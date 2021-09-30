@@ -1,9 +1,10 @@
 {
   "name": "sveltekit-auth-example",
+  "description": "SvelteKit Authentication Example",
   "version": "0.5.1",
   "private": false,
   "author": "Nate Stuyvesant",
-  "license": "MIT",
+  "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/main/LICENSE",
   "repository": {
     "type": "git",
     "url": "https://github.com/nstuyvesant/sveltekit-auth-example.git"

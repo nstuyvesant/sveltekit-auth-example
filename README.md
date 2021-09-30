@@ -25,7 +25,6 @@ Pages use the session.user.role to determine whether they are authorized. While 
 
 ## Prerequisites
 - PostgreSQL 13 or higher
-- pgAdmin 5.7 or higher
 - Node.js 16.10.0 or higher
 - npm 7.24.1 or higher
 
@@ -42,7 +41,7 @@ git clone https://github.com/nstuyvesant/sveltekit-auth-example.git
 cd /sveltekit-auth-example
 npm install
 
-# Create the database from command-line (or use pgAdmin)
+# Create the database from command-line
 psql -d postgres -f db_create.sql
 ```
 

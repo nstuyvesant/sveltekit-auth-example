@@ -1,7 +1,7 @@
 -- Invoke this script via
 -- $ psql -d postgres -f db_create.sql
 
--- Create user if not already there
+-- Create role if not already there
 DO
 $do$
 BEGIN
@@ -26,8 +26,6 @@ CREATE DATABASE auth
   WITH 
   OWNER = auth
   ENCODING = 'UTF8'
-  LC_COLLATE = 'en_US.UTF-8'
-  LC_CTYPE = 'en_US.UTF-8'
   TABLESPACE = pg_default
   CONNECTION LIMIT = -1;
 
