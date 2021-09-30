@@ -23,7 +23,7 @@ As the client calls endpoints, each request to the server includes the session I
 
 > There is some overhead to checking the user session in a database each time versus using a JSON web token; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
 
-Pages use the session.user.role to determine whether they are authorized. While a malicious user could alter the client-side session, the data populated on restricted pages is normally served via endpoints which are secured server-side.
+Pages use the session.user.role to determine whether they are authorized. While a malicious user could alter the client-side session store, the data populated on restricted pages is served via endpoints which have request.locals.user available for the endpoint to determine whether to grant access.
 
 ## Prerequisites
 - PostgreSQL 13 or higher
@@ -64,7 +64,11 @@ npm run dev -- --open
 
 ## Valid logins
 
-The db_create.sql script adds three users to the database:
+The db_create.sql script adds three users to the database with obvious roles:
 - admin@example.com password admin
 - teacher@example.com password teacher
 - student@example.com password student
+
+## My ask of you
+
+Please report any issues or areas where the code can be optimized. I am still learning Svelte and SvelteKit. All feedback is appreciated.

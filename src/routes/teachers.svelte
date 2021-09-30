@@ -1,6 +1,9 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
 
+	// export const ssr = false
+	export const prerender = false
+
 	export const load: Load = ({ session }) => {
     const authorized = ['admin', 'teacher']
 		if (!authorized.includes(session.user?.role)) {
