@@ -11,10 +11,10 @@ export const post: RequestHandler = async (request) => {
   try {
     switch (slug) {
       case 'login': 
-        sql = `SELECT response AS "authenticationResult" FROM authenticate($1);`
+        sql = `SELECT authenticate($1) AS "authenticationResult";`
         break
       case 'register':
-        sql = `SELECT response AS "authenticationResult" FROM register($1);`
+        sql = `SELECT register($1) AS "authenticationResult";`
         break
       case 'logout':
         return {

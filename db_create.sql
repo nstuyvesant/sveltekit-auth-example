@@ -167,6 +167,36 @@ $BODY$;
 
 ALTER FUNCTION public.get_session(uuid) OWNER TO auth;
 
+CREATE OR REPLACE FUNCTION public.register(
+	input json,
+	OUT user_session json)
+    RETURNS json
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
+  input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
+  input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
+  input_phone varchar(23) := TRIM((input->>'phone')::varchar);
+  input_password varchar(80) := (input->>'password')::varchar;
+BEGIN
+  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name, 'phone', users.phone)) INTO user_session FROM users WHERE email = input_email;
+  IF NOT FOUND THEN
+    INSERT INTO users(role, password, email, first_name, last_name, phone)
+      VALUES('student', crypt(input_password, input_password), input_email, input_first_name, input_last_name, input_phone)
+      RETURNING
+        json_build_object(
+          'sessionId', create_session(users.id),
+          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', input_phone)
+        ) INTO user_session;
+  END IF;
+END;
+$BODY$;
+
+ALTER FUNCTION public.register(json) OWNER TO auth;
+
 CREATE OR REPLACE FUNCTION public.start_gmail_user_session(
 	input json,
 	OUT user_session json)
