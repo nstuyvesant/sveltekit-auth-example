@@ -4,6 +4,7 @@
   import { page, session } from '$app/stores'
   import useAuth from '$lib/auth'
 
+  // Vue.js Composition API style
   const { initializeSignInWithGoogle, logout } = useAuth(page, session, goto)
 
   let sessionValue

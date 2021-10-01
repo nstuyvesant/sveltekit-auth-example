@@ -3,8 +3,7 @@ import type { Handle, GetSession } from '@sveltejs/kit'
 import { query } from './routes/_db'
 import type { ServerRequest, ServerResponse } from '@sveltejs/kit/types/hooks'
 
-// Attach authorization to each server request
-// as the user's role may have changed
+// Attach authorization to each server request (role may have changed)
 async function attachUserToRequest(sessionId: string, request: ServerRequest) {
   const sql = `
     SELECT
@@ -47,7 +46,10 @@ export const handle: Handle = async ({ request, resolve }) => {
   return response
 }
 
-// Only runs for page requests - not endpoints
+// Only runs for first page request (and never for calls to endpoints)
 export const getSession: GetSession = (request) => {
-  return request.locals.user ? { user: request.locals.user } : {}
+  console.log(`hooks.ts:getSession() - ${request.method} ${request.path}, request.locals.user: ${!!request.locals.user}`)
+  return request.locals.user ?
+    { user: request.locals.user }
+    : {}
 }

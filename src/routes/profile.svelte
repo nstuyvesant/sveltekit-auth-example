@@ -5,6 +5,7 @@
   export const prerender = false
 
   export const load: Load = ({ session }) => {
+    console.log('Profile Load')
     const authorized = ['admin', 'teacher', 'student']
 		if (!authorized.includes(session.user?.role)) {
 			return {

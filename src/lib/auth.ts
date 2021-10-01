@@ -46,7 +46,7 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
       session.set({ user: fromEndpoint.user })
       const { role } = fromEndpoint.user
       if (referrer) return goto(referrer)
-      if (role === 'teacher') return goto('/shynet')
+      if (role === 'teacher') return goto('/teachers')
       if (role === 'admin') return goto('/admin')
       // Don't stay on login if successfully authenticated
       if (window.location.pathname === '/login') goto('/')
@@ -89,7 +89,7 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
         session.set({ user: fromEndpoint.user })
         const { role } = fromEndpoint.user
         if (referrer) return goto(referrer)
-        if (role === 'teacher') return goto('/shynet')
+        if (role === 'teacher') return goto('/teachers')
         if (role === 'admin') return goto('/admin')
         return goto('/')
       } else {
