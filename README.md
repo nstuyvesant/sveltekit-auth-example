@@ -3,7 +3,7 @@
 This is an example of how to register, authenticate, and update users and limit their access to
 areas of the website by role (admin, teacher, student).
 
-It's an SPA built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap.
+It's an SPA built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. 
 
 Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash). Because of that, **getSession()** in hooks.ts is not useful. Instead, the client makes REST calls, gets the user in the body of the response (if successful) and adds the user to the client-side session store.
 
@@ -21,11 +21,11 @@ The website supports two types of authentication:
    - The endpoint decodes and validates the user information then calls the PostgreSQL function start_gmail_user_session to upsert the user to the database returing a session id in an httpOnly SameSite cookie and user in the body of the response.
    - The client stores the user object in SvelteKit's session store.
 
-As the client calls endpoints, each request to the server includes the session ID in the httpOnly cookie. The handle() function in hooks.ts checks the database for this session ID. If it exists and is not expired, it attaches the user (including role) to request.locals. Each endpoint can then examine request.locals.user.role to determine whether to respond or return a 403.
+As the client calls endpoints, each request to the server includes the session ID in the httpOnly cookie. The handle() function in hooks.ts checks the database for this session ID. If it exists and is not expired, it attaches the user (including role) to request.locals. Each endpoint can then examine request.locals.user.role to determine whether to respond or return a 401.
 
 > There is some overhead to checking the user session in a database each time versus using a JSON web token; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
 
-Pages use the session.user.role to determine whether they are authorized. While a malicious user could alter the client-side session store, the data populated on restricted pages is served via endpoints which have request.locals.user available for them determine whether to grant access.
+Pages use the session.user.role to determine whether they are authorized. While a malicious user could alter the client-side session store to see pages they should not, the dynamic data in those restricted pages is served via endpoints which check request.locals.user to determine whether to grant access.
 
 ## Prerequisites
 - PostgreSQL 13 or higher

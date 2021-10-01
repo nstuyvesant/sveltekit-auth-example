@@ -133,8 +133,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public.authenticate(json)
-    OWNER TO auth;
+ALTER FUNCTION public.authenticate(json) OWNER TO auth;
 
 CREATE OR REPLACE FUNCTION public.create_session(
 	input_user_id integer)
@@ -223,6 +222,31 @@ END;
 $BODY$;
 
 ALTER PROCEDURE public.upsert_user(json) OWNER TO auth;
+
+CREATE OR REPLACE PROCEDURE public.update_user(input_id integer, input json)
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
+  input_password varchar(80) := COALESCE((input->>'password')::varchar, '');
+  input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
+  input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
+  input_phone varchar(23) := TRIM((input->>'phone')::varchar);
+BEGIN
+  UPDATE users SET
+    email = input_email,
+	password = CASE WHEN input_password = ''
+      THEN password -- leave as is (we are updating fields other than the password)
+	  ELSE crypt(input_password, gen_salt('bf', 8))
+	END,
+	first_name = input_first_name,
+	last_name = input_last_name,
+	phone = input_phone
+  WHERE id = input_id;
+END;
+$BODY$;
+
+ALTER PROCEDURE public.update_user(integer, json) OWNER TO auth;
 
 CALL public.upsert_user('{"id":0, "role":"admin", "email":"admin@example.com", "password":"admin", "firstName":"Jane", "lastName":"Doe", "phone":"412-555-1212"}'::json);
 CALL public.upsert_user('{"id":0, "role":"teacher", "email":"teacher@example.com", "password":"teacher", "firstName":"John", "lastName":"Doe", "phone":"724-555-1212"}'::json);
