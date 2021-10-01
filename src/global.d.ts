@@ -10,6 +10,13 @@ interface ImportMeta {
   }
 }
 
+type AuthenticationResult = {
+  statusCode: number
+  status: string
+  user: User
+  sessionId: string
+}
+
 type Credentials = {
   email: string
   password: string

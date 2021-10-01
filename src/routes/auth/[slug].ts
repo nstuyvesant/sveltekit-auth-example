@@ -11,10 +11,10 @@ export const post: RequestHandler = async (request) => {
   try {
     switch (slug) {
       case 'login': 
-        sql = `SELECT response FROM authenticate($1);`
+        sql = `SELECT response AS "authenticationResult" FROM authenticate($1);`
         break
       case 'register':
-        sql = `SELECT response FROM register($1);`
+        sql = `SELECT response AS "authenticationResult" FROM register($1);`
         break
       case 'logout':
         return {
@@ -35,7 +35,9 @@ export const post: RequestHandler = async (request) => {
           }
         }
     }
+
     result = await query(sql, [JSON.stringify(body)])
+
   } catch (error) {
     return {
       status: 503,
@@ -46,29 +48,30 @@ export const post: RequestHandler = async (request) => {
     }
   }
 
-  const { response } = result.rows[0]
-  if (!response.user) {
+  const { authenticationResult }: { authenticationResult: AuthenticationResult } = result.rows[0]
+
+  if (!authenticationResult.user) {
     return {
-      status: response.statusCode,
+      status: authenticationResult.statusCode,
       body: {
-        message: response.status,
+        message: authenticationResult.status,
         user: null,
         sessionId: null
       }
     }
   }
 
-  // prevent hooks.ts handle() from deleting cookie we just set
-  request.locals.user = response.user
+  // Prevent hooks.ts:handle() from deleting cookie we just set
+  request.locals.user = authenticationResult.user
 
   return {
-    status: response.statusCode,
-    headers: { // database expires sessions in 2 hours
-      'Set-Cookie': `session=${response.sessionId}; Path=/; SameSite=Lax; HttpOnly;`
+    status: authenticationResult.statusCode,
+    headers: { // database expires sessions in 2 hours (could do it here too)
+      'Set-Cookie': `session=${authenticationResult.sessionId}; Path=/; SameSite=Lax; HttpOnly;`
     },
     body: {
-      message: response.status,
-      user: response.user,
+      message: authenticationResult.status,
+      user: authenticationResult.user,
     }
   }
 }
