@@ -6,21 +6,10 @@ import type { ServerRequest, ServerResponse } from '@sveltejs/kit/types/hooks'
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequest(sessionId: string, request: ServerRequest) {
   const sql = `
-    SELECT
-      json_build_object(
-        'id', sessions.user_id,
-        'role', users.role,
-        'email', users.email,
-        'firstName', users.first_name,
-        'lastName', users.last_name,
-        'phone', users.phone
-      ) AS user
-    FROM sessions
-      INNER JOIN users ON sessions.user_id = users.id
-    WHERE sessions.id = $1 AND expires > CURRENT_TIMESTAMP LIMIT 1;`
+    SELECT * FROM get_session($1);`
   const { rows } = await query(sql, [sessionId])
   if (rows?.length > 0) {
-    request.locals.user = rows[0].user
+    request.locals.user = rows[0].get_session
   }
 }
 

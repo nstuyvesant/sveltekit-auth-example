@@ -148,17 +148,24 @@ $BODY$;
 
 ALTER FUNCTION public.create_session(integer) OWNER TO auth;
 
-CREATE OR REPLACE FUNCTION public.session_exists(
-	input_session_id uuid)
-    RETURNS boolean
-    LANGUAGE 'sql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
+CREATE OR REPLACE FUNCTION public.get_session(input_session_id uuid)
+  RETURNS json
+  LANGUAGE 'sql'
 AS $BODY$
-SELECT (COUNT(*))> 0 FROM sessions WHERE id = input_session_id;
+SELECT json_build_object(
+  'id', sessions.user_id,
+  'role', users.role,
+  'email', users.email,
+  'firstName', users.first_name,
+  'lastName', users.last_name,
+  'phone', users.phone
+) AS user
+FROM sessions
+  INNER JOIN users ON sessions.user_id = users.id
+WHERE sessions.id = input_session_id AND expires > CURRENT_TIMESTAMP LIMIT 1;
 $BODY$;
 
-ALTER FUNCTION public.session_exists(uuid) OWNER TO auth;
+ALTER FUNCTION public.get_session(uuid) OWNER TO auth;
 
 CREATE OR REPLACE FUNCTION public.start_gmail_user_session(
 	input json,
@@ -173,14 +180,14 @@ DECLARE
   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
 BEGIN
-  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name)) INTO user_session FROM users WHERE email = input_email;
+  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name, 'phone', users.phone)) INTO user_session FROM users WHERE email = input_email;
   IF NOT FOUND THEN
     INSERT INTO users(role, email, first_name, last_name)
       VALUES('student', input_email, input_first_name, input_last_name)
       RETURNING
         json_build_object(
           'id', create_session(users.id),
-          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name)
+          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', null)
         ) INTO user_session;
   END IF;
 END;

@@ -22,14 +22,13 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
 	})
 
   function initializeSignInWithGoogle() {
-    if (!window.google.initialized) {
+    if (!google.initialized) {
       google.accounts.id.initialize({
         client_id: config.googleClientId,
         callback: googleCallback
       })
-      window.google.initialized = true
-    } else 
-      console.log('Sign in with Google already initialized.')
+      google.initialized = true
+    }
   }
 
   async function googleCallback(response) {
