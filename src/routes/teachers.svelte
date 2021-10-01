@@ -19,16 +19,13 @@
 			headers: { 'Content-Type': 'application/json' }
 		})
 
-		if (res.ok) {
-			const { message } = await res.json()
-			return {
-				props: {
-					message
-				}
+		// if !res.ok, error is returned as message
+		const { message } = await res.json()
+		return {
+			props: {
+				message
 			}
 		}
-
-		return {}
 	}
 </script>
 
