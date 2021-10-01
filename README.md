@@ -5,6 +5,8 @@ areas of the website by role (admin, teacher, student).
 
 It's an SPA built with SvelteKit and a PostgreSQL database back-end. It's coded in TypeScript and the website is styled using Bootstrap.
 
+Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site. Because of that, **getSession()** in hooks.ts is useless. Instead, the client makes REST calls, gets the user in the body of the response (if successful) and adds the user to the client-side session store.
+
 The website supports two types of authentication:
 1. **Local accounts** via username (email) and password
    - The login form (/src/routes/login.svelte) sends the login info as JSON to endpoint /auth/login

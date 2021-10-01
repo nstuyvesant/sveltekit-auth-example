@@ -46,9 +46,9 @@ export const handle: Handle = async ({ request, resolve }) => {
   return response
 }
 
-// Only runs for first page request (and never for calls to endpoints)
+// Only useful for authentication schemes that redirect back to the website - not
+// an SPA with client-side routing that handles authentication seamlessly
 export const getSession: GetSession = (request) => {
-  console.log(`hooks.ts:getSession() - ${request.method} ${request.path}, request.locals.user: ${!!request.locals.user}`)
   return request.locals.user ?
     { user: request.locals.user }
     : {}
