@@ -4,7 +4,7 @@
 	// export const ssr = false
 	export const prerender = false
 
-	export const load: Load = ({ session }) => {
+	export const load: Load = async ({ session }) => {
     const authorized = ['admin', 'teacher']
 		if (!authorized.includes(session.user?.role)) {
 			return {
@@ -12,9 +12,30 @@
 				redirect: '/login?referrer=/teachers'
 			}
 		}
+
+		const url = '/api/v1/teacher'
+		const res = await fetch(url, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		})
+
+		if (res.ok) {
+			const { message } = await res.json()
+			return {
+				props: {
+					message
+				}
+			}
+		}
+
 		return {}
 	}
 </script>
 
+<script lang="ts">
+	export let message
+</script>
+
 <h1>Teachers</h1>
 <h4>Teacher Or Admin Role</h4>
+<p>{message}</p>
