@@ -44,6 +44,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Profile</title>
+</svelte:head>
+
 <div class="d-flex justify-content-center my-3">
   <div class="card login">
     <div class="card-body">

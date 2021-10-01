@@ -33,6 +33,10 @@
 	export let message
 </script>
 
+<svelte:head>
+  <title>Teachers</title>
+</svelte:head>
+
 <h1>Teachers</h1>
 <h4>Teacher Or Admin Role</h4>
 <p>{message}</p>

@@ -1,3 +1,3 @@
 # Backlog
 
-* [High] Forgot password
+* [High] Implement "Forgot password" functionality from login.svelte

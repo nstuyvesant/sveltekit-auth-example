@@ -51,11 +51,11 @@
           </div>
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
-            <input class="form-control is-large" bind:this={focusedField} bind:value={credentials.email} placeholder="Email" autocomplete="email">
+            <input type="email" class="form-control is-large" bind:this={focusedField} bind:value={credentials.email} placeholder="Email" autocomplete="email"/>
           </div>
           <div class="mb-3">
             <label class="form-label" for="password">Password</label>
-            <input class="form-control is-large" type="password" bind:value={credentials.password} placeholder="Password" autocomplete="current-password">
+            <input class="form-control is-large" type="password" bind:value={credentials.password} placeholder="Password" autocomplete="current-password"/>
             <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
           </div>
         </div>

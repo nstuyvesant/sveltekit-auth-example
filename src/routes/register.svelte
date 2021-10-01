@@ -51,6 +51,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Register</title>
+</svelte:head>
+
 <div class="d-flex justify-content-center my-3">
   <div class="card login">
     <div class="card-body">
