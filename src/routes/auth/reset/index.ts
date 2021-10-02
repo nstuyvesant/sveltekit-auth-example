@@ -14,8 +14,8 @@ export const put: RequestHandler = async ({body}) => {
     const userId = decoded.subject
 
     // Update the database with the new password
-    const sql = `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE id = $2;`
-    await query(sql, [password, userId])
+    const sql = `CALL reset_password($1, $2);`
+    await query(sql, [userId, password])
 
     return {
       status: 200,

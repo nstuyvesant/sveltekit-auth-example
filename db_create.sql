@@ -225,6 +225,17 @@ $BODY$;
 
 ALTER FUNCTION public.start_gmail_user_session(json) OWNER TO auth;
 
+CREATE OR REPLACE PROCEDURE public.reset_password(
+	input_id integer,
+	input_password text)
+LANGUAGE 'sql'
+AS $BODY$
+  UPDATE users SET password = crypt(input_password, gen_salt('bf', 8)) WHERE id = input_id;
+END;
+$BODY$;
+
+ALTER PROCEDURE public.reset_password(integer, text) OWNER TO auth;
+
 CREATE OR REPLACE PROCEDURE public.upsert_user(input json)
 LANGUAGE plpgsql
 AS $BODY$
