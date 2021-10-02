@@ -109,3 +109,9 @@
     </div>
   </div>
 </div>
+
+<style lang="scss">
+  .card-body {
+    width: 25rem;
+  }
+</style>

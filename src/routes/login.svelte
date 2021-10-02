@@ -47,7 +47,7 @@
 </svelte:head>
 
 <div class="d-flex justify-content-center mt-5">
-  <div class="card login">
+  <div class="card">
     <div class="card-body">
       <form id="signIn" autocomplete="on" novalidate>
         <h4><strong>Sign In</strong></h4>
@@ -87,7 +87,7 @@
 </div>
 
 <style lang="scss">
-  .login {
+  .card-body {
     width: 25rem;
   }
 </style>

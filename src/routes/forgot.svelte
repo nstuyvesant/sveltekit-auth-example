@@ -51,7 +51,8 @@
 </svelte:head>
 
 <div class="d-flex justify-content-center mt-5">
-  <div class="card login">
+<!-- <div class="col-8 offset-2 mt-5"> -->
+  <div class="card">
     <div class="card-body">
       <form id="forgot" autocomplete="on" novalidate>
         <h4><strong>Forgot password</strong></h4>
@@ -71,3 +72,9 @@
     </div>
   </div>
 </div>
+
+<style lang="scss">
+  .card-body {
+    width: 25rem;
+  }
+</style>
