@@ -24,6 +24,7 @@
 
 <script lang="ts">
   import { session } from '$app/stores'
+import { focusOnFirstError } from '$lib/focus';
 
   let focusedField: HTMLInputElement
   let message: string
@@ -31,19 +32,30 @@
   export let user: User
 
   async function update() {
+    message = ''
     const form = document.forms['profile']
 
-    $session.user = JSON.parse(JSON.stringify(user)) // deep clone
-    const url = '/api/v1/user'
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
-    const reply = await res.json()
-    message = reply.message
+    if (!passwordMatch()) {
+      confirmPassword.classList.add('is-invalid')
+    }
+
+    if (form.checkValidity()) {
+      $session.user = JSON.parse(JSON.stringify(user)) // deep clone
+      const url = '/api/v1/user'
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      })
+      const reply = await res.json()
+      message = reply.message
+    } else {
+      form.classList.add('was-validated')
+      focusOnFirstError(form)
+    }
+
   }
 
   const passwordMatch = () => {
@@ -76,7 +88,7 @@
           </div>
           <div class="mb-3">
             <label class="form-label" for="password">Confirm password</label>
-            <input type="password" id="password" class="form-control is-large" bind:this={confirmPassword} required={user.password !== ''} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
+            <input type="password" id="password" class="form-control is-large" bind:this={confirmPassword} required={!!user.password} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
             <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
           </div>
         {/if}

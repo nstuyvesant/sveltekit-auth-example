@@ -8,22 +8,26 @@
   const { initializeSignInWithGoogle, loginLocal } = useAuth(page, session, goto)
 
   let focusedField: HTMLInputElement
-
+  let message: string
   const credentials: Credentials = {
     email: '',
     password: ''
   }
-  let displayedError: string
 
   async function login() {
+    message = ''
     const form = document.forms['signIn']
 
-    displayedError = undefined
-    try {
-      await loginLocal(credentials)
-    } catch (err) {
-      console.error('Login error', err.message)
-      displayedError = err.message
+    if (form.checkValidity()) {
+      try {
+        await loginLocal(credentials)
+      } catch (err) {
+        console.error('Login error', err.message)
+        message = err.message
+      }
+    } else {
+      form.classList.add('was-validated')
+      focusOnFirstError(form)
     }
   }
 
@@ -68,8 +72,8 @@
           <a href="/forgot" class="text-black-50">Forgot Password?</a><br/>
           <br/>
         </div>
-        {#if displayedError}
-          <p class="text-danger">{displayedError}</p>
+        {#if message}
+          <p class="text-danger">{message}</p>
         {/if}
         <div class="d-grid gap-2">
           <button on:click|preventDefault={login} class="btn btn-primary btn-lg">Sign In</button>

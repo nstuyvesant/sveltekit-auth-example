@@ -34,41 +34,46 @@
   }
 
   const resetPassword = async () => {
+    message = ''
     const form = document.forms['reset']
+
     if (!passwordMatch()) {
       confirmPassword.classList.add('is-invalid')
-      form.classList.add('was-validated')
-      focusOnFirstError('modalForm')
-      return
     }
 
-    message = ''
+    if (form.checkValidity()) {
 
-    const url = `/auth/reset`
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        token,
-        password
+      const url = `/auth/reset`
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token,
+          password
+        })
       })
-    })
 
-    if (res.ok) {
-      $toast = {
-        title: 'Password Reset Succesful',
-        body: 'Your password was reset. Please login.',
-        isOpen: true
-      }
+      if (res.ok) {
+        $toast = {
+          title: 'Password Reset Succesful',
+          body: 'Your password was reset. Please login.',
+          isOpen: true
+        }
 
-      goto('/login')
+        goto('/login')
+      } else {
+        const body = await res.json()
+        console.log('Failed reset', body)
+        message = body.message
+      } 
+
     } else {
-      const body = await res.json()
-      console.log('Failed reset', body)
-      message = body.message
-    } 
+      form.classList.add('was-validated')
+      focusOnFirstError(form)
+    }
+
   }
 </script>
 
@@ -90,7 +95,8 @@
         </div>
         <div class="mb-3">
           <label class="form-label" for="passwordConfirm">Password (retype)</label>
-          <input class="form-control is-large" id="passwordConfirm" type="password" bind:this={confirmPassword} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
+          <input class="form-control is-large" id="passwordConfirm" type="password" required={!!password} bind:this={confirmPassword} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
+          <div class="invalid-feedback">Passwords must match</div>
         </div>
 
         {#if message}

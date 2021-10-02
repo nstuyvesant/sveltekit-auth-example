@@ -15,28 +15,33 @@
   })
 
   const sendPasswordReset = async () => {
+    message = ''
     const form = document.forms['forgot']
 
-    message = ''
-    if (email.toLowerCase().includes('gmail.com')) {
-      return message = 'GMail passwords must be reset on Manage Your Google Account.'
-    }
-    const url = `/auth/forgot`
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email })
-    })
-    
-    if (res.ok) {
-      $toast = {
-        title: 'Password Reset',
-        body: 'Please check your inbox for a password reset email (junk mail, too).',
-        isOpen: true
+    if (form.checkValidity()) {
+      if (email.toLowerCase().includes('gmail.com')) {
+        return message = 'GMail passwords must be reset on Manage Your Google Account.'
       }
-      return goto('/')
+      const url = `/auth/forgot`
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      })
+    
+      if (res.ok) {
+        $toast = {
+          title: 'Password Reset',
+          body: 'Please check your inbox for a password reset email (junk mail, too).',
+          isOpen: true
+        }
+        return goto('/')
+      }
+    } else {
+      form.classList.add('was-validated')
+      focusOnFirstError(form)
     }
   }
 </script>

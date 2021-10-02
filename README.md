@@ -74,9 +74,9 @@ npm run dev -- --open
 ## Valid logins
 
 The db_create.sql script adds three users to the database with obvious roles:
-- admin@example.com password admin
-- teacher@example.com password teacher
-- student@example.com password student
+- admin@example.com password admin123
+- teacher@example.com password teacher123
+- student@example.com password student123
 
 ## My ask of you
 

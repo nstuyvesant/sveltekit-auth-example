@@ -31,18 +31,28 @@
     phone: ''
   }
   let confirmPassword: HTMLInputElement
-  let displayedError: string
+  let message: string
 
   async function register() {
     const form = document.forms['register']
+    message = ''
 
-    displayedError = undefined
-    try {
-      await registerLocal(user)
-    } catch (err) {
-      console.error('Login error', err.message)
-      displayedError = err.message
+    if (!passwordMatch()) {
+      confirmPassword.classList.add('is-invalid')
     }
+
+    if (form.checkValidity()) {
+      try {
+        await registerLocal(user)
+      } catch (err) {
+        console.error('Login error', err.message)
+        message = err.message
+      }
+    } else {
+      form.classList.add('was-validated')
+      focusOnFirstError(form)
+    }
+  
   }
 
   onMount(() => {
@@ -105,8 +115,8 @@
           <input type="tel" bind:value={user.phone} id="phone" class="form-control" placeholder="Phone" autocomplete="tel-local"/>
         </div>
       
-        {#if displayedError}
-          <p>{displayedError}</p>
+        {#if message}
+          <p>{message}</p>
         {/if}
       
         <button type="button" on:click={register} class="btn btn-primary btn-lg">Register</button>

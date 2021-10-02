@@ -296,6 +296,6 @@ $BODY$;
 
 ALTER PROCEDURE public.update_user(integer, json) OWNER TO auth;
 
-CALL public.upsert_user('{"id":0, "role":"admin", "email":"admin@example.com", "password":"admin", "firstName":"Jane", "lastName":"Doe", "phone":"412-555-1212"}'::json);
-CALL public.upsert_user('{"id":0, "role":"teacher", "email":"teacher@example.com", "password":"teacher", "firstName":"John", "lastName":"Doe", "phone":"724-555-1212"}'::json);
-CALL public.upsert_user('{"id":0, "role":"student", "email":"student@example.com", "password":"student", "firstName":"Justin", "lastName":"Case", "phone":"814-555-1212"}'::json);
+CALL public.upsert_user('{"id":0, "role":"admin", "email":"admin@example.com", "password":"admin123", "firstName":"Jane", "lastName":"Doe", "phone":"412-555-1212"}'::json);
+CALL public.upsert_user('{"id":0, "role":"teacher", "email":"teacher@example.com", "password":"teacher123", "firstName":"John", "lastName":"Doe", "phone":"724-555-1212"}'::json);
+CALL public.upsert_user('{"id":0, "role":"student", "email":"student@example.com", "password":"student123", "firstName":"Justin", "lastName":"Case", "phone":"814-555-1212"}'::json);
