@@ -1,6 +1,5 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
-  import { toast } from '../../../stores'
 
   export const load: Load = async ({ page }) => {
     return {
@@ -14,6 +13,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
+  import { toast } from '../../../stores'
 
   export const prerender = true
   export let token: string
@@ -43,7 +43,6 @@
     })
 
     if (res.ok) {
-// BUG: toast is not opening for some reason
       $toast = {
         title: 'Password Reset Succesful',
         body: 'Your password was reset. Please login.',
