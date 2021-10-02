@@ -25,6 +25,7 @@
     "node": "~16.10.0",
     "npm": "^7.24.1"
   },
+  "type": "module",
   "dependencies": {
     "cookie": "^0.4.1",
     "google-auth-library": "^7.10.0",
