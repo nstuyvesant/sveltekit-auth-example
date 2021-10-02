@@ -58,7 +58,7 @@
         <p>Hey, you're human. We get it.</p>
         <div class="mb-3">
           <label class="form-label" for="email">Email</label>
-          <input bind:this={focusedField} bind:value={email} type="email" id="email" class="form-control is-large" required placeholder="Email" autocomplete="email"/>
+          <input bind:this={focusedField} bind:value={email} type="email" id="email" class="form-control" required placeholder="Email" autocomplete="email"/>
           <div class="invalid-feedback">Email address required</div>
         </div>
         {#if message}

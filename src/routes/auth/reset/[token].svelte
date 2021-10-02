@@ -89,13 +89,13 @@
         <p>Please provide a new password.</p>
         <div class="mb-3">
           <label class="form-label" for="password">Password</label>
-          <input class="form-control is-large" id="password" type="password" bind:value={password} bind:this={focusedField} minlength="8" maxlength="80" placeholder="Password" autocomplete="new-password"/>
+          <input class="form-control" id="password" type="password" bind:value={password} bind:this={focusedField} minlength="8" maxlength="80" placeholder="Password" autocomplete="new-password"/>
           <div class="invalid-feedback">Password with 8 chars or more required</div>
           <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="passwordConfirm">Password (retype)</label>
-          <input class="form-control is-large" id="passwordConfirm" type="password" required={!!password} bind:this={confirmPassword} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
+          <input class="form-control" id="passwordConfirm" type="password" required={!!password} bind:this={confirmPassword} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
           <div class="invalid-feedback">Passwords must match</div>
         </div>
 

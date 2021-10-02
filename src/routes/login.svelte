@@ -58,12 +58,12 @@
           </div>
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
-            <input type="email" class="form-control is-large" bind:this={focusedField} bind:value={credentials.email} required placeholder="Email" autocomplete="email"/>
+            <input type="email" class="form-control" bind:this={focusedField} bind:value={credentials.email} required placeholder="Email" autocomplete="email"/>
             <div class="invalid-feedback">Email address required</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="password">Password</label>
-            <input class="form-control is-large" type="password" bind:value={credentials.password} required minlength="8" maxlength="80" placeholder="Password" autocomplete="current-password"/>
+            <input class="form-control" type="password" bind:value={credentials.password} required minlength="8" maxlength="80" placeholder="Password" autocomplete="current-password"/>
             <div class="invalid-feedback">Password with 8 chars or more required</div>
             <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
           </div>

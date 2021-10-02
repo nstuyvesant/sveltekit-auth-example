@@ -86,18 +86,18 @@
         </div>
         <div class="mb-3">
           <label class="form-label" for="email">Email</label>
-          <input bind:this={focusedField} type="email" class="form-control is-large" bind:value={user.email} required placeholder="Email" id="email" autocomplete="email"/>
+          <input bind:this={focusedField} type="email" class="form-control" bind:value={user.email} required placeholder="Email" id="email" autocomplete="email"/>
           <div class="invalid-feedback">Email address required</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="password">Password</label>
-          <input type="password" id="password" class="form-control is-large" bind:value={user.password} required minlength="8" maxlength="80" placeholder="Password" autocomplete="new-password"/>
+          <input type="password" id="password" class="form-control" bind:value={user.password} required minlength="8" maxlength="80" placeholder="Password" autocomplete="new-password"/>
           <div class="invalid-feedback">Password with 8 chars or more required</div>
           <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="password">Confirm password</label>
-          <input type="password" id="password" class="form-control is-large" bind:this={confirmPassword} required minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
+          <input type="password" id="password" class="form-control" bind:this={confirmPassword} required minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
           <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
         </div>
         <div class="mb-3">
