@@ -53,8 +53,9 @@ psql -d postgres -f db_create.sql
 
 3. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
 ```bash
-VITE_GOOGLE_CLIENT_ID=replace_with_your_own
 VITE_DATABASE_URL=postgres://user:password@localhost:5432/auth
+VITE_GOOGLE_CLIENT_ID=replace_with_your_own
+VITE_JWT_SECRET=replace_with_your_own
 ```
 
 ## Run locally
