@@ -27,10 +27,13 @@ As the client calls endpoints, each request to the server includes the session I
 
 Pages use the session.user.role to determine whether they are authorized. While a malicious user could alter the client-side session store to see pages they should not, the dynamic data in those restricted pages is served via endpoints which check request.locals.user to determine whether to grant access.
 
+The forgot password functionality uses SendInBlue to send the email. You would need to have a SendInBlue account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar.
+
 ## Prerequisites
 - PostgreSQL 13 or higher
 - Node.js 16.10.0 or higher
 - npm 7.24.1 or higher
+- SendInBlue account
 
 ## Setting up the project
 
@@ -54,8 +57,11 @@ psql -d postgres -f db_create.sql
 3. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
 ```bash
 VITE_DATABASE_URL=postgres://user:password@localhost:5432/auth
+VITE_EMAIL_FROM='{ "email":"jdoe@example.com", "name":"John Doe" }'
 VITE_GOOGLE_CLIENT_ID=replace_with_your_own
 VITE_JWT_SECRET=replace_with_your_own
+VITE_SEND_IN_BLUE_URL=https://api.sendinblue.com
+VITE_SEND_IN_BLUE_KEY=replace_with_your_own
 ```
 
 ## Run locally
