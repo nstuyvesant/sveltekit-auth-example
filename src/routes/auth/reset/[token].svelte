@@ -1,5 +1,7 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
+  import { toast } from '../../../stores'
+
   export const load: Load = async ({ page }) => {
     return {
       props: {
@@ -25,11 +27,35 @@
     focusedField.focus()
   })
 
-  const resetPassword = () => {
+  const resetPassword = async () => {
     message = ''
-    // TODO: POST token and password to /auth/reset
-    // TODO: show Toast
-    goto('/login')
+
+    const url = `/auth/reset`
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token,
+        password
+      })
+    })
+
+    if (res.ok) {
+// BUG: toast is not opening for some reason
+      $toast = {
+        title: 'Password Reset Succesful',
+        body: 'Your password was reset. Please login.',
+        isOpen: true
+      }
+
+      goto('/login')
+    } else {
+      const body = await res.json()
+      console.log('Failed reset', body)
+      message = body.message
+    } 
   }
 </script>
 
