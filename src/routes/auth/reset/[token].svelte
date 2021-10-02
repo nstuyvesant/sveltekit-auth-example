@@ -14,20 +14,34 @@
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import { toast } from '../../../stores'
+  import { focusOnFirstError } from '$lib/focus'
 
   export const prerender = true
   export let token: string
 
   let focusedField: HTMLInputElement
   let password: string
-  let passwordConfirm: string
+  let confirmPassword: HTMLInputElement
   let message: string
 
   onMount(() => {
     focusedField.focus()
   })
 
+  const passwordMatch = () => {
+    if (!password) password = ''
+    return password == confirmPassword.value
+  }
+
   const resetPassword = async () => {
+    const form = document.forms['reset']
+    if (!passwordMatch()) {
+      confirmPassword.classList.add('is-invalid')
+      form.classList.add('was-validated')
+      focusOnFirstError('modalForm')
+      return
+    }
+
     message = ''
 
     const url = `/auth/reset`
@@ -65,17 +79,18 @@
 <div class="d-flex justify-content-center mt-5">
   <div class="card login">
     <div class="card-body">
-      <form autocomplete="on" novalidate>
+      <form id="reset" autocomplete="on" novalidate>
         <h4><strong>New Password</strong></h4>
         <p>Please provide a new password.</p>
         <div class="mb-3">
           <label class="form-label" for="password">Password</label>
-          <input class="form-control is-large" id="password" type="password" bind:value={password} bind:this={focusedField} placeholder="Password" autocomplete="new-password"/>
+          <input class="form-control is-large" id="password" type="password" bind:value={password} bind:this={focusedField} minlength="8" maxlength="80" placeholder="Password" autocomplete="new-password"/>
+          <div class="invalid-feedback">Password with 8 chars or more required</div>
           <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="passwordConfirm">Password (retype)</label>
-          <input class="form-control is-large" id="passwordConfirm" type="password" bind:value={passwordConfirm} placeholder="Password (again)" autocomplete="new-password"/>
+          <input class="form-control is-large" id="passwordConfirm" type="password" bind:this={confirmPassword} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
         </div>
 
         {#if message}

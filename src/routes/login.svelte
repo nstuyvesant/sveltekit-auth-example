@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation'
   import { page, session } from '$app/stores'
   import useAuth from '$lib/auth'
+  import { focusOnFirstError } from '$lib/focus'
 
   const { initializeSignInWithGoogle, loginLocal } = useAuth(page, session, goto)
 
@@ -15,6 +16,8 @@
   let displayedError: string
 
   async function login() {
+    const form = document.forms['signIn']
+
     displayedError = undefined
     try {
       await loginLocal(credentials)
@@ -42,7 +45,7 @@
 <div class="d-flex justify-content-center mt-5">
   <div class="card login">
     <div class="card-body">
-      <form autocomplete="on" novalidate>
+      <form id="signIn" autocomplete="on" novalidate>
         <h4><strong>Sign In</strong></h4>
         <p>Welcome back.</p>
         <div>
@@ -51,11 +54,13 @@
           </div>
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
-            <input type="email" class="form-control is-large" bind:this={focusedField} bind:value={credentials.email} placeholder="Email" autocomplete="email"/>
+            <input type="email" class="form-control is-large" bind:this={focusedField} bind:value={credentials.email} required placeholder="Email" autocomplete="email"/>
+            <div class="invalid-feedback">Email address required</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="password">Password</label>
-            <input class="form-control is-large" type="password" bind:value={credentials.password} placeholder="Password" autocomplete="current-password"/>
+            <input class="form-control is-large" type="password" bind:value={credentials.password} required minlength="8" maxlength="80" placeholder="Password" autocomplete="current-password"/>
+            <div class="invalid-feedback">Password with 8 chars or more required</div>
             <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
           </div>
         </div>

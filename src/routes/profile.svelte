@@ -27,9 +27,12 @@
 
   let focusedField: HTMLInputElement
   let message: string
+  let confirmPassword: HTMLInputElement
   export let user: User
 
   async function update() {
+    const form = document.forms['profile']
+
     $session.user = JSON.parse(JSON.stringify(user)) // deep clone
     const url = '/api/v1/user'
     const res = await fetch(url, {
@@ -42,6 +45,11 @@
     const reply = await res.json()
     message = reply.message
   }
+
+  const passwordMatch = () => {
+    if (!user.password) user.password = ''
+    return user.password == confirmPassword.value
+  }
 </script>
 
 <svelte:head>
@@ -53,25 +61,34 @@
     <div class="card-body">
       <h4><strong>Profile</strong></h4>
       <p>Update your information.</p>
-      <form autocomplete="on" novalidate class="mt-3">
+      <form id="profile" autocomplete="on" novalidate class="mt-3">
         {#if !user.email.includes('gmail.com')}
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
-            <input bind:this={focusedField} type="email" class="form-control is-large" bind:value={user.email} placeholder="Email" id="email" autocomplete="email"/>
+            <input bind:this={focusedField} type="email" class="form-control is-large" bind:value={user.email} required placeholder="Email" id="email" autocomplete="email"/>
+            <div class="invalid-feedback">Email address required</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="password">Password</label>
-            <input type="password" id="password" class="form-control is-large" bind:value={user.password} placeholder="Password"/>
+            <input type="password" id="password" class="form-control is-large" bind:value={user.password} minlength="8" maxlength="80" placeholder="Password"/>
+            <div class="invalid-feedback">Password with 8 chars or more required</div>
+            <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="password">Confirm password</label>
+            <input type="password" id="password" class="form-control is-large" bind:this={confirmPassword} required={user.password !== ''} minlength="8" maxlength="80" placeholder="Password (again)" autocomplete="new-password"/>
             <div class="form-text">Password minimum length 8, must have one capital letter, 1 number, and one unique character.</div>
           </div>
         {/if}
         <div class="mb-3">
           <label class="form-label" for="firstName">First name</label>
-          <input bind:value={user.firstName} class="form-control" id="firstName" placeholder="First name" autocomplete="given-name"/>
+          <input bind:value={user.firstName} class="form-control" id="firstName" required placeholder="First name" autocomplete="given-name"/>
+          <div class="invalid-feedback">First name required</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="lastName">Last name</label>
-          <input bind:value={user.lastName} class="form-control" id="lastName" placeholder="Last name" autocomplete="family-name"/>
+          <input bind:value={user.lastName} class="form-control" id="lastName" required placeholder="Last name" autocomplete="family-name"/>
+          <div class="invalid-feedback">Last name required</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="phone">Phone</label>
