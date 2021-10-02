@@ -26,6 +26,21 @@ type Credentials = {
   password: string
 }
 
+type MessageAddressee = {
+  email: string
+  name?: string
+}
+
+type Message = {
+  sender?: MessageAddressee[]
+  to: MessageAddressee[]
+  subject: string
+  htmlContent?: string
+  textContent?: string
+  tags?: string[]
+  contact?: Person
+}
+
 type User = {
   id?: number
   role?: 'student' | 'teacher' | 'admin'

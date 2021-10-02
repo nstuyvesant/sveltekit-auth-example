@@ -2,6 +2,8 @@
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import { page, session } from '$app/stores'
+  import { Toast, ToastBody, ToastHeader } from 'sveltestrap'
+  import { toast } from '../stores'
   import useAuth from '$lib/auth'
 
   // Vue.js Composition API style
@@ -17,6 +19,10 @@
     if (!sessionValue.user && window.location.pathname !== '/login')
       google.accounts.id.prompt() // open One Tap dialog
 	})
+
+  const toggle = () => {
+    $toast.isOpen = !$toast.isOpen
+  }
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -41,6 +47,10 @@
 
 <main class="container">
   <slot/>
+  <Toast class="position-fixed top-0 end-0 m-3" autohide={true} delay={4000} duration={800} isOpen={$toast.isOpen} on:close={() => ($toast.isOpen = false)}>
+    <ToastHeader class="bg-primary text-white" {toggle}>{$toast.title}</ToastHeader>
+    <ToastBody>{$toast.body}</ToastBody>
+  </Toast>
 </main>
 
 <style lang="scss" global>
