@@ -10,6 +10,9 @@ interface ImportMetaEnv {
   VITE_GOOGLE_SECRET: string
   VITE_JWT_SECRET: string
   VITE_WEB_URL: string
+  VITE_SEND_IN_BLUE_KEY: string
+  VITE_SEND_IN_BLUE_URL: string
+  VITE_EMAIL_FROM: string
 }
 
 type AuthenticationResult = {
