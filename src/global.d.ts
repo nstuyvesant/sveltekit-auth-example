@@ -4,14 +4,12 @@
 
 declare const google: any
 
-interface ImportMeta {
-  env: {
-    VITE_DATABASE_URL: string
-    VITE_GOOGLE_CLIENT_ID: string
-    VITE_GOOGLE_SECRET: string
-    VITE_JWT_SECRET: string
-    VITE_WEB_URL: string
-  }
+interface ImportMetaEnv {
+  VITE_DATABASE_URL: string
+  VITE_GOOGLE_CLIENT_ID: string
+  VITE_GOOGLE_SECRET: string
+  VITE_JWT_SECRET: string
+  VITE_WEB_URL: string
 }
 
 type AuthenticationResult = {

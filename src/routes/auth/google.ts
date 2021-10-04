@@ -35,7 +35,9 @@ async function upsertGoogleUser(user: User): Promise<UserSession> {
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
-export const post: RequestHandler<{ user: User }, Partial<{ token: string }>> = async (request) => {
+type UserLocal = { user: User }
+type BodyToken = { token: string }
+export const post: RequestHandler<UserLocal, Required<BodyToken>> = async (request) => {
   try {
     const user = await getGoogleUserFromJWT(request.body.token)
     const userSession = await upsertGoogleUser(user)

@@ -6,7 +6,8 @@ import { sendMessage } from '../_send-in-blue'
 
 const { VITE_WEB_URL } = import.meta.env
 
-export const post: RequestHandler<{ email: string }, Partial<{ email: string }>> = async (request) => {
+type EmailAddress = { email: string }
+export const post: RequestHandler<unknown, Required<EmailAddress>> = async (request) => {
   const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
   const { rows } = await query(sql, [request.body.email])
 
