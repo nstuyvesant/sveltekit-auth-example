@@ -5,7 +5,7 @@ import { query } from '../../_db'
 
 const { VITE_JWT_SECRET } = import.meta.env
 
-export const put: RequestHandler = async ({body}) => {
+export const put: RequestHandler<unknown, Required<{ token: string, password: string }>> = async ({body}) => {
   const { token, password } = body
 
   // Check the validity of the token and extract userId
