@@ -6,7 +6,7 @@
 
 	export const load: Load = async ({ session }) => {
 		const authorized = ['admin']
-		if (!authorized.includes(session.user?.role)) { // also checked !session.authenticated but !session.user is good enough
+		if (!authorized.includes(session.user?.role)) {
 			return {
 				status: 302,
 				redirect: '/login?referrer=/admin'

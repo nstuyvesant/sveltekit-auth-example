@@ -51,7 +51,6 @@
 </svelte:head>
 
 <div class="d-flex justify-content-center mt-5">
-<!-- <div class="col-8 offset-2 mt-5"> -->
   <div class="card">
     <div class="card-body">
       <form id="forgot" autocomplete="on" novalidate>

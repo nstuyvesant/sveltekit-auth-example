@@ -14,7 +14,11 @@
 		sessionValue = value
 	})
 
-  onMount(() => {
+  onMount(async() => {
+    // Instead of loading the entire Bootstrap bundle when we only need collapse for the Navbar,
+    // we can load it here since this is guaranteed to only execute on the browser
+    await import('bootstrap/js/dist/collapse')
+
     initializeSignInWithGoogle()
     if (!sessionValue.user && window.location.pathname !== '/login')
       google.accounts.id.prompt() // open One Tap dialog
@@ -26,7 +30,7 @@
 </script>
 
 <svelte:head>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script> -->
 </svelte:head>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">

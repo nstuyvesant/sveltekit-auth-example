@@ -24,7 +24,7 @@
 
 <script lang="ts">
   import { session } from '$app/stores'
-import { focusOnFirstError } from '$lib/focus';
+  import { focusOnFirstError } from '$lib/focus';
 
   let focusedField: HTMLInputElement
   let message: string
