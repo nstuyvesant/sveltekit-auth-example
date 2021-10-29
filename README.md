@@ -31,10 +31,10 @@ The forgot password functionality uses SendInBlue to send the email. You would n
 
 ## Prerequisites
 - PostgreSQL 13 or higher
-- Node.js 16.10.0 or higher
-- npm 7.24.1 or higher
-- SendInBlue account (only used for emailing password reset link)
+- Node.js 16.13.0 or higher
+- npm 8.1.0 or higher
 - Google API client
+- SendInBlue account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
 ## Setting up the project
 
