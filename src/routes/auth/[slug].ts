@@ -17,6 +17,10 @@ export const post: RequestHandler = async (request) => {
         sql = `SELECT register($1) AS "authenticationResult";`
         break
       case 'logout':
+        if (request.locals.user) { // if user is null, they are logged out anyway (session might have ended)
+          sql = `CALL delete_session($1);`
+          result = await query(sql, [request.locals.user.id])
+        }
         return {
           status: 200,
           headers: {

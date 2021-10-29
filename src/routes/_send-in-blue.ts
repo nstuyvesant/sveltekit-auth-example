@@ -1,13 +1,19 @@
-const { VITE_SEND_IN_BLUE_KEY, VITE_SEND_IN_BLUE_URL, VITE_EMAIL_FROM } = import.meta.env
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const SEND_IN_BLUE_KEY = process.env['SEND_IN_BLUE_KEY']
+const SEND_IN_BLUE_URL = process.env['SEND_IN_BLUE_URL']
+const SEND_IN_BLUE_FROM = <MessageAddressee> JSON.parse(process.env['SEND_IN_BLUE_FROM'])
+const SEND_IN_BLUE_ADMINS = <MessageAddressee> JSON.parse(process.env['SEND_IN_BLUE_ADMINS'])
 
 // POST or PUT submission to SendInBlue
 const submit = async (method, url, data) => {
-  const response: Response = await fetch(`${VITE_SEND_IN_BLUE_URL}${url}`, {
+  const response: Response = await fetch(`${SEND_IN_BLUE_URL}${url}`, {
     method,
     headers: {
-      'Accept': 'application/json', // Probably not needed
       'Content-Type': 'application/json',
-      'api-key': <string> VITE_SEND_IN_BLUE_KEY
+      'api-key': SEND_IN_BLUE_KEY
     },
     body: JSON.stringify(data)
   })
@@ -17,7 +23,7 @@ const submit = async (method, url, data) => {
   }
 }
 
-const sender: MessageAddressee = <MessageAddressee> JSON.parse(<string> VITE_EMAIL_FROM)
+const sender = SEND_IN_BLUE_FROM
+const to  = SEND_IN_BLUE_ADMINS
 
-type SendMessageResponse = (message: Message) => Promise<void>
-export const sendMessage: SendMessageResponse = async (message: Message) => submit('POST', '/v3/smtp/email', { ...message, sender })
+export const sendMessage = async (message: Message) => submit('POST', '/v3/smtp/email', { sender, to: [to], ...message })

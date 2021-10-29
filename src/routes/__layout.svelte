@@ -7,7 +7,7 @@
   import useAuth from '$lib/auth'
 
   // Vue.js Composition API style
-  const { initializeSignInWithGoogle, logout } = useAuth(page, session, goto)
+	const { loadScript, initializeSignInWithGoogle, logout } = useAuth(page, session, goto)
 
   let sessionValue
   session.subscribe(value => {
@@ -19,19 +19,14 @@
     // we can load it here since this is guaranteed to only execute on the browser
     await import('bootstrap/js/dist/collapse')
 
-    initializeSignInWithGoogle()
-    if (!sessionValue.user && window.location.pathname !== '/login')
-      google.accounts.id.prompt() // open One Tap dialog
+		await loadScript()
+		initializeSignInWithGoogle()
 	})
 
   const toggle = () => {
     $toast.isOpen = !$toast.isOpen
   }
 </script>
-
-<svelte:head>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script> -->
-</svelte:head>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">

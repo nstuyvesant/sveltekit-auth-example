@@ -1,3 +1,10 @@
+# 1.0.1
+
+* Switched to dotenv vs. VITE_ env values for better security
+* Load Sign in with Google via code instead of static template
+* Fix logout (didn't work if session expired)
+* Fix login button rendering if that's the starting page
+
 # Backlog
 
 * [Low] Add password complexity check

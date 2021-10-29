@@ -5,7 +5,7 @@
   import useAuth from '$lib/auth'
   import { focusOnFirstError } from '$lib/focus'
 
-  const { initializeSignInWithGoogle, loginLocal } = useAuth(page, session, goto)
+  const { loadScript, initializeSignInWithGoogle, loginLocal } = useAuth(page, session, goto)
 
   let focusedField: HTMLInputElement
   let message: string
@@ -31,13 +31,10 @@
     }
   }
 
-  onMount(() => {
+  onMount(async() => {
+    await loadScript() // probably cached
+    initializeSignInWithGoogle('googleButton')
     focusedField.focus()
-    initializeSignInWithGoogle()
-    google.accounts.id.renderButton(
-      document.getElementById('googleButton'),
-      { theme: 'filled_blue', size: 'large', width: '367' }  // customization attributes
-    )
 	})
 </script>
 
@@ -53,8 +50,13 @@
         <h4><strong>Sign In</strong></h4>
         <p>Welcome back.</p>
         <div>
-          <div class="mb-3">
+          <div class="mb-1">
             <div id="googleButton"></div>
+          </div>
+          <div class="text-centered">
+            <div class="strike">
+              <span>or</span>
+            </div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
@@ -89,5 +91,37 @@
 <style lang="scss">
   .card-body {
     width: 25rem;
+  }
+
+  .strike {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap; 
+  }
+
+  .strike > span {
+    position: relative;
+    display: inline-block;
+  }
+
+  .strike > span:before,
+  .strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 1px;
+    background: darkgray;
+  }
+
+  .strike > span:before {
+    right: 100%;
+    margin-right: 10px;
+  }
+
+  .strike > span:after {
+    left: 100%;
+    margin-left: 10px;
   }
 </style>

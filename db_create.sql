@@ -225,6 +225,12 @@ $BODY$;
 
 ALTER FUNCTION public.start_gmail_user_session(json) OWNER TO auth;
 
+CREATE PROCEDURE public.delete_session(input_id integer)
+    LANGUAGE sql
+    AS $$
+DELETE FROM sessions WHERE user_id = input_id;
+$$;
+
 CREATE OR REPLACE PROCEDURE public.reset_password(
 	input_id integer,
 	input_password text)

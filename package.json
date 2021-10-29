@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -14,6 +14,7 @@
   },
   "scripts": {
     "dev": "svelte-kit dev",
+    "serve": "npm run dev -- --open",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
@@ -28,6 +29,7 @@
   "type": "module",
   "dependencies": {
     "cookie": "^0.4.1",
+    "dotenv": "^10.0.0",
     "google-auth-library": "^7.10.1",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.7.1",

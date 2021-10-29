@@ -57,12 +57,14 @@ psql -d postgres -f db_create.sql
 
 3. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
 ```bash
-VITE_DATABASE_URL=postgres://user:password@localhost:5432/auth
-VITE_EMAIL_FROM='{ "email":"jdoe@example.com", "name":"John Doe" }'
+DATABASE_URL=postgres://user:password@localhost:5432/auth
+DOMAIN=http://localhost:3000
+JWT_SECRET=replace_with_your_own
+SEND_IN_BLUE_URL=https://api.sendinblue.com
+SEND_IN_BLUE_KEY=replace_with_your_own
+SEND_IN_BLUE_FROM='{ "email":"jdoe@example.com", "name":"John Doe" }'
+SEND_IN_BLUE_ADMINS='{ "email":"jdoe@example.com", "name":"John Doe" }'
 VITE_GOOGLE_CLIENT_ID=replace_with_your_own
-VITE_JWT_SECRET=replace_with_your_own
-VITE_SEND_IN_BLUE_URL=https://api.sendinblue.com
-VITE_SEND_IN_BLUE_KEY=replace_with_your_own
 ```
 
 ## Run locally

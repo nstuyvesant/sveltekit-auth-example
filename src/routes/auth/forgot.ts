@@ -1,10 +1,13 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
 import { query } from '../_db'
 import { sendMessage } from '../_send-in-blue'
 
-const { VITE_WEB_URL } = import.meta.env
+dotenv.config()
+const DOMAIN = process.env['DOMAIN']
+const JWT_SECRET: Secret = process.env['JWT_SECRET']
 
 type EmailAddress = { email: string }
 export const post: RequestHandler<unknown, Required<EmailAddress>> = async (request) => {
@@ -14,7 +17,7 @@ export const post: RequestHandler<unknown, Required<EmailAddress>> = async (requ
   if (rows.length > 0) {
     const { userId } = rows[0]
     // Create JWT with userId expiring in 30 mins
-    const secret = <Secret> import.meta.env.VITE_JWT_SECRET
+    const secret = JWT_SECRET
     const token = jwt.sign({ subject: userId }, secret, {
       expiresIn: '30m'
     })
@@ -26,7 +29,7 @@ export const post: RequestHandler<unknown, Required<EmailAddress>> = async (requ
       subject: 'Password reset',
       tags: ['account'],
       htmlContent: `
-        <a href="${VITE_WEB_URL}/auth/reset/${token}">Reset my password</a>. Your browser will open and ask you to provide a
+        <a href="${DOMAIN}/auth/reset/${token}">Reset my password</a>. Your browser will open and ask you to provide a
         new password with a confirmation then redirect you to your login page.
       `
     }

@@ -1,14 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Readable, Writable } from 'svelte/store'
 import type { Page } from '@sveltejs/kit'
 import { config } from '$lib/config'
 
-type UseAuth = {
-  initializeSignInWithGoogle: () => void
-  registerLocal: (user: User) => Promise<void>
-  loginLocal: (credentials: Credentials) => Promise<void>
-  logout: () => Promise<void>
-}
-export default function useAuth(page: Readable<Page<Record<string, string>>>, session: Writable<any>, goto): UseAuth {
+export default function useAuth(page: Readable<Page<Record<string, string>>>, session: Writable<any>, goto) {
 
   // Required to use session.set()
   let sessionValue
@@ -21,14 +16,48 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
 		referrer = value.query.get('referrer')
 	})
 
-  function initializeSignInWithGoogle() {
-    if (!google.initialized) {
-      google.accounts.id.initialize({
-        client_id: config.googleClientId,
-        callback: googleCallback
-      })
-      google.initialized = true
+  const loadScript = () => new Promise( (resolve, reject) => {
+    const script = document.createElement('script')
+    script.id = 'gsiScript'
+    script.async = true
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.onerror = (error) => reject(error)
+    script.onload = () => resolve(script)
+    document.body.appendChild(script)
+  })
+
+  function googleAccountsIdInitialize() {
+    return window.google.accounts.id.initialize({
+      client_id: config.googleClientId,
+      callback: googleCallback
+    })
+  }
+
+  function googleAccountsIdRenderButton(htmlId: string) {
+    return window.google.accounts.id.renderButton(
+      document.getElementById(htmlId), {
+        theme: 'filled_blue',
+        size: 'large',
+        width: '367'
+      }
+    )
+  }
+
+  function initializeSignInWithGoogle(htmlId?: string) {
+    googleAccountsIdInitialize()
+
+    if (htmlId) {
+      return googleAccountsIdRenderButton(htmlId)
     }
+
+    if (!sessionValue.user) window.google.accounts.id.prompt()
+  }
+
+  function setSessionUser(user: User | null) {
+    session.update(s => ({
+      ...s,
+      user
+    }))
   }
 
   async function googleCallback(response) {
@@ -85,7 +114,7 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
       })
       const fromEndpoint = await res.json()
       if (res.ok) {
-        session.set({ user: fromEndpoint.user })
+        setSessionUser(fromEndpoint.user)
         const { role } = fromEndpoint.user
         if (referrer) return goto(referrer)
         if (role === 'teacher') return goto('/teachers')
@@ -112,5 +141,5 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
     } else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
   }
 
-  return { initializeSignInWithGoogle, registerLocal, loginLocal, logout }
+  return { loadScript, initializeSignInWithGoogle, registerLocal, loginLocal, logout }
 }

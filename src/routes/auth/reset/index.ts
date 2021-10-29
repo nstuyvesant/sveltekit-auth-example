@@ -1,16 +1,19 @@
+import dotenv from 'dotenv'
 import type { RequestHandler } from '@sveltejs/kit'
 import type  { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import { query } from '../../_db'
 
-const { VITE_JWT_SECRET } = import.meta.env
+dotenv.config()
+
+const JWT_SECRET = process.env['JWT_SECRET']
 
 export const put: RequestHandler<unknown, Required<{ token: string, password: string }>> = async ({body}) => {
   const { token, password } = body
 
   // Check the validity of the token and extract userId
   try {
-    const decoded = <JwtPayload> jwt.verify(token, <string> VITE_JWT_SECRET)
+    const decoded = <JwtPayload> jwt.verify(token, JWT_SECRET)
     const userId = decoded.subject
 
     // Update the database with the new password
