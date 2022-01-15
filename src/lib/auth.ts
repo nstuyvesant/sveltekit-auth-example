@@ -13,7 +13,7 @@ export default function useAuth(page: Readable<Page<Record<string, string>>>, se
 
   let referrer
   page.subscribe(value => {
-		referrer = value.query.get('referrer')
+		referrer = value.url.searchParams.get('referrer')
 	})
 
   const loadScript = () => new Promise( (resolve, reject) => {
