@@ -9,7 +9,7 @@ const config = {
 		adapter: adapter({
 			out: 'build'
 		}),
-		target: '#svelte'
+		//target: '#svelte'
 	}
 }
 
