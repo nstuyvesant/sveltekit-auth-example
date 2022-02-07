@@ -1,9 +1,9 @@
 import type { RequestHandler } from '@sveltejs/kit'
 
-export const get: RequestHandler = async (request) => {
+export const get: RequestHandler = async event=> {
   const authorized = ['admin', 'teacher']
 
-  if (!request.locals.user || !authorized.includes(request.locals.user.role)) {
+  if (!event.locals.user || !authorized.includes(event.locals.user.role)) {
     return {
       status: 401,
       body: {

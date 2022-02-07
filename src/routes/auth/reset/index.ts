@@ -8,7 +8,8 @@ dotenv.config()
 
 const JWT_SECRET = process.env['JWT_SECRET']
 
-export const put: RequestHandler<unknown, Required<{ token: string, password: string }>> = async ({body}) => {
+export const put: RequestHandler = async event => {
+  const body = await event.request.json()
   const { token, password } = body
 
   // Check the validity of the token and extract userId

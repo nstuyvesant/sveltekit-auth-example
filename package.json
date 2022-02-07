@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",

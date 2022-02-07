@@ -9,10 +9,10 @@ dotenv.config()
 const DOMAIN = process.env['DOMAIN']
 const JWT_SECRET: Secret = process.env['JWT_SECRET']
 
-type EmailAddress = { email: string }
-export const post: RequestHandler<unknown, Required<EmailAddress>> = async (request) => {
+export const post: RequestHandler = async event => {
+  const body = await event.request.json()
   const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
-  const { rows } = await query(sql, [request.body.email])
+  const { rows } = await query(sql, [body.email])
 
   if (rows.length > 0) {
     const { userId } = rows[0]
@@ -25,7 +25,7 @@ export const post: RequestHandler<unknown, Required<EmailAddress>> = async (requ
     // Email URL with token to user
     const message: Message = {
       // sender: JSON.parse(<string> VITE_EMAIL_FROM),
-      to: [{ email: request.body.email }],
+      to: [{ email: body.email }],
       subject: 'Password reset',
       tags: ['account'],
       htmlContent: `

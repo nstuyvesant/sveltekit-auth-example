@@ -1,3 +1,8 @@
+# 1.0.2
+
+* [Fix] Updated endpoints and hooks to conform to SvelteKit's API changes.
+* Updated project dependencies
+
 # 1.0.1
 
 * Switched to dotenv vs. VITE_ env values for better security

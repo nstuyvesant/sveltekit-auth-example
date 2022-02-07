@@ -35,15 +35,14 @@ async function upsertGoogleUser(user: User): Promise<UserSession> {
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
-type UserLocal = { user: User }
-type BodyToken = { token: string }
-export const post: RequestHandler<UserLocal, Required<BodyToken>> = async (request) => {
+export const post: RequestHandler = async event => {
   try {
-    const user = await getGoogleUserFromJWT(request.body.token)
+    const { token } = await event.request.json()
+    const user = await getGoogleUserFromJWT(token)
     const userSession = await upsertGoogleUser(user)
 
     // Prevent hooks.ts's handler() from deleting cookie thinking no one has authenticated
-    request.locals.user = userSession.user
+    event.locals.user = userSession.user
 
     return {
       status: 200,
