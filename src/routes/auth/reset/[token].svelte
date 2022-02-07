@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
 
-  export const load: Load = async ({ page }) => {
+  export const load: Load = async event => {
     return {
       props: {
-        token: page.params.token
+        token: event.params.token
       }
     }
   }

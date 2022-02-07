@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Readable, Writable } from 'svelte/store'
-import type { Page } from '@sveltejs/kit'
 import { config } from '$lib/config'
 
-export default function useAuth(page: Readable<Page<Record<string, string>>>, session: Writable<any>, goto) {
+type Page = Readable<{
+  url: URL;
+  params: Record<string, string>;
+  stuff: App.Stuff;
+  status: number;
+  error: Error | null;
+}>
+
+export default function useAuth(page: Page, session: Writable<any>, goto) {
 
   // Required to use session.set()
   let sessionValue
