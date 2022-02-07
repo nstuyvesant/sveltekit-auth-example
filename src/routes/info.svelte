@@ -1,7 +1,3 @@
-<script context="module" lang="ts">
-  export const prerender = true
-</script>
-
 <svelte:head>
   <title>Info Page</title>
 </svelte:head>

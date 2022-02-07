@@ -16,7 +16,6 @@
   import { toast } from '../../../stores'
   import { focusOnFirstError } from '$lib/focus'
 
-  export const prerender = true
   export let token: string
 
   let focusedField: HTMLInputElement

@@ -4,8 +4,6 @@
   import { toast } from '../stores'
   import { focusOnFirstError } from '$lib/focus'
 
-  export const prerender = true
-
   let focusedField: HTMLInputElement
   let email: string
   let message: string
