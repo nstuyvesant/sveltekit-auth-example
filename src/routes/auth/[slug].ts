@@ -40,7 +40,7 @@ export const post: RequestHandler = async event => {
     }
 
     // Only /auth/login and /auth/register at this point
-    const body = event.request.json()
+    const body = await event.request.json()
     result = await query(sql, [JSON.stringify(body)])
 
   } catch (error) {
