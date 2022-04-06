@@ -34,6 +34,7 @@
 
     if (!passwordMatch()) {
       confirmPassword.classList.add('is-invalid')
+      return
     }
 
     if (form.checkValidity()) {
