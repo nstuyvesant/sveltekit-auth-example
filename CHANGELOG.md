@@ -1,3 +1,9 @@
+# 1.0.3
+* [Fix] user created or updated when password mismatches (@lxy-yz)
+* Updated project dependencies
+* Replaced Sveltestrap's Toast with native Bootstrap 5 JavaScript to avoid error with @popperjs import (lacks type=module)
+* Added declarations for Session and Locals for type safety
+
 # 1.0.2
 
 * [Fix] Updated endpoints and hooks to conform to SvelteKit's API changes.

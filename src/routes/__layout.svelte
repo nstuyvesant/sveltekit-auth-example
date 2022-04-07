@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import { page, session } from '$app/stores'
-  import { Toast, ToastBody, ToastHeader } from 'sveltestrap'
   import { toast } from '../stores'
   import useAuth from '$lib/auth'
 
@@ -14,18 +13,24 @@
 		sessionValue = value
 	})
 
-  onMount(async() => {
-    // Instead of loading the entire Bootstrap bundle when we only need collapse for the Navbar,
-    // we can load it here since this is guaranteed to only execute on the browser
-    await import('bootstrap/js/dist/collapse')
+  let Toast
 
+  onMount(async() => {
+    await import('bootstrap/js/dist/collapse')
+    Toast = (await import('bootstrap/js/dist/toast')).default
 		await loadScript()
 		initializeSignInWithGoogle()
 	})
 
-  const toggle = () => {
-    $toast.isOpen = !$toast.isOpen
+  const openToast = (open: boolean) => {
+    if (open) {
+      const toastDiv = <HTMLDivElement> document.getElementById('authToast')
+      const t = new Toast(toastDiv)
+      t.show()
+    }
   }
+
+  $: openToast($toast.isOpen)
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -50,10 +55,17 @@
 
 <main class="container">
   <slot/>
-  <Toast class="position-fixed top-0 end-0 m-3" autohide={true} delay={4000} duration={800} isOpen={$toast.isOpen} on:close={() => ($toast.isOpen = false)}>
-    <ToastHeader class="bg-primary text-white" {toggle}>{$toast.title}</ToastHeader>
-    <ToastBody>{$toast.body}</ToastBody>
-  </Toast>
+
+  <div id="authToast" class="toast position-fixed top-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-primary text-white">
+      <strong class="me-auto">{$toast.title}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      {$toast.body}
+    </div>
+  </div>
+
 </main>
 
 <style lang="scss" global>
@@ -64,5 +76,9 @@
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  .toast {
+    z-index: 9999;
   }
 </style>

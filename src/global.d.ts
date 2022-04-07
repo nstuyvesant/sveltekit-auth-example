@@ -2,6 +2,24 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// See https://kit.svelte.dev/docs/typescript
+// for information about these interfaces
+declare namespace App {
+	interface Locals {
+    user: User
+  }
+
+	// interface Platform {}
+
+	interface Session {
+    reservationDate: Date
+    scheduledClass?: ScheduledClass
+    user?: User
+  }
+
+	// interface Stuff {}
+}
+
 interface ImportMetaEnv {
   VITE_GOOGLE_CLIENT_ID: string
 }
