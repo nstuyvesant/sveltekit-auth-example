@@ -32,7 +32,7 @@
     message = ''
     const form = document.forms['profile']
 
-    if (!passwordMatch()) {
+    if (!user.email.includes('gmail.com') && !passwordMatch()) {
       confirmPassword.classList.add('is-invalid')
       return
     }
