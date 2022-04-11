@@ -1,4 +1,7 @@
 # 1.0.4
+* Bump dependencies
+
+# 1.0.4
 * [Fix] If you login with a Google account, you cannot Update the Profile (UI is looking for password and confirm password which don't make sense in this context)
 * Added Content Security Policy
 
