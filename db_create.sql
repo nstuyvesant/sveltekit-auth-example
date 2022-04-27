@@ -210,7 +210,7 @@ DECLARE
   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
 BEGIN
-  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name, 'phone', users.phone)) INTO user_session FROM users WHERE email = input_email;
+  PERFORM id FROM users WHERE email = input_email;
   IF NOT FOUND THEN
     INSERT INTO users(role, email, first_name, last_name)
       VALUES('student', input_email, input_first_name, input_last_name)
@@ -219,6 +219,8 @@ BEGIN
           'id', create_session(users.id),
           'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', null)
         ) INTO user_session;
+  ELSE
+    SELECT authenticate(input) INTO user_session;
   END IF;
 END;
 $BODY$;

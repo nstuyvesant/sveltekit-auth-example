@@ -9,12 +9,6 @@ export const post: RequestHandler = async event => {
 
   try {
     switch (slug) {
-      case 'login': 
-        sql = `SELECT authenticate($1) AS "authenticationResult";`
-        break
-      case 'register':
-        sql = `SELECT register($1) AS "authenticationResult";`
-        break
       case 'logout':
         if (event.locals.user) { // if user is null, they are logged out anyway (session might have ended)
           sql = `CALL delete_session($1);`
@@ -29,6 +23,13 @@ export const post: RequestHandler = async event => {
             message: 'Logout successful.'
           }
         }
+      case 'login': 
+        sql = `SELECT authenticate($1) AS "authenticationResult";`
+        break
+      case 'register':
+        sql = `SELECT register($1) AS "authenticationResult";`
+        break
+
       default:
         return {
           status: 404,
@@ -41,8 +42,18 @@ export const post: RequestHandler = async event => {
 
     // Only /auth/login and /auth/register at this point
     const body = await event.request.json()
-    result = await query(sql, [JSON.stringify(body)])
 
+    // While client checks for these to be non-null, register() in the database does not
+    if (slug == 'register' && (!body.email || !body.password || !body.firstName || !body.lastName))
+    return {
+      status: 400,
+      body: {
+        message: 'Please supply all required fields: email, password, first and last name.',
+        user: null
+      }
+    }
+
+    result = await query(sql, [JSON.stringify(body)])
   } catch (error) {
     return {
       status: 503,

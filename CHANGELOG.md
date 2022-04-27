@@ -1,3 +1,8 @@
+# 1.0.5
+* Bump dependencies
+* [Fix] Flaw in register allowing user to register over top of an existing account
+* Additional checks of submitted data
+
 # 1.0.4
 * Bump dependencies
 
