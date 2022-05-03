@@ -182,15 +182,17 @@ DECLARE
   input_phone varchar(23) := TRIM((input->>'phone')::varchar);
   input_password varchar(80) := (input->>'password')::varchar;
 BEGIN
-  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name, 'phone', users.phone)) INTO user_session FROM users WHERE email = input_email;
+  PERFORM id FROM users WHERE email = input_email;
   IF NOT FOUND THEN
     INSERT INTO users(role, password, email, first_name, last_name, phone)
-      VALUES('student', crypt(input_password, input_password), input_email, input_first_name, input_last_name, input_phone)
+      VALUES('student', crypt(input_password, gen_salt('bf', 8)), input_email, input_first_name, input_last_name, input_phone)
       RETURNING
         json_build_object(
           'sessionId', create_session(users.id),
-          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', input_phone)
+          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', input_phone, 'optOut', false)
         ) INTO user_session;
+  ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
+  	SELECT authenticate(input) INTO user_session;
   END IF;
 END;
 $BODY$;
@@ -210,7 +212,7 @@ DECLARE
   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
 BEGIN
-  PERFORM id FROM users WHERE email = input_email;
+  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name, 'phone', users.phone)) INTO user_session FROM users WHERE email = input_email;
   IF NOT FOUND THEN
     INSERT INTO users(role, email, first_name, last_name)
       VALUES('student', input_email, input_first_name, input_last_name)
@@ -219,8 +221,6 @@ BEGIN
           'id', create_session(users.id),
           'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', null)
         ) INTO user_session;
-  ELSE
-    SELECT authenticate(input) INTO user_session;
   END IF;
 END;
 $BODY$;

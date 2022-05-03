@@ -1,3 +1,7 @@
+# 1.0.7
+* Bump dependencies and verify against latest SvelteKit
+* Additional changes for register PostgreSQL function
+
 # 1.0.5
 * Bump dependencies
 * [Fix] Flaw in register allowing user to register over top of an existing account
