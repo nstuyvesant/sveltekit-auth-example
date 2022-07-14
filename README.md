@@ -30,9 +30,9 @@ Pages use the session.user.role to determine whether they are authorized. While 
 The forgot password functionality uses SendInBlue to send the email. You would need to have a SendInBlue account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar.
 
 ## Prerequisites
-- PostgreSQL 13 or higher
-- Node.js 16.13.0 or higher
-- npm 8.1.0 or higher
+- PostgreSQL 14 or higher
+- Node.js 16.16.0 or higher
+- npm 8.14.0 or higher
 - Google API client
 - SendInBlue account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
