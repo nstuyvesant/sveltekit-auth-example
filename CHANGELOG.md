@@ -1,3 +1,7 @@
+# 1.0.9
+* Bump dependencies
+* Adjust for changes to SvelteKit with respect to vite
+
 # 1.0.7
 * Bump dependencies and verify against latest SvelteKit
 * Additional changes for register PostgreSQL function

@@ -53,7 +53,7 @@ npm install
 psql -d postgres -f db_create.sql
 ```
 
-2. Create a **Google API client ID** per [these instructions](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid).
+2. Create a **Google API client ID** per [these instructions](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid). Make sure you include `http://localhost:3000`, `http://localhost` in the Authorized JavaScript origins and `http://localhost:3000/auth/google/callback` in the Authorized redirect URIs for your Client ID for Web application. ** Do not access the site using http://127.0.0.1:3000 ** - use `http://localhost:3000` or it will not work.
 
 3. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
 ```bash
@@ -83,4 +83,4 @@ The db_create.sql script adds three users to the database with obvious roles:
 
 ## My ask of you
 
-Please report any issues or areas where the code can be optimized. I am still learning Svelte and SvelteKit. All feedback is appreciated.
+Please report any issues or areas where the code can be optimized.

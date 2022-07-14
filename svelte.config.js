@@ -5,6 +5,7 @@ const production = process.env.NODE_ENV === 'production'
 
 const baseCsp = [
 	'self',
+	'ws://127.0.0.1:3000/',
 	// 'strict-dynamic', // issues with datepicker on classes, add to calendar scripts
 	'https://www.gstatic.com/recaptcha/', // recaptcha
 	'https://accounts.google.com/gsi/', // sign-in w/google
@@ -32,11 +33,6 @@ const config = {
 				'object-src': ['none'],
 				'base-uri': ['self'],
 				// 'require-trusted-types-for': ["'script'"] // will require effort to get this working
-			}
-		},
-		vite: {
-			serviceWorker: {
-				files: (filepath) => !/\.DS_Store/.test(filepath)
 			}
 		}
 	}
