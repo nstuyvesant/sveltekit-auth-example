@@ -5,7 +5,6 @@ const production = process.env.NODE_ENV === 'production'
 
 const baseCsp = [
 	'self',
-	// 'strict-dynamic', // issues with datepicker on classes, add to calendar scripts
 	'https://www.gstatic.com/recaptcha/', // recaptcha
 	'https://accounts.google.com/gsi/', // sign-in w/google
 	'https://www.google.com/recaptcha/', // recapatcha
@@ -30,8 +29,7 @@ const config = {
 				'img-src': ['data:', 'blob:', ...baseCsp],
 				'style-src': ['unsafe-inline', ...baseCsp],
 				'object-src': ['none'],
-				'base-uri': ['self'],
-				// 'require-trusted-types-for': ["'script'"] // will require effort to get this working
+				'base-uri': ['self']
 			}
 		}
 	}

@@ -1,3 +1,7 @@
+# 1.0.12
+* Remove unnecessary reference from app.d.ts
+* Remove commented lines in svelte.config.js
+
 # 1.0.10
 * Bump dependencies
 * Adjust for changes to SvelteKit

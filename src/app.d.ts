@@ -1,7 +1,4 @@
-/// <reference types="@sveltejs/kit" />
 /// <reference types="bootstrap" />
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // See https://kit.svelte.dev/docs/typescript
 // for information about these interfaces
@@ -98,6 +95,8 @@ type UserSession = {
   id: string,
   user: User
 }
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface Window {
   google?: any
