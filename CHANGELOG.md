@@ -1,3 +1,8 @@
+# 1.0.10
+* Bump dependencies
+* Adjust for changes to SvelteKit
+* Improve typings
+
 # 1.0.9
 * Bump dependencies
 * Adjust for changes to SvelteKit with respect to vite
