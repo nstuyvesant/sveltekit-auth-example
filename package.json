@@ -42,8 +42,7 @@
     "dotenv": "^16.0.1",
     "google-auth-library": "^8.1.1",
     "jsonwebtoken": "^8.5.1",
-    "pg": "^8.7.3",
-    "pg-native": "^3.0.0"
+    "pg": "^8.7.3"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "latest",
