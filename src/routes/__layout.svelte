@@ -8,12 +8,7 @@
   // Vue.js Composition API style
 	const { loadScript, initializeSignInWithGoogle, logout } = useAuth(page, session, goto)
 
-  let sessionValue
-  session.subscribe(value => {
-		sessionValue = value
-	})
-
-  let Toast
+  let Toast: any
 
   onMount(async() => {
     await import('bootstrap/js/dist/collapse')

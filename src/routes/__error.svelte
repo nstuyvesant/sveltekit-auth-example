@@ -1,15 +1,18 @@
 <script lang="ts" context="module">
-  export const load = ({ error, status }) => {
+  import type { Load } from '@sveltejs/kit'
+
+  export const load: Load = ({ error, status }) => {
+    const { message } = <Error> error
     return {
       props: {
-        errorMessage: `${status}: ${error.message}`
+        errorMessage: `${status}: ${message}`
       }
     }
   }
 </script>
 
 <script lang="ts">
-  export let errorMessage
+  export let errorMessage = ''
 </script>
 
 <h1>Error</h1>

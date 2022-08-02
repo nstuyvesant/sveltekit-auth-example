@@ -6,9 +6,9 @@ import { query } from '../../_db'
 
 dotenv.config()
 
-const JWT_SECRET = process.env['JWT_SECRET']
+const JWT_SECRET =  <jwt.Secret> process.env.JWT_SECRET
 
-export const put: RequestHandler = async event => {
+export const PUT: RequestHandler = async event => {
   const body = await event.request.json()
   const { token, password } = body
 

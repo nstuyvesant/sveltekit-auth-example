@@ -4,7 +4,7 @@ import { query } from '../_db';
 import { config } from '$lib/config'
 
 // Verify JWT per https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
-async function getGoogleUserFromJWT(token: string): Promise<User> {
+async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
   try {
     const clientId = config.googleClientId
     const client = new OAuth2Client(clientId)
@@ -13,29 +13,34 @@ async function getGoogleUserFromJWT(token: string): Promise<User> {
       audience: clientId
     });
     const payload = ticket.getPayload()
+    if (!payload) throw new Error('Google authentication did not get the expected payload')
     return {
-      firstName: payload['given_name'],
-      lastName: payload['family_name'],
+      firstName: payload['given_name'] || 'UnknownFirstName',
+      lastName: payload['family_name'] || 'UnknownLastName',
       email: payload['email']
     }
-  } catch (error) {
-    throw new Error(`Google user could not be authenticated: ${error.message}`)
+  } catch (err) {
+    let message = ''
+    if (err instanceof Error) message = err.message
+    throw new Error(`Google user could not be authenticated: ${message}`)
   }
 }
 
 // Upsert user and get session ID
-async function upsertGoogleUser(user: User): Promise<UserSession> {
+async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
   try {
     const sql = `SELECT start_gmail_user_session($1) AS user_session;`
     const { rows } = await query(sql, [JSON.stringify(user)])
     return <UserSession> rows[0].user_session
-  } catch (error) {
-    throw new Error(`GMail user could not be upserted: ${error.message}`)
+  } catch (err) {
+    let message = ''
+    if (err instanceof Error) message = err.message
+    throw new Error(`GMail user could not be upserted: ${message}`)
   }
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
-export const post: RequestHandler = async event => {
+export const POST: RequestHandler = async event => {
   try {
     const { token } = await event.request.json()
     const user = await getGoogleUserFromJWT(token)
@@ -54,11 +59,13 @@ export const post: RequestHandler = async event => {
         user: userSession.user
       }
     }
-  } catch (error) {
+  } catch (err) {
+    let message = ''
+    if (err instanceof Error) message = err.message
     return { // session cookie deleted by hooks.js handle()
       status: 401,
       body: {
-        message: error.message
+        message: message
       }
     }
   }

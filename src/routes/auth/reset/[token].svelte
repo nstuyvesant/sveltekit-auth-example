@@ -34,7 +34,7 @@
 
   const resetPassword = async () => {
     message = ''
-    const form = document.forms['reset']
+    const form = <HTMLFormElement> document.getElementById('reset')
 
     if (!passwordMatch()) {
       confirmPassword.classList.add('is-invalid')

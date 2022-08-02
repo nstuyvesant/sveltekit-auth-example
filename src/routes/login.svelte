@@ -16,14 +16,16 @@
 
   async function login() {
     message = ''
-    const form = document.forms['signIn']
+    const form = <HTMLFormElement> document.getElementById('signIn')
 
     if (form.checkValidity()) {
       try {
         await loginLocal(credentials)
       } catch (err) {
-        console.error('Login error', err.message)
-        message = err.message
+        if (err instanceof Error) {
+          console.error('Login error', err.message)
+          message = err.message
+        }
       }
     } else {
       form.classList.add('was-validated')

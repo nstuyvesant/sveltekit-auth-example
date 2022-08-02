@@ -3,7 +3,7 @@
 
   export const load: Load = ({ session }) => {
     const authorized = ['admin', 'teacher', 'student'] // must be logged-in
-		if (!authorized.includes(session.user?.role)) {
+		if (session.user && !authorized.includes(session.user.role)) {
 			return {
 				status: 302,
 				redirect: '/login?referrer=/profile'
@@ -20,6 +20,7 @@
 </script>
 
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { session } from '$app/stores'
   import { focusOnFirstError } from '$lib/focus';
 
@@ -28,11 +29,15 @@
   let confirmPassword: HTMLInputElement
   export let user: User
 
+  onMount(() => {
+    focusedField.focus()
+	})
+
   async function update() {
     message = ''
-    const form = document.forms['profile']
+    const form = <HTMLFormElement> document.getElementById('profile')
 
-    if (!user.email.includes('gmail.com') && !passwordMatch()) {
+    if (!user?.email?.includes('gmail.com') && !passwordMatch()) {
       confirmPassword.classList.add('is-invalid')
       return
     }
@@ -72,7 +77,7 @@
       <h4><strong>Profile</strong></h4>
       <p>Update your information.</p>
       <form id="profile" autocomplete="on" novalidate class="mt-3">
-        {#if !user.email.includes('gmail.com')}
+        {#if !user?.email?.includes('gmail.com')}
           <div class="mb-3">
             <label class="form-label" for="email">Email</label>
             <input bind:this={focusedField} type="email" class="form-control" bind:value={user.email} required placeholder="Email" id="email" autocomplete="email"/>
@@ -92,7 +97,7 @@
         {/if}
         <div class="mb-3">
           <label class="form-label" for="firstName">First name</label>
-          <input bind:value={user.firstName} class="form-control" id="firstName" required placeholder="First name" autocomplete="given-name"/>
+          <input bind:this={focusedField} bind:value={user.firstName} class="form-control" id="firstName" required placeholder="First name" autocomplete="given-name"/>
           <div class="invalid-feedback">First name required</div>
         </div>
         <div class="mb-3">

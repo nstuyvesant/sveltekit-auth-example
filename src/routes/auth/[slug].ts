@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { query } from '../_db'
 
-export const post: RequestHandler = async event => {
+export const POST: RequestHandler = async event => {
   const { slug } = event.params
 
   let result

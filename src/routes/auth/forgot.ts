@@ -6,10 +6,10 @@ import { query } from '../_db'
 import { sendMessage } from '../_send-in-blue'
 
 dotenv.config()
-const DOMAIN = process.env['DOMAIN']
-const JWT_SECRET: Secret = process.env['JWT_SECRET']
+const DOMAIN = process.env.DOMAIN
+const JWT_SECRET = process.env.JWT_SECRET
 
-export const post: RequestHandler = async event => {
+export const POST: RequestHandler = async event => {
   const body = await event.request.json()
   const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
   const { rows } = await query(sql, [body.email])
@@ -18,7 +18,7 @@ export const post: RequestHandler = async event => {
     const { userId } = rows[0]
     // Create JWT with userId expiring in 30 mins
     const secret = JWT_SECRET
-    const token = jwt.sign({ subject: userId }, secret, {
+    const token = jwt.sign({ subject: userId }, <Secret> secret, {
       expiresIn: '30m'
     })
 

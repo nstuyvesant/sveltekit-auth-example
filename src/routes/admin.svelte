@@ -1,9 +1,9 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
 
-	export const load: Load = async ({ session }) => {
+	export const load: Load = async ({ fetch, session }) => {
 		const authorized = ['admin']
-		if (!authorized.includes(session.user?.role)) {
+		if (session.user && !authorized.includes(session.user.role)) {
 			return {
 				status: 302,
 				redirect: '/login?referrer=/admin'
@@ -28,7 +28,7 @@
 </script>
 
 <script lang="ts">
-	export let message
+	export let message = ''
 </script>
 
 <svelte:head>

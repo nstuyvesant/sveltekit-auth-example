@@ -23,7 +23,9 @@
 
   let focusedField: HTMLInputElement
 
-  let user = {
+  let user: User = {
+    id: 0,
+    role: 'student',
     firstName: '',
     lastName: '',
     password: '',
@@ -34,7 +36,7 @@
   let message: string
 
   async function register() {
-    const form = document.forms['register']
+    const form = <HTMLFormElement> document.getElementById('register')
     message = ''
 
     if (!passwordMatch()) {
@@ -46,8 +48,10 @@
       try {
         await registerLocal(user)
       } catch (err) {
-        console.error('Login error', err.message)
-        message = err.message
+        if (err instanceof Error) {
+          message = err.message
+          console.error('Login error', message)
+        }
       }
     } else {
       form.classList.add('was-validated')
@@ -59,7 +63,7 @@
   onMount(() => {
     focusedField.focus()
     initializeSignInWithGoogle()
-    google.accounts.id.renderButton(
+    window.google.accounts.id.renderButton(
       document.getElementById('googleButton'),
       { theme: 'filled_blue', size: 'large', width: '367' }  // customization attributes
     )

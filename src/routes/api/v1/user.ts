@@ -1,10 +1,9 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { query } from '../../_db'
+import { requestAuthorized } from './_auth'
 
-export const put: RequestHandler = async event => {
-  const authorized = ['admin', 'teacher', 'student']
-
-  if (!event.locals.user || !authorized.includes(event.locals.user.role)) {
+export const PUT: RequestHandler = async event => {
+  if (!requestAuthorized(event, ['admin', 'teacher', 'student'])) {
     return {
       status: 401,
       body: {

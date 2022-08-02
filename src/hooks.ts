@@ -14,7 +14,7 @@ async function attachUserToRequest(sessionId: string, event: RequestEvent) {
 
 function deleteCookieIfNoUser(event: RequestEvent, response: Response) {
   if (!event.locals.user) {
-    response.headers['Set-Cookie'] = `session=; Path=/; HttpOnly; SameSite=Lax; Expires=${new Date().toUTCString()}`
+    response.headers.set('Set-Cookie', `session=; Path=/; HttpOnly; SameSite=Lax; Expires=${new Date().toUTCString()}`)
   }
 }
 
@@ -27,7 +27,9 @@ export const handle: Handle = async ({ event, resolve }) => {
     await attachUserToRequest(cookies.session, event)
   }
 
-  const response = await resolve(event)
+  const response = await resolve(event, {
+		ssr: !event.request.url.includes('/admin')
+	})
 
   // after endpoint or page is called
   deleteCookieIfNoUser(event, response)

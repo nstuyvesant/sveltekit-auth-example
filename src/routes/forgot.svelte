@@ -14,7 +14,7 @@
 
   const sendPasswordReset = async () => {
     message = ''
-    const form = document.forms['forgot']
+    const form = <HTMLFormElement> document.getElementById('forgot')
 
     if (form.checkValidity()) {
       if (email.toLowerCase().includes('gmail.com')) {

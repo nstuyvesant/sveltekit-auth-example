@@ -5,13 +5,13 @@ import pg from 'pg'
 
 dotenv.config()
 
-const pgNativePool = new pg.native.Pool({
+const pool = new pg.Pool({
   max: 10, // default
-  connectionString: process.env['DATABASE_URL'],
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
 })
 
 type PostgresQueryResult = (sql: string, params?: any[]) => Promise<QueryResult<any>>
-export const query: PostgresQueryResult = (sql, params?) => pgNativePool.query(sql, params)
+export const query: PostgresQueryResult = (sql, params?) => pool.query(sql, params)

@@ -1,4 +1,5 @@
 /// <reference types="@sveltejs/kit" />
+/// <reference types="bootstrap" />
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -12,16 +13,10 @@ declare namespace App {
 	// interface Platform {}
 
 	interface Session {
-    reservationDate: Date
-    scheduledClass?: ScheduledClass
     user?: User
   }
 
 	// interface Stuff {}
-}
-
-interface ImportMetaEnv {
-  VITE_GOOGLE_CLIENT_ID: string
 }
 
 type AuthenticationResult = {
@@ -36,14 +31,31 @@ type Credentials = {
   password: string
 }
 
+interface GoogleCredentialResponse {
+	credential: string
+	select_by:
+		| 'auto'
+		| 'user'
+		| 'user_1tap'
+		| 'user_2tap'
+		| 'btn'
+		| 'btn_confirm'
+		| 'btn_add_session'
+		| 'btn_confirm_add_session'
+}
+
+interface ImportMetaEnv {
+  VITE_GOOGLE_CLIENT_ID: string
+}
+
 type MessageAddressee = {
   email: string
   name?: string
 }
 
 type Message = {
-  sender?: MessageAddressee[]
-  to: MessageAddressee[]
+  sender?: MessageAddressee
+  to?: MessageAddressee[]
   subject: string
   htmlContent?: string
   textContent?: string
@@ -51,9 +63,30 @@ type Message = {
   contact?: Person
 }
 
+interface SendInBlueContact {
+  updateEnabled: boolean
+  email: string
+  emailBlacklisted: boolean
+  attributes: {
+    NAME: string
+    SURNAME: string
+  }
+}
+
+interface SendInBlueMessage extends Message {
+  sender: MessageAddressee
+  to: MessageAddressee[]
+}
+
+interface SendInBlueRequest extends RequestInit {
+  headers: {
+    'api-key': string
+  }
+}
+
 type User = {
-  id?: number
-  role?: 'student' | 'teacher' | 'admin'
+  id: number
+  role: 'student' | 'teacher' | 'admin'
   password?: string
   firstName?: string
   lastName?: string
@@ -68,4 +101,6 @@ type UserSession = {
 
 interface Window {
   google?: any
+  grecaptcha: any
+  bootstrap: Bootstrap
 }

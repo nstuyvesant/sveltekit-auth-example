@@ -10,15 +10,15 @@ type Page = Readable<{
   error: Error | null;
 }>
 
-export default function useAuth(page: Page, session: Writable<any>, goto) {
+export default function useAuth(page: Page, session: Writable<any>, goto: (url: string | URL, opts?: { replaceState?: boolean; noscroll?: boolean; keepfocus?: boolean; state?: any; }) => Promise<any>) {
 
   // Required to use session.set()
-  let sessionValue
+  let sessionValue: App.Session
   session.subscribe(value => {
     sessionValue = value
   })
 
-  let referrer
+  let referrer: string | null
   page.subscribe(value => {
 		referrer = value.url.searchParams.get('referrer')
 	})
@@ -67,7 +67,7 @@ export default function useAuth(page: Page, session: Writable<any>, goto) {
     }))
   }
 
-  async function googleCallback(response) {
+  async function googleCallback(response: GoogleCredentialResponse) {
     const res = await fetch('/auth/google', {
       method: 'POST',
       headers: {
@@ -105,12 +105,14 @@ export default function useAuth(page: Page, session: Writable<any>, goto) {
         throw new Error(fromEndpoint.message)
       }
     } catch (err) {
-      console.error('Login error', err)
-      throw new Error(err.message)
+      if (err instanceof Error) {
+        console.error('Login error', err)
+        throw new Error(err.message)
+      }
     }
   }
 
-  async function loginLocal(credentials) {
+  async function loginLocal(credentials: Credentials) {
     try {
       const res = await fetch('/auth/login', {
         method: 'POST',
@@ -131,8 +133,10 @@ export default function useAuth(page: Page, session: Writable<any>, goto) {
         throw new Error(fromEndpoint.message)
       }
     } catch (err) {
-      console.error('Login error', err)
-      throw new Error(err.message)
+      if (err instanceof Error) {
+        console.error('Login error', err)
+        throw new Error(err.message)
+      }
     }
   }
 
