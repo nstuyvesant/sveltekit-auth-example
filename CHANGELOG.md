@@ -1,3 +1,9 @@
+# Backlog for 1.0.14
+* Refactor routing to be folder, not file-based - https://github.com/sveltejs/kit/discussions/5774 (file system router). More info: https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3294867
+
+# 1.0.13
+* Bump dependencies
+
 # 1.0.12
 * Remove unnecessary reference from app.d.ts
 * Remove commented lines in svelte.config.js

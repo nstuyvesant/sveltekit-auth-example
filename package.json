@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -34,38 +34,38 @@
   },
   "engines": {
     "node": "~18.7.0",
-    "npm": "^8.15.1"
+    "npm": "^8.18.0"
   },
   "type": "module",
   "dependencies": {
     "cookie": "^0.5.0",
     "dotenv": "^16.0.1",
-    "google-auth-library": "^8.1.1",
+    "google-auth-library": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.7.3"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "latest",
-    "@sveltejs/kit": "latest",
-    "@types/bootstrap": "5.2.1",
+    "@sveltejs/kit": "1.0.0-next.405",
+    "@types/bootstrap": "5.2.2",
     "@types/cookie": "^0.5.1",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/pg": "^8.6.5",
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/parser": "^5.33.1",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
-    "eslint": "^8.21.0",
+    "eslint": "^8.22.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
-    "sass": "^1.54.0",
+    "sass": "^1.54.4",
     "svelte": "^3.49.0",
-    "svelte-check": "^2.8.0",
+    "svelte-check": "^2.8.1",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
-    "vite": "^3.0.4"
+    "vite": "^3.0.8"
   }
 }
