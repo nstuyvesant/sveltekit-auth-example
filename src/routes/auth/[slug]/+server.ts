@@ -1,8 +1,7 @@
-import { error, json } from '@sveltejs/kit'
-import type { Action } from './$types'
+import { error, json, type RequestHandler } from '@sveltejs/kit'
 import { query } from '../../_db'
 
-export const POST: Action = async (event) => {
+export const POST: RequestHandler = async (event) => {
 	const { slug } = event.params
 
 	let result

@@ -4,6 +4,9 @@
 * Refactor $env/dynamic/private and public
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.15
+* [Bug] Replaced use of Action type in +server.ts files (only works for +page.server.ts)
+
 # 1.0.14
 * Refactor routing to be folder, not file-based - https://github.com/sveltejs/kit/discussions/5774 (file system router). More info: https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3294867
 * Move bootstrap SCSS import to JavaScript in +layout.svelte

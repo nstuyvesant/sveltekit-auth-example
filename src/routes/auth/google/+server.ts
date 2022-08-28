@@ -1,5 +1,4 @@
-import { error } from '@sveltejs/kit'
-import type { Action } from './$types'
+import { error, type RequestHandler } from '@sveltejs/kit'
 import { OAuth2Client } from 'google-auth-library'
 import { query } from '../../_db';
 import { config } from '$lib/config'
@@ -42,7 +41,7 @@ async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
-export const POST: Action = async event => {
+export const POST: RequestHandler = async event => {
   try {
     const { token } = await event.request.json()
     const user = await getGoogleUserFromJWT(token)

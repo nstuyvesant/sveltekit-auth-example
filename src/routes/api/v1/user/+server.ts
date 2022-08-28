@@ -1,8 +1,7 @@
-import { error, json } from '@sveltejs/kit'
-import type { Action } from './$types'
+import { error, json, type RequestHandler } from '@sveltejs/kit'
 import { query } from '../../../_db'
 
-export const PUT: Action = async event => {
+export const PUT: RequestHandler = async event => {
   const { user } = event.locals
 
   if (!user)

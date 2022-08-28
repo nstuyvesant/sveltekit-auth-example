@@ -1,4 +1,4 @@
-import type { Action } from './$types'
+import type { RequestHandler } from '@sveltejs/kit'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
@@ -9,7 +9,7 @@ dotenv.config()
 const DOMAIN = process.env.DOMAIN
 const JWT_SECRET = process.env.JWT_SECRET
 
-export const POST: Action = async event => {
+export const POST: RequestHandler = async event => {
   const body = await event.request.json()
   const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
   const { rows } = await query(sql, [body.email])
