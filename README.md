@@ -3,31 +3,28 @@
 This is an example of how to register, authenticate, and update users and limit their access to
 areas of the website by role (admin, teacher, student).
 
-It's an SPA built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. 
-
-Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash). Because of that, **getSession()** in hooks.ts is not useful. Instead, the client makes REST calls, gets the user in the body of the response (if successful) and adds the user to the client-side session store.
+It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash).
 
 The website supports two types of authentication:
 1. **Local accounts** via username (email) and password
-   - The login form (/src/routes/login.svelte) sends the login info as JSON to endpoint /auth/login
+   - The login form (/src/routes/login/+page.svelte) sends the login info as JSON to endpoint /auth/login
    - The endpoint passes the JSON to PostgreSQL function authenticate(json) which hashes the password and compares it to the stored hashed password in the users table. The function returns JSON containing a session ID (v4 UUID) and user object (sans password).
-   - The endpoint sends session ID as an httpOnly SameSite cookie and the user object in the body of the response.
-   - The client stores the user object in SvelteKit's session store.
+   - The endpoint sends this session ID as an httpOnly SameSite cookie and the user object in the body of the response.
+   - The client stores the user object in the loginSession store.
+   - Further requests to the server include the session cookie. The hooks.ts handle() method extracts the session cookie, looks up the user and attaches it to RequestEvent.locals so server-side code can check locals.user.role to see if the request is authorized and return an HTTP 401 status if not.
 2. **Sign in with Google**
-   - **Sign in with Google** is initialized in /src/routes/__layout.svelte.
-   - **One Tap** "dialog" is displayed on the Home page (/src/routes/index.svelte) while the **Sign in with Google** button is on the login page (/src/routes/login.svelte).
-   - Clicking either button opens a new window asking the user to authorize this website. If they OK it, a JWT is sent to a callback function.
+   - **Sign in with Google** is initialized in /src/routes/+layout.svelte.
+   - **Google One Tap** prompt is displayed on the initially loaded page unless [Intelligent Tracking Prevention is enabled in the browser](https://developers.google.com/identity/gsi/web/guides/features#upgraded_ux_on_itp_browsers).
+   - **Sign in with Google** button is on the login page (/src/routes/login/+page.svelte) and register page (/src/routes/register/+page.svelte).
+   - Clicking either button opens a new window asking the user to authorize this website. If the user OKs it, a JSON Web Token (JWT) is sent to a callback function.
    - The callback function (in /src/lib/auth.ts) sends the JWT to an endpoint on this server /auth/google.
    - The endpoint decodes and validates the user information then calls the PostgreSQL function start_gmail_user_session to upsert the user to the database returing a session id in an httpOnly SameSite cookie and user in the body of the response.
-   - The client stores the user object in SvelteKit's session store.
+   - The client stores the user object in the loginSession store.
+   - Further requests to the server work identically to local accounts above.
 
-As the client calls endpoints, each request to the server includes the session ID in the httpOnly cookie. The handle() function in hooks.ts checks the database for this session ID. If it exists and is not expired, it attaches the user (including role) to request.locals. Each endpoint can then examine request.locals.user.role to determine whether to respond or return a 401.
+> There is some overhead to checking the user session in a database each time versus using a JWT; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
 
-> There is some overhead to checking the user session in a database each time versus using a JSON web token; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
-
-Pages use the session.user.role to determine whether they are authorized. While a malicious user could alter the client-side session store to see pages they should not, the dynamic data in those restricted pages is served via endpoints which check request.locals.user to determine whether to grant access.
-
-The forgot password functionality uses SendInBlue to send the email. You would need to have a SendInBlue account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar.
+The forgot password functionality uses [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (just happen to be familiar with their API because of another project).
 
 ## Prerequisites
 - PostgreSQL 14 or higher
@@ -38,7 +35,7 @@ The forgot password functionality uses SendInBlue to send the email. You would n
 
 ## Setting up the project
 
-Here are the steps using a macOS, Linux or UNIX command-line:
+Here are the steps:
 
 1. Get the project and setup the database
 ```bash
@@ -49,7 +46,7 @@ git clone https://github.com/nstuyvesant/sveltekit-auth-example.git
 cd /sveltekit-auth-example
 npm install
 
-# Create PostgreSQL database
+# Create PostgreSQL database (only works if you installed PostgreSQL)
 psql -d postgres -f db_create.sql
 ```
 
@@ -83,4 +80,4 @@ The db_create.sql script adds three users to the database with obvious roles:
 
 ## My ask of you
 
-Please report any issues or areas where the code can be optimized.
+Please report any issues [here](https://github.com/nstuyvesant/sveltekit-auth-example/issues). [Pull requests](https://github.com/nstuyvesant/sveltekit-auth-example/pulls) are encouraged especially as SvelteKit is evolving rapidly.

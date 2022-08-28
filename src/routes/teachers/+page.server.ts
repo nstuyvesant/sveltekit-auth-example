@@ -1,0 +1,13 @@
+import { redirect } from '@sveltejs/kit'
+import type { PageServerLoad } from './$types'
+
+export const load: PageServerLoad = async ({locals}) => {
+	const authorized = ['admin', 'teacher']
+	if (!locals.user || !authorized.includes(locals.user.role)) {
+		throw redirect(302, '/login?referrer=/teachers')
+	}
+
+  return {
+    message: 'Teachers or Admin-only content from endpoint.'
+  }
+}

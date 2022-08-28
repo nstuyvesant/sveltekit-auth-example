@@ -1,22 +1,11 @@
-<script context="module" lang="ts">
-	import type { Load } from '@sveltejs/kit'
-
-  export const load: Load = async event => {
-    return {
-      props: {
-        token: event.params.token
-      }
-    }
-  }
-</script>
-
 <script lang="ts">
+  import type { PageData } from './$types'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import { toast } from '../../../stores'
+  import { toast } from '../../../../stores'
   import { focusOnFirstError } from '$lib/focus'
 
-  export let token: string
+  export let data: PageData
 
   let focusedField: HTMLInputElement
   let password: string
@@ -49,7 +38,7 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          token,
+          token: data.token,
           password
         })
       })

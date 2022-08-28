@@ -1,33 +1,15 @@
-<script context="module" lang="ts">
-  import type { Load } from '@sveltejs/kit'
-
-  export const load: Load = ({ session }) => {
-    const authorized = ['admin', 'teacher', 'student'] // must be logged-in
-		if (session.user && !authorized.includes(session.user.role)) {
-			return {
-				status: 302,
-				redirect: '/login?referrer=/profile'
-			}
-		}
-
-    return {
-      props: {
-        // Clone session.user so unsaved changes are NOT retained
-        user: JSON.parse(JSON.stringify(session.user))
-      }
-    }
-  }
-</script>
-
 <script lang="ts">
+	import type { PageData } from './$types'
   import { onMount } from 'svelte'
-  import { session } from '$app/stores'
-  import { focusOnFirstError } from '$lib/focus';
+  import { focusOnFirstError } from '$lib/focus'
+  import { loginSession } from '../../stores'
+
+  export let data: PageData
+  const { user } : {user : User } = data
 
   let focusedField: HTMLInputElement
   let message: string
   let confirmPassword: HTMLInputElement
-  export let user: User
 
   onMount(() => {
     focusedField.focus()
@@ -43,7 +25,6 @@
     }
 
     if (form.checkValidity()) {
-      $session.user = JSON.parse(JSON.stringify(user)) // deep clone
       const url = '/api/v1/user'
       const res = await fetch(url, {
         method: 'PUT',
@@ -54,6 +35,7 @@
       })
       const reply = await res.json()
       message = reply.message
+      $loginSession = JSON.parse(JSON.stringify(user)) // update loginSession store
     } else {
       form.classList.add('was-validated')
       focusOnFirstError(form)

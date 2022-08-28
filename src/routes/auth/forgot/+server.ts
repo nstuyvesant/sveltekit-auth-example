@@ -1,15 +1,15 @@
-import type { RequestHandler } from '@sveltejs/kit'
+import type { Action } from './$types'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { query } from '../_db'
-import { sendMessage } from '../_send-in-blue'
+import { query } from '../../_db'
+import { sendMessage } from '../../_send-in-blue'
 
 dotenv.config()
 const DOMAIN = process.env.DOMAIN
 const JWT_SECRET = process.env.JWT_SECRET
 
-export const POST: RequestHandler = async event => {
+export const POST: Action = async event => {
   const body = await event.request.json()
   const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
   const { rows } = await query(sql, [body.email])
@@ -36,7 +36,5 @@ export const POST: RequestHandler = async event => {
     sendMessage(message)
   }
 
-  return {
-    status: 204
-  }
+  return new Response(undefined, { status: 204 })
 }

@@ -1,5 +1,5 @@
 import * as cookie from 'cookie'
-import type { Handle, GetSession, RequestEvent } from '@sveltejs/kit'
+import type { Handle, RequestEvent } from '@sveltejs/kit'
 import { query } from './routes/_db'
 
 // Attach authorization to each server request (role may have changed)
@@ -8,7 +8,7 @@ async function attachUserToRequest(sessionId: string, event: RequestEvent) {
     SELECT * FROM get_session($1);`
   const { rows } = await query(sql, [sessionId])
   if (rows?.length > 0) {
-    event.locals.user = rows[0].get_session
+    event.locals.user = <User> rows[0].get_session
   }
 }
 
@@ -27,19 +27,9 @@ export const handle: Handle = async ({ event, resolve }) => {
     await attachUserToRequest(cookies.session, event)
   }
 
-  const response = await resolve(event, {
-		ssr: !event.request.url.includes('/admin')
-	})
+  const response = await resolve(event)
 
   // after endpoint or page is called
   deleteCookieIfNoUser(event, response)
   return response
-}
-
-// Only useful for authentication schemes that redirect back to the website - not
-// an SPA with client-side routing that handles authentication seamlessly
-export const getSession: GetSession = event => {
-  return event.locals.user ?
-    { user: event.locals.user }
-    : {}
 }

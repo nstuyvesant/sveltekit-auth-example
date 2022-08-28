@@ -1,6 +1,7 @@
-import type { RequestHandler } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
+import type { Action } from './$types'
 import { OAuth2Client } from 'google-auth-library'
-import { query } from '../_db';
+import { query } from '../../_db';
 import { config } from '$lib/config'
 
 // Verify JWT per https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
@@ -13,7 +14,8 @@ async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
       audience: clientId
     });
     const payload = ticket.getPayload()
-    if (!payload) throw new Error('Google authentication did not get the expected payload')
+    if (!payload) throw error(500, 'Google authentication did not get the expected payload')
+    
     return {
       firstName: payload['given_name'] || 'UnknownFirstName',
       lastName: payload['family_name'] || 'UnknownLastName',
@@ -22,7 +24,7 @@ async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message
-    throw new Error(`Google user could not be authenticated: ${message}`)
+    throw error(500,`Google user could not be authenticated: ${message}`)
   }
 }
 
@@ -35,12 +37,12 @@ async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message
-    throw new Error(`GMail user could not be upserted: ${message}`)
+    throw error(500,`Gmail user could not be upserted: ${message}`)
   }
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
-export const POST: RequestHandler = async event => {
+export const POST: Action = async event => {
   try {
     const { token } = await event.request.json()
     const user = await getGoogleUserFromJWT(token)
@@ -49,24 +51,18 @@ export const POST: RequestHandler = async event => {
     // Prevent hooks.ts's handler() from deleting cookie thinking no one has authenticated
     event.locals.user = userSession.user
 
-    return {
-      status: 200,
-      headers: { // database expires sessions in 2 hours
-        'Set-Cookie': `session=${userSession.id}; Path=/; SameSite=Lax; HttpOnly;`
-      },
-      body: {
-        message: 'Successful Google Sign-In.',
-        user: userSession.user
+    return new Response(JSON.stringify({
+      message: 'Successful Google Sign-In.',
+      user: userSession.user
+    }), {
+      headers: {
+      'Set-Cookie': `session=${userSession.id}; Path=/; SameSite=Lax; HttpOnly;`}
       }
-    }
+    )
+
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message
-    return { // session cookie deleted by hooks.js handle()
-      status: 401,
-      body: {
-        message: message
-      }
-    }
+    throw error(401, message)
   }
 }

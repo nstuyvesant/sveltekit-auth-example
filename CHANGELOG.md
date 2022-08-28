@@ -1,5 +1,13 @@
-# Backlog for 1.0.14
+# Backlog
+* [Bug] Address TypeScript issues found during `npm run check` (11 errors) - most related to use of Action type
+* Consider not setting defaultUser in loginSession as it would simplify +layout.svelte.
+* Refactor $env/dynamic/private and public
+* Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
+
+# 1.0.14
 * Refactor routing to be folder, not file-based - https://github.com/sveltejs/kit/discussions/5774 (file system router). More info: https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3294867
+* Move bootstrap SCSS import to JavaScript in +layout.svelte
+* Refactor as session was removed in https://github.com/sveltejs/kit/discussions/5883
 
 # 1.0.13
 * Bump dependencies

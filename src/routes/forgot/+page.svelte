@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import { toast } from '../stores'
+  import { toast } from '../../stores'
   import { focusOnFirstError } from '$lib/focus'
 
   let focusedField: HTMLInputElement
@@ -18,7 +18,7 @@
 
     if (form.checkValidity()) {
       if (email.toLowerCase().includes('gmail.com')) {
-        return message = 'GMail passwords must be reset on Manage Your Google Account.'
+        return message = 'Gmail passwords must be reset on Manage Your Google Account.'
       }
       const url = `/auth/forgot`
       const res = await fetch(url, {

@@ -1,71 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Page } from '@sveltejs/kit' 
 import type { Readable, Writable } from 'svelte/store'
 import { config } from '$lib/config'
+import { defaultUser } from '../stores'
 
-type Page = Readable<{
-  url: URL;
-  params: Record<string, string>;
-  stuff: App.Stuff;
-  status: number;
-  error: Error | null;
-}>
-
-export default function useAuth(page: Page, session: Writable<any>, goto: (url: string | URL, opts?: { replaceState?: boolean; noscroll?: boolean; keepfocus?: boolean; state?: any; }) => Promise<any>) {
-
-  // Required to use session.set()
-  let sessionValue: App.Session
-  session.subscribe(value => {
-    sessionValue = value
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export default function useAuth(page: Readable<Page>, loginSession: Writable<User>, goto: (url: string | URL, opts?: { replaceState?: boolean; noscroll?: boolean; keepfocus?: boolean; state?: any; }) => Promise<any>) {
+  let user: User
+  loginSession.subscribe(value => {
+    user = value
   })
 
   let referrer: string | null
   page.subscribe(value => {
 		referrer = value.url.searchParams.get('referrer')
 	})
-
-  const loadScript = () => new Promise( (resolve, reject) => {
-    const script = document.createElement('script')
-    script.id = 'gsiScript'
-    script.async = true
-    script.src = 'https://accounts.google.com/gsi/client'
-    script.onerror = (error) => reject(error)
-    script.onload = () => resolve(script)
-    document.body.appendChild(script)
-  })
-
-  function googleAccountsIdInitialize() {
-    return window.google.accounts.id.initialize({
-      client_id: config.googleClientId,
-      callback: googleCallback
-    })
-  }
-
-  function googleAccountsIdRenderButton(htmlId: string) {
-    return window.google.accounts.id.renderButton(
-      document.getElementById(htmlId), {
-        theme: 'filled_blue',
-        size: 'large',
-        width: '367'
-      }
-    )
-  }
-
-  function initializeSignInWithGoogle(htmlId?: string) {
-    googleAccountsIdInitialize()
-
-    if (htmlId) {
-      return googleAccountsIdRenderButton(htmlId)
-    }
-
-    if (!sessionValue.user) window.google.accounts.id.prompt()
-  }
-
-  function setSessionUser(user: User | null) {
-    session.update(s => ({
-      ...s,
-      user
-    }))
-  }
 
   async function googleCallback(response: GoogleCredentialResponse) {
     const res = await fetch('/auth/google', {
@@ -75,38 +23,64 @@ export default function useAuth(page: Page, session: Writable<any>, goto: (url: 
       },
       body: JSON.stringify({ token: response.credential })
     })
-    const fromEndpoint = await res.json()
 
     if (res.ok) {
-      session.set({ user: fromEndpoint.user })
+      const fromEndpoint = await res.json()
+      loginSession.set(fromEndpoint.user) // update loginSession store
       const { role } = fromEndpoint.user
       if (referrer) return goto(referrer)
       if (role === 'teacher') return goto('/teachers')
       if (role === 'admin') return goto('/admin')
-      // Don't stay on login if successfully authenticated
-      if (window.location.pathname === '/login') goto('/')
+      if (location.pathname === '/login') goto('/') // logged in so go home
     }
+  }
+
+  function initializeSignInWithGoogle(htmlId?: string) {
+    const { id } = window.google.accounts // assumes <script src="https://accounts.google.com/gsi/client" async defer></script> is in app.html
+    id.initialize({ client_id: config.googleClientId, callback: googleCallback })
+
+    if (htmlId) { // render button instead of prompt
+      return id.renderButton(
+        document.getElementById(htmlId), {
+          theme: 'filled_blue',
+          size: 'large',
+          width: '367'
+        }
+      )
+    }
+
+    if (!user) id.prompt()
+  }
+
+  function setloginSession(user: User | null) {
+    loginSession.update(s => ({
+      ...s,
+      user
+    }))
   }
 
   async function registerLocal(user: User) {
     try {
       const res = await fetch('/auth/register', {
         method: 'POST',
-        body: JSON.stringify(user),
+        body: JSON.stringify(user), // server needs to ignore user.role and always set it to 'student'
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      const fromEndpoint = await res.json()
-      if (res.ok) {
-        session.set({ user: fromEndpoint.user })
-        goto('/')
-      } else {
-        throw new Error(fromEndpoint.message)
+      if (!res.ok)  {
+        if (res.status == 401) // user already existed and passwords didn't match (otherwise, we login the user)
+          throw new Error('Sorry, that username is already in use.')
+        throw new Error(res.statusText) // should only occur if there's a database error
       }
+
+      // res.ok
+      const fromEndpoint = await res.json()
+      loginSession.set(fromEndpoint.user) // update store so user is logged in
+      goto('/')
     } catch (err) {
+      console.error('Register error', err)
       if (err instanceof Error) {
-        console.error('Login error', err)
         throw new Error(err.message)
       }
     }
@@ -123,7 +97,7 @@ export default function useAuth(page: Page, session: Writable<any>, goto: (url: 
       })
       const fromEndpoint = await res.json()
       if (res.ok) {
-        setSessionUser(fromEndpoint.user)
+        setloginSession(fromEndpoint.user)
         const { role } = fromEndpoint.user
         if (referrer) return goto(referrer)
         if (role === 'teacher') return goto('/teachers')
@@ -141,16 +115,16 @@ export default function useAuth(page: Page, session: Writable<any>, goto: (url: 
   }
 
   async function logout() {
-    // Request server delete httpOnly cookie called session
+    // Request server delete httpOnly cookie called loginSession
     const url = '/auth/logout'
     const res = await fetch(url, {
       method: 'POST'
     })
     if (res.ok) {
-      session.set({}) // delete session.user from 
+      loginSession.set(defaultUser) // delete loginSession.user from 
       goto('/login')
     } else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
   }
 
-  return { loadScript, initializeSignInWithGoogle, registerLocal, loginLocal, logout }
+  return { initializeSignInWithGoogle, registerLocal, loginLocal, logout }
 }

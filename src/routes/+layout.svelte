@@ -1,19 +1,26 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import type { LayoutData } from './$types'
   import { goto } from '$app/navigation'
-  import { page, session } from '$app/stores'
-  import { toast } from '../stores'
+  import { page } from '$app/stores'
+  import { loginSession, toast } from '../stores'
   import useAuth from '$lib/auth'
+  import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
+
+	export let data: LayoutData
+
+  // If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
+  const { user } = data
+  $loginSession = user
 
   // Vue.js Composition API style
-	const { loadScript, initializeSignInWithGoogle, logout } = useAuth(page, session, goto)
+	const { initializeSignInWithGoogle, logout } = useAuth(page, loginSession, goto)
 
   let Toast: any
 
-  onMount(async() => {
-    await import('bootstrap/js/dist/collapse')
+  onMount(async () => {
+    await import('bootstrap/js/dist/collapse') // lots of ways to load Bootstrap but prefer this approach to avoid SSR issues
     Toast = (await import('bootstrap/js/dist/toast')).default
-		await loadScript()
 		initializeSignInWithGoogle()
 	})
 
@@ -38,11 +45,11 @@
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="/">Home</a>
         <a class="nav-link" href="/info">Info</a>
-        <a class="nav-link" class:d-none={!$session.user} href="/profile">Profile</a>
-        <a class="nav-link" class:d-none={!$session.user || $session.user?.role !== 'admin'} href="/admin">Admin</a>
-        <a class="nav-link" class:d-none={!$session.user || $session.user?.role === 'student'} href="/teachers">Teachers</a>
-        <a class="nav-link" class:d-none={!!$session.user} href="/login">Login</a>
-        <a on:click|preventDefault={logout} class="nav-link" class:d-none={!$session.user} href={'#'}>Logout</a>
+        <a class="nav-link" class:d-none={!$loginSession || $loginSession.id === 0} href="/profile">Profile</a>
+        <a class="nav-link" class:d-none={!$loginSession || $loginSession?.role !== 'admin'} href="/admin">Admin</a>
+        <a class="nav-link" class:d-none={!$loginSession || $loginSession?.role === 'student'} href="/teachers">Teachers</a>
+        <a class="nav-link" class:d-none={!!$loginSession} href="/login">Login</a>
+        <a on:click|preventDefault={logout} class="nav-link" class:d-none={!$loginSession || $loginSession.id === 0} href={'#'}>Logout</a>
       </div>
     </div>
   </div>
@@ -64,9 +71,6 @@
 </main>
 
 <style lang="scss" global>
-  // Load Bootstrap's SCSS
-  @import 'bootstrap/scss/bootstrap';
-
   // Make Retina displays crisper
   * {
     -webkit-font-smoothing: antialiased;

@@ -1,3 +1,4 @@
+import { json as json$1 } from '@sveltejs/kit';
 import dotenv from 'dotenv'
 import type { RequestHandler } from '@sveltejs/kit'
 import type  { JwtPayload } from 'jsonwebtoken'
@@ -21,19 +22,15 @@ export const PUT: RequestHandler = async event => {
     const sql = `CALL reset_password($1, $2);`
     await query(sql, [userId, password])
 
-    return {
-      status: 200,
-      body: {
-        message: 'Password successfully reset.'
-      }
-    }
+    return json$1({
+  message: 'Password successfully reset.'
+})
   } catch (error) {
     // Technically, I should check error.message to make sure it's not a DB issue
-    return {
-      status: 403,
-      body: {
-        message: 'Password reset token expired.'
-      }
-    }
+    return json$1({
+  message: 'Password reset token expired.'
+}, {
+      status: 403
+    })
   }
 }

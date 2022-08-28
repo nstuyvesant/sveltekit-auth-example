@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import { page, session } from '$app/stores'
+  import { page } from '$app/stores'
+  import { loginSession } from '../../stores'
   import useAuth from '$lib/auth'
   import { focusOnFirstError } from '$lib/focus'
 
-  const { loadScript, initializeSignInWithGoogle, loginLocal } = useAuth(page, session, goto)
+  const { initializeSignInWithGoogle, loginLocal } = useAuth(page, loginSession, goto)
 
   let focusedField: HTMLInputElement
   let message: string
@@ -34,7 +35,6 @@
   }
 
   onMount(async() => {
-    await loadScript() // probably cached
     initializeSignInWithGoogle('googleButton')
     focusedField.focus()
 	})

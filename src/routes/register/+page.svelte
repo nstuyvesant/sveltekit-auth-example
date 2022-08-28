@@ -1,25 +1,12 @@
-<script context="module" lang="ts">
-  import type { Load } from '@sveltejs/kit'
-
-  export const load: Load = ({ session }) => {
-		if (session.user) { // Do not display if user is logged in
-			return {
-				status: 302,
-				redirect: '/'
-			}
-		}
-		return {}
-	}
-</script>
-
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import { page, session } from '$app/stores'
+  import { page } from '$app/stores'
+  import { loginSession } from '../../stores'
   import useAuth from '$lib/auth'
   import { focusOnFirstError } from '$lib/focus'
 
-  const { initializeSignInWithGoogle, registerLocal } = useAuth(page, session, goto)
+  const { initializeSignInWithGoogle, registerLocal } = useAuth(page, loginSession, goto)
 
   let focusedField: HTMLInputElement
 
@@ -50,7 +37,7 @@
       } catch (err) {
         if (err instanceof Error) {
           message = err.message
-          console.error('Login error', message)
+          console.log('Login error', message)
         }
       }
     } else {
@@ -62,11 +49,7 @@
 
   onMount(() => {
     focusedField.focus()
-    initializeSignInWithGoogle()
-    window.google.accounts.id.renderButton(
-      document.getElementById('googleButton'),
-      { theme: 'filled_blue', size: 'large', width: '367' }  // customization attributes
-    )
+    initializeSignInWithGoogle('googleButton')
   })
 
 
@@ -121,7 +104,7 @@
         </div>
       
         {#if message}
-          <p>{message}</p>
+          <p class="text-danger">{message}</p>
         {/if}
       
         <button type="button" on:click={register} class="btn btn-primary btn-lg">Register</button>
