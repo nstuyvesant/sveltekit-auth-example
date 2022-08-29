@@ -1,4 +1,5 @@
-import { error, json, type RequestHandler } from '@sveltejs/kit'
+import { error, json } from '@sveltejs/kit'
+import type { RequestHandler } from './$types'
 import { query } from '../../_db'
 
 export const POST: RequestHandler = async (event) => {

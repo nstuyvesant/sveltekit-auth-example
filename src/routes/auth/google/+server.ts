@@ -1,4 +1,5 @@
-import { error, type RequestHandler } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
+import type { RequestHandler } from './$types'
 import { OAuth2Client } from 'google-auth-library'
 import { query } from '../../_db';
 import { config } from '$lib/config'

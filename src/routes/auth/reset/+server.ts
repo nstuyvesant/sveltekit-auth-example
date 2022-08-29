@@ -1,6 +1,6 @@
 import { json as json$1 } from '@sveltejs/kit';
 import dotenv from 'dotenv'
-import type { RequestHandler } from '@sveltejs/kit'
+import type { RequestHandler } from './$types'
 import type  { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import { query } from '../../_db'

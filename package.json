@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -63,7 +63,7 @@
     "prettier-plugin-svelte": "^2.7.0",
     "sass": "^1.54.5",
     "svelte": "^3.49.0",
-    "svelte-check": "^2.8.1",
+    "svelte-check": "^2.9.0",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",

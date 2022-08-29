@@ -1,4 +1,4 @@
-import type { RequestHandler } from '@sveltejs/kit'
+import type { RequestHandler } from './$types'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { LayoutData } from './$types'
+  import type { LayoutServerData } from './$types'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import { loginSession, toast } from '../stores'
   import useAuth from '$lib/auth'
   import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
 
-	export let data: LayoutData
+	export let data: LayoutServerData
 
   // If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
   const { user } = data

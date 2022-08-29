@@ -1,8 +1,10 @@
 # Backlog
-* [Bug] Address TypeScript issues found during `npm run check` (11 errors) - most related to use of Action type
 * Consider not setting defaultUser in loginSession as it would simplify +layout.svelte.
 * Refactor $env/dynamic/private and public
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
+
+# 1.0.16
+* [Bug] Fixed LayoutServerLoad typing
 
 # 1.0.15
 * [Bug] Replaced use of Action type in +server.ts files (only works for +page.server.ts)
