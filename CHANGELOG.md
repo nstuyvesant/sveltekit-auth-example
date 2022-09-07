@@ -1,9 +1,12 @@
 # Backlog
 * Add username and Avatar icon to menu bar
-* [Possible Bug] Getting HTTP 401 on https://play.google.com/log?format=json&hasfast=true&authuser=0 from google-auth-library. As I didn't explicitly request logging, it could be that Safari is preventing Google from further invading our privacy. Will require some investigation. The site works regardless.
 * Consider not setting defaultUser in loginSession as it would simplify +layout.svelte.
 * Refactor $env/dynamic/private and public
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
+
+# 1.0.19
+* Added SvelteKit's cookies implementation in RequestEvent
+* [Bug] Logout then go to http://localhost/admin gives error on auth.ts:39
 
 # 1.0.18
 * Bump dependencies

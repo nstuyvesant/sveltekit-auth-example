@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit'
+import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { OAuth2Client } from 'google-auth-library'
 import { query } from '../../_db';
@@ -51,15 +51,14 @@ export const POST: RequestHandler = async event => {
     // Prevent hooks.ts's handler() from deleting cookie thinking no one has authenticated
     event.locals.user = userSession.user
 
-    return new Response(JSON.stringify({
+    return json({
       message: 'Successful Google Sign-In.',
       user: userSession.user
-    }), {
+    }, {
       headers: {
       'Set-Cookie': `session=${userSession.id}; Path=/; SameSite=Lax; HttpOnly;`}
-      }
-    )
-
+    })
+    
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message

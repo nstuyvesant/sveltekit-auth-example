@@ -16,11 +16,12 @@ export const POST: RequestHandler = async (event) => {
 					sql = `CALL delete_session($1);`
 					result = await query(sql, [event.locals.user.id])
 				}
-				return new Response(JSON.stringify({ message: 'Logout successful.' }), {
+				return json({ message: 'Logout successful.' }, {
 					headers: {
 						'Set-Cookie': `session=; Path=/; SameSite=Lax; HttpOnly; Expires=${new Date().toUTCString()}`
 					}
 				})
+
 			case 'login':
 				sql = `SELECT authenticate($1) AS "authenticationResult";`
 				break
