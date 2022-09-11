@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /// <reference types="bootstrap" />
 /// <reference types="google.accounts" />
 
@@ -16,14 +18,14 @@ declare namespace App {
 	// interface PublicEnv {} // $env/dynamic/public
 }
 
-type AuthenticationResult = {
+interface AuthenticationResult {
   statusCode: number
   status: string
   user: User
   sessionId: string
 }
 
-type Credentials = {
+interface Credentials {
   email: string
   password: string
 }
@@ -45,12 +47,12 @@ interface ImportMetaEnv {
   VITE_GOOGLE_CLIENT_ID: string
 }
 
-type MessageAddressee = {
+interface MessageAddressee {
   email: string
   name?: string
 }
 
-type Message = {
+interface Message {
   sender?: MessageAddressee
   to?: MessageAddressee[]
   subject: string
@@ -81,7 +83,7 @@ interface SendInBlueRequest extends RequestInit {
   }
 }
 
-type User = {
+interface UserProperties {
   id: number
   role: 'student' | 'teacher' | 'admin'
   password?: string
@@ -91,12 +93,12 @@ type User = {
   phone?: string
 }
 
-type UserSession = {
+type User = UserProperties | undefined
+
+interface UserSession {
   id: string,
   user: User
 }
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface Window {
   google?: any

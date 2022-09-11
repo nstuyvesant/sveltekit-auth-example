@@ -1,8 +1,12 @@
 # Backlog
-* Add username and Avatar icon to menu bar
-* Consider not setting defaultUser in loginSession as it would simplify +layout.svelte.
 * Refactor $env/dynamic/private and public
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
+
+# 1.0.20
+* Bump dependencies
+* Add service-worker
+* Add dropdown, avatarm and user's first name to navbar once user is logged in
+* Refactor user session and update typing
 
 # 1.0.19
 * Added SvelteKit's cookies implementation in RequestEvent

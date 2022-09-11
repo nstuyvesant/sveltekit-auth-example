@@ -1,7 +1,8 @@
 # SvelteKit Authentication and Authorization Example
 
 This is an example of how to register, authenticate, and update users and limit their access to
-areas of the website by role (admin, teacher, student).
+areas of the website by role (admin, teacher, student). As almost every recent release of SvelteKit introduced breaking changes, this project attempts to
+maintain compatibility with the latest release.
 
 It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash).
 

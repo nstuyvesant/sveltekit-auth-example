@@ -31,6 +31,9 @@ const config = {
 				'object-src': ['none'],
 				'base-uri': ['self']
 			}
+		},
+		files: {
+			serviceWorker: 'src/service-worker.ts'
 		}
 	}
 }
