@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -18,8 +18,7 @@
     "authentication",
     "example",
     "google",
-    "postgresql",
-    "example"
+    "postgresql"
   ],
   "scripts": {
     "start": "node build",
@@ -38,8 +37,6 @@
   },
   "type": "module",
   "dependencies": {
-    "google-auth-library": "^8.5.1",
-    "jsonwebtoken": "^8.5.1",
     "pg": "^8.8.0"
   },
   "devDependencies": {
@@ -55,6 +52,8 @@
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
+    "google-auth-library": "^8.5.1",
+    "jsonwebtoken": "^8.5.1",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "sass": "^1.54.9",

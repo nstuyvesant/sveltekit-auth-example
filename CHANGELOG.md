@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.22
+* Move google-auth-library and jsonwebtoken to devDependencies from dependencies and other cleanup to package.json
+
 # 1.0.21
 * Refactor to use $env/static/private and public, dropping dotenv dependency
 * Remove @types/cookie and bootstrap-icons dependencies
