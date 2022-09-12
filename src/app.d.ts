@@ -13,9 +13,19 @@ declare namespace App {
 
 	// interface Platform {}
 
-  // interface PrivateEnv {} // $env/dynamic/private
+  interface PrivateEnv { // $env/dynamic/private
+    DATABASE_URL: string
+    DOMAIN: string
+    JWT_SECRET: string
+    SEND_IN_BLUE_URL: string
+    SEND_IN_BLUE_KEY: string
+    SEND_IN_BLUE_FROM: string
+    SEND_IN_BLUE_ADMINS: string
+  } 
 
-	// interface PublicEnv {} // $env/dynamic/public
+	interface PublicEnv { // $env/dynamic/public
+    PUBLIC_GOOGLE_CLIENT_ID: string
+  }
 }
 
 interface AuthenticationResult {
@@ -41,10 +51,6 @@ interface GoogleCredentialResponse {
 		| 'btn_confirm'
 		| 'btn_add_session'
 		| 'btn_confirm_add_session'
-}
-
-interface ImportMetaEnv {
-  VITE_GOOGLE_CLIENT_ID: string
 }
 
 interface MessageAddressee {

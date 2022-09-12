@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import dotenv from 'dotenv'
 import type { QueryResult} from 'pg'
 import pg from 'pg'
-
-dotenv.config()
+import { DATABASE_URL } from '$env/static/private'
 
 const pool = new pg.Pool({
   max: 10, // default
-  connectionString: process.env.DATABASE_URL,
+  connectionString: DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }

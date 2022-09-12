@@ -1,17 +1,16 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { OAuth2Client } from 'google-auth-library'
-import { query } from '../../_db';
-import { config } from '$lib/config'
+import { query } from '../../_db'
+import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
 
 // Verify JWT per https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
 async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
   try {
-    const clientId = config.googleClientId
-    const client = new OAuth2Client(clientId)
+    const client = new OAuth2Client(PUBLIC_GOOGLE_CLIENT_ID)
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: clientId
+      audience: PUBLIC_GOOGLE_CLIENT_ID
     });
     const payload = ticket.getPayload()
     if (!payload) throw error(500, 'Google authentication did not get the expected payload')

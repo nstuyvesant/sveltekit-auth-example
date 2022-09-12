@@ -1,13 +1,9 @@
 import type { RequestHandler } from './$types'
+import { JWT_SECRET, DOMAIN } from '$env/static/private'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
 import { query } from '../../_db'
 import { sendMessage } from '../../_send-in-blue'
-
-dotenv.config()
-const DOMAIN = process.env.DOMAIN
-const JWT_SECRET = process.env.JWT_SECRET
 
 export const POST: RequestHandler = async event => {
   const body = await event.request.json()

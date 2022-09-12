@@ -2,7 +2,7 @@
 
 import type { Page } from '@sveltejs/kit'
 import type { Readable, Writable } from 'svelte/store'
-import { config } from '$lib/config'
+import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
 
 export default function useAuth(
 	page: Readable<Page>,
@@ -44,7 +44,7 @@ export default function useAuth(
 
 	function initializeSignInWithGoogle(htmlId?: string) {
 		const { id } = window.google.accounts // assumes <script src="https://accounts.google.com/gsi/client" async defer></script> is in app.html
-		id.initialize({ client_id: config.googleClientId, callback: googleCallback })
+		id.initialize({ client_id: PUBLIC_GOOGLE_CLIENT_ID, callback: googleCallback })
 
 		if (htmlId) {
 			// render button instead of prompt

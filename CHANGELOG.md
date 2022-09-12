@@ -1,6 +1,9 @@
 # Backlog
-* Refactor $env/dynamic/private and public
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
+
+# 1.0.21
+* Refactor to use $env/static/private and public, dropping dotenv dependency
+* Remove @types/cookie and bootstrap-icons dependencies
 
 # 1.0.20
 * Bump dependencies

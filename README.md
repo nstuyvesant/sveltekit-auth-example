@@ -28,9 +28,9 @@ The website supports two types of authentication:
 The forgot password functionality uses [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (just happen to be familiar with their API because of another project).
 
 ## Prerequisites
-- PostgreSQL 14 or higher
-- Node.js 18.7.0 or higher
-- npm 8.18.0 or higher
+- PostgreSQL 14.5 or higher
+- Node.js 18.9.0 or higher
+- npm 8.19.1 or higher
 - Google API client
 - SendInBlue account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
@@ -62,7 +62,7 @@ SEND_IN_BLUE_URL=https://api.sendinblue.com
 SEND_IN_BLUE_KEY=replace_with_your_own
 SEND_IN_BLUE_FROM='{ "email":"jdoe@example.com", "name":"John Doe" }'
 SEND_IN_BLUE_ADMINS='{ "email":"jdoe@example.com", "name":"John Doe" }'
-VITE_GOOGLE_CLIENT_ID=replace_with_your_own
+PUBLIC_GOOGLE_CLIENT_ID=replace_with_your_own
 ```
 
 ## Run locally
