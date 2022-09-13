@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { query } from '../../_db'
+import { query } from '$lib/server/db'
 
 export const POST: RequestHandler = async (event) => {
 	const { slug } = event.params
@@ -11,8 +11,7 @@ export const POST: RequestHandler = async (event) => {
 	try {
 		switch (slug) {
 			case 'logout':
-				if (event.locals.user) {
-					// if user is null, they are logged out anyway (session might have ended)
+				if (event.locals.user) { // else they are logged out / session ended
 					sql = `CALL delete_session($1);`
 					result = await query(sql, [event.locals.user.id])
 				}
@@ -50,7 +49,7 @@ export const POST: RequestHandler = async (event) => {
 		// includes when a user tries to register an existing email account with wrong password
 		throw error(authenticationResult.statusCode, authenticationResult.status)
 
-	// Ensures hooks.ts:handle() will not delete cookie just set
+	// Ensures hooks.server.ts:handle() will not delete session cookie
 	event.locals.user = authenticationResult.user
 
 	return json(

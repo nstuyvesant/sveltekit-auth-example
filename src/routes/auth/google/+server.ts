@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { OAuth2Client } from 'google-auth-library'
-import { query } from '../../_db'
+import { query } from '$lib/server/db'
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
 
 // Verify JWT per https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
@@ -47,7 +47,7 @@ export const POST: RequestHandler = async event => {
     const user = await getGoogleUserFromJWT(token)
     const userSession = await upsertGoogleUser(user)
 
-    // Prevent hooks.ts's handler() from deleting cookie thinking no one has authenticated
+    // Prevent hooks.server.ts's handler() from deleting cookie thinking no one has authenticated
     event.locals.user = userSession.user
 
     return json({

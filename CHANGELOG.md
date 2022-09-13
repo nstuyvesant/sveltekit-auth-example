@@ -1,6 +1,10 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.23
+* Restructured server-side libraries to $lib/server based on https://github.com/sveltejs/kit/pull/6623
+* General cleanup
+
 # 1.0.22
 * Move google-auth-library and jsonwebtoken to devDependencies from dependencies and other cleanup to package.json
 

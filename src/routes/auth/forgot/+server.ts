@@ -2,8 +2,8 @@ import type { RequestHandler } from './$types'
 import { JWT_SECRET, DOMAIN } from '$env/static/private'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import { query } from '../../_db'
-import { sendMessage } from '../../_send-in-blue'
+import { query } from '$lib/server/db'
+import { sendMessage } from '$lib/server/send-in-blue'
 
 export const POST: RequestHandler = async event => {
   const body = await event.request.json()
@@ -20,7 +20,6 @@ export const POST: RequestHandler = async event => {
 
     // Email URL with token to user
     const message: Message = {
-      // sender: JSON.parse(<string> VITE_EMAIL_FROM),
       to: [{ email: body.email }],
       subject: 'Password reset',
       tags: ['account'],

@@ -1,5 +1,5 @@
 import type { Handle, RequestEvent } from '@sveltejs/kit'
-import { query } from './routes/_db'
+import { query } from '$lib/server/db'
 
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) {

@@ -1,6 +1,6 @@
-import { error, json} from '@sveltejs/kit'
+import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { query } from '../../../_db'
+import { query } from '$lib/server/db'
 
 export const PUT: RequestHandler = async event => {
   const { user } = event.locals

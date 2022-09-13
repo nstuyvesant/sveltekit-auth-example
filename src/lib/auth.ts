@@ -62,7 +62,7 @@ export default function useAuth(
 		try {
 			const res = await fetch('/auth/register', {
 				method: 'POST',
-				body: JSON.stringify(user), // server needs to ignore user.role and always set it to 'student'
+				body: JSON.stringify(user), // server ignores user.role - always set it to 'student' (lowest priv)
 				headers: {
 					'Content-Type': 'application/json'
 				}

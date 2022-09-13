@@ -2,8 +2,8 @@ import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import { query } from '../../_db'
 import { JWT_SECRET } from '$env/static/private'
+import { query } from '$lib/server/db'
 
 export const PUT: RequestHandler = async (event) => {
 	const body = await event.request.json()

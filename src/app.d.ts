@@ -13,7 +13,7 @@ declare namespace App {
 
 	// interface Platform {}
 
-  interface PrivateEnv { // $env/dynamic/private
+  interface PrivateEnv { // $env/static/private
     DATABASE_URL: string
     DOMAIN: string
     JWT_SECRET: string
@@ -23,7 +23,7 @@ declare namespace App {
     SEND_IN_BLUE_ADMINS: string
   } 
 
-	interface PublicEnv { // $env/dynamic/public
+	interface PublicEnv { // $env/static/public
     PUBLIC_GOOGLE_CLIENT_ID: string
   }
 }

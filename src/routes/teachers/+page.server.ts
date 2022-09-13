@@ -9,6 +9,6 @@ export const load: PageServerLoad = async ({locals}) => {
 	}
 
   return {
-    message: 'Teachers or Admin-only content from endpoint.'
+    message: 'Teachers or Admin-only content from server.'
   }
 }

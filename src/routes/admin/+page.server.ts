@@ -9,6 +9,6 @@ export const load: PageServerLoad = async ({locals})=> {
 	}
 
 	return {
-    message: 'Admin-only content from endpoint.'
+    message: 'Admin-only content from server.'
   }
 }

@@ -52,7 +52,6 @@
     initializeSignInWithGoogle('googleButton')
   })
 
-
   const passwordMatch = () => {
     if (!user) return false // placate TypeScript
     if (!user.password) user.password = ''
