@@ -2,9 +2,11 @@
 
 This is an example of how to register, authenticate, and update users and limit their access to
 areas of the website by role (admin, teacher, student). As almost every recent release of SvelteKit introduced breaking changes, this project attempts to
-maintain compatibility with the latest release.
+maintain compatibility with the latest release and leverage new APIs.
 
 It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash).
+
+The project includes a Content Security Policy (CSP) in svelte.config.js.
 
 The website supports two types of authentication:
 1. **Local accounts** via username (email) and password
@@ -25,7 +27,7 @@ The website supports two types of authentication:
 
 > There is some overhead to checking the user session in a database each time versus using a JWT; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
 
-The forgot password functionality uses [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (just happen to be familiar with their API because of another project).
+The forgot password / password reset functionality uses a JWT and [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (used their API because on another project).
 
 ## Prerequisites
 - PostgreSQL 14.5 or higher

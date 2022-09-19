@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.24
+* Bump dependencies
+
 # 1.0.23
 * Restructured server-side libraries to $lib/server based on https://github.com/sveltejs/kit/pull/6623
 * General cleanup

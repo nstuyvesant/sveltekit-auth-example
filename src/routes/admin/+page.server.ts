@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async ({locals})=> {
+export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = locals
 	const authorized = ['admin']
 	if (!user || !authorized.includes(user.role)) {
@@ -9,6 +9,6 @@ export const load: PageServerLoad = async ({locals})=> {
 	}
 
 	return {
-    message: 'Admin-only content from server.'
-  }
+		message: 'Admin-only content from server.'
+	}
 }
