@@ -1,12 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import { page } from '$app/stores'
   import { loginSession } from '../../stores'
-  import useAuth from '$lib/auth'
   import { focusOnFirstError } from '$lib/focus'
-
-  const { initializeSignInWithGoogle, registerLocal } = useAuth(page, loginSession, goto)
 
   let focusedField: HTMLInputElement
 
@@ -49,8 +45,40 @@
 
   onMount(() => {
     focusedField.focus()
-    initializeSignInWithGoogle('googleButton')
+    window.google.accounts.id.renderButton(document.getElementById('googleButton'), {
+				theme: 'filled_blue',
+				size: 'large',
+				width: '367'
+    })
   })
+
+  async function registerLocal(user: User) {
+		try {
+			const res = await fetch('/auth/register', {
+				method: 'POST',
+				body: JSON.stringify(user), // server ignores user.role - always set it to 'student' (lowest priv)
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			if (!res.ok) {
+				if (res.status == 401)
+					// user already existed and passwords didn't match (otherwise, we login the user)
+					throw new Error('Sorry, that username is already in use.')
+				throw new Error(res.statusText) // should only occur if there's a database error
+			}
+
+			// res.ok
+			const fromEndpoint = await res.json()
+			loginSession.set(fromEndpoint.user) // update store so user is logged in
+			goto('/')
+		} catch (err) {
+			console.error('Register error', err)
+			if (err instanceof Error) {
+				throw new Error(err.message)
+			}
+		}
+	}
 
   const passwordMatch = () => {
     if (!user) return false // placate TypeScript

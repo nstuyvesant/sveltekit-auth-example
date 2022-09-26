@@ -3,10 +3,7 @@
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import { loginSession } from '../../stores'
-  import useAuth from '$lib/auth'
   import { focusOnFirstError } from '$lib/focus'
-
-  const { initializeSignInWithGoogle, loginLocal } = useAuth(page, loginSession, goto)
 
   let focusedField: HTMLInputElement
   let message: string
@@ -35,9 +32,42 @@
   }
 
   onMount(async() => {
-    initializeSignInWithGoogle('googleButton')
+    window.google.accounts.id.renderButton(document.getElementById('googleButton'), {
+				theme: 'filled_blue',
+				size: 'large',
+				width: '367'
+    })
     focusedField.focus()
 	})
+
+  async function loginLocal(credentials: Credentials) {
+		try {
+			const res = await fetch('/auth/login', {
+				method: 'POST',
+				body: JSON.stringify(credentials),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			const fromEndpoint = await res.json()
+			if (res.ok) {
+				loginSession.set(fromEndpoint.user)
+				const { role } = fromEndpoint.user
+        const referrer = $page.url.searchParams.get('referrer')
+				if (referrer) return goto(referrer)
+				if (role === 'teacher') return goto('/teachers')
+				if (role === 'admin') return goto('/admin')
+				return goto('/')
+			} else {
+				throw new Error(fromEndpoint.message)
+			}
+		} catch (err) {
+			if (err instanceof Error) {
+				console.error('Login error', err)
+				throw new Error(err.message)
+			}
+		}
+	}
 </script>
 
 <svelte:head>
