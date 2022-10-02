@@ -158,7 +158,8 @@ SELECT json_build_object(
   'email', users.email,
   'firstName', users.first_name,
   'lastName', users.last_name,
-  'phone', users.phone
+  'phone', users.phone,
+  'expires', sessions.expires
 ) AS user
 FROM sessions
   INNER JOIN users ON sessions.user_id = users.id

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { LayoutServerData } from './$types'
-  import { goto } from '$app/navigation'
+  import { goto, beforeNavigate } from '$app/navigation'
   import { page } from '$app/stores'
   import { loginSession, toast } from '../stores'
   import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
@@ -14,6 +14,15 @@
   $loginSession = user
 
   let Toast: any
+
+  beforeNavigate( () => {
+		let expirationDate = $loginSession?.expires ? new Date($loginSession.expires) : undefined
+
+		if (expirationDate && expirationDate < new Date()) {
+			console.log('Login session expired.')
+			$loginSession = null
+		}
+	})
 
   onMount(async () => {
     await import('bootstrap/js/dist/collapse') // lots of ways to load Bootstrap but prefer this approach to avoid SSR issues

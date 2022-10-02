@@ -91,6 +91,7 @@ interface SendInBlueRequest extends RequestInit {
 
 interface UserProperties {
   id: number
+  expires?: string // ISO-8601 datetime
   role: 'student' | 'teacher' | 'admin'
   password?: string
   firstName?: string
@@ -99,7 +100,7 @@ interface UserProperties {
   phone?: string
 }
 
-type User = UserProperties | undefined
+type User = UserProperties | undefined | null
 
 interface UserSession {
   id: string,

@@ -31,8 +31,8 @@ The forgot password / password reset functionality uses a JWT and [**SendInBlue*
 
 ## Prerequisites
 - PostgreSQL 14.5 or higher
-- Node.js 18.9.0 or higher
-- npm 8.19.1 or higher
+- Node.js 18.10.0 or higher
+- npm 8.19.2 or higher
 - Google API client
 - SendInBlue account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
