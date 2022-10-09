@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.27
+* Update dependencies
+
 # 1.0.26
 * On the client, track whether the login session has expired and if so, clear $loginSession
 * Update dependencies
