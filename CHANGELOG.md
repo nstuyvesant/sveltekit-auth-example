@@ -4,6 +4,9 @@
 # 1.0.27
 * Update dependencies
 
+# 1.0.27
+* Update dependencies
+
 # 1.0.26
 * On the client, track whether the login session has expired and if so, clear $loginSession
 * Update dependencies
