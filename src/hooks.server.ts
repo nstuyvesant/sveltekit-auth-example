@@ -21,10 +21,11 @@ export const handle: Handle = async ({ event, resolve }) => {
     await attachUserToRequestEvent(sessionId, event)
   }
 
+  if (!event.locals.user) cookies.delete('session')
+
   const response = await resolve(event)
 
   // after endpoint or page is called
-  if (!event.locals.user) cookies.delete('session')
 
   return response
 }

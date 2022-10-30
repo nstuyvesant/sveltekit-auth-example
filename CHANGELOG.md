@@ -1,7 +1,11 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
-# 1.0.27
+# 1.0.29
+* Fixed bug in hooks.server.ts - new version of SvelteKit complains about modifying cookie after `const response = await resolve(event)` so moved it up two lines.
+* Update dependencies
+
+# 1.0.28
 * Update dependencies
 
 # 1.0.27
