@@ -1,6 +1,10 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.31
+* Cleanup
+* Update SvelteKit
+
 # 1.0.30
 * Fixed bug where opening /login or /register would fail to render Sign in With Google button (onMount in +layout.svelte loads after children's onMount)
 * Fix bad path for favicon

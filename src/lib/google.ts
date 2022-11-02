@@ -1,9 +1,7 @@
-import type { Page } from '@sveltejs/kit'
 import { page } from '$app/stores'
 import { goto } from '$app/navigation'
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
 import { googleInitialized, loginSession } from '../stores'
-import type { Readable } from 'svelte/store'
 
 export function renderGoogleButton() {
   const btn = document.getElementById('googleButton')
