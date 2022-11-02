@@ -4,7 +4,8 @@
   import { goto, beforeNavigate } from '$app/navigation'
   import { page } from '$app/stores'
   import { loginSession, toast } from '../stores'
-  import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
+  import { initializeGoogleAccounts } from '$lib/google'
+
   import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
 
 	export let data: LayoutServerData
@@ -25,30 +26,16 @@
 	})
 
   onMount(async () => {
+    initializeGoogleAccounts()
+
     await import('bootstrap/js/dist/collapse') // lots of ways to load Bootstrap but prefer this approach to avoid SSR issues
     await import('bootstrap/js/dist/dropdown')
     Toast = (await import('bootstrap/js/dist/toast')).default
-		window.google.accounts.id.initialize({
-      client_id: PUBLIC_GOOGLE_CLIENT_ID,
-      callback: googleCallback
-    })
 
-    if (!$loginSession) window.google.accounts.id.prompt()
+    if (!$loginSession) google.accounts.id.prompt()
 	})
 
-  async function logout() {
-		// Request server delete httpOnly cookie called loginSession
-		const url = '/auth/logout'
-		const res = await fetch(url, {
-			method: 'POST'
-		})
-		if (res.ok) {
-			loginSession.set(undefined) // delete loginSession.user from
-			goto('/login')
-		} else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
-	}
-
-  async function googleCallback(response: GoogleCredentialResponse) {
+  async function googleCallback(response: google.accounts.id.CredentialResponse) {
 		const res = await fetch('/auth/google', {
 			method: 'POST',
 			headers: {
@@ -67,6 +54,18 @@
 			if (role === 'admin') return goto('/admin')
 			if (location.pathname === '/login') goto('/') // logged in so go home
 		}
+	}
+
+  async function logout() {
+		// Request server delete httpOnly cookie called loginSession
+		const url = '/auth/logout'
+		const res = await fetch(url, {
+			method: 'POST'
+		})
+		if (res.ok) {
+			loginSession.set(undefined) // delete loginSession.user from
+			goto('/login')
+		} else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
 	}
 
   const openToast = (open: boolean) => {

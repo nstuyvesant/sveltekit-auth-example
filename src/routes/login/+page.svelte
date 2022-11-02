@@ -4,6 +4,7 @@
   import { page } from '$app/stores'
   import { loginSession } from '../../stores'
   import { focusOnFirstError } from '$lib/focus'
+  import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
   let focusedField: HTMLInputElement
   let message: string
@@ -31,12 +32,10 @@
     }
   }
 
-  onMount(async() => {
-    window.google.accounts.id.renderButton(document.getElementById('googleButton'), {
-				theme: 'filled_blue',
-				size: 'large',
-				width: '367'
-    })
+  onMount(() => {
+    initializeGoogleAccounts()
+    renderGoogleButton()
+
     focusedField.focus()
 	})
 

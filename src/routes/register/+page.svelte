@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
+  import { page } from '$app/stores'
   import { loginSession } from '../../stores'
   import { focusOnFirstError } from '$lib/focus'
+  import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
   let focusedField: HTMLInputElement
 
@@ -44,12 +46,10 @@
   }
 
   onMount(() => {
+    initializeGoogleAccounts()
+    renderGoogleButton()
+
     focusedField.focus()
-    window.google.accounts.id.renderButton(document.getElementById('googleButton'), {
-				theme: 'filled_blue',
-				size: 'large',
-				width: '367'
-    })
   })
 
   async function registerLocal(user: User) {

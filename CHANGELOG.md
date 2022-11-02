@@ -1,6 +1,11 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.30
+* Fixed bug where opening /login or /register would fail to render Sign in With Google button (onMount in +layout.svelte loads after children's onMount)
+* Fix bad path for favicon
+* Update dependencies
+
 # 1.0.29
 * Fixed bug in hooks.server.ts - new version of SvelteKit complains about modifying cookie after `const response = await resolve(event)` so moved it up two lines.
 * Update dependencies
