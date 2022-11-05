@@ -35,27 +35,6 @@
     if (!$loginSession) google.accounts.id.prompt()
 	})
 
-  async function googleCallback(response: google.accounts.id.CredentialResponse) {
-		const res = await fetch('/auth/google', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ token: response.credential })
-		})
-
-		if (res.ok) {
-			const fromEndpoint = await res.json()
-			loginSession.set(fromEndpoint.user) // update loginSession store
-			const { role } = fromEndpoint.user
-      const referrer = $page.url.searchParams.get('referrer')
-			if (referrer) return goto(referrer)
-			if (role === 'teacher') return goto('/teachers')
-			if (role === 'admin') return goto('/admin')
-			if (location.pathname === '/login') goto('/') // logged in so go home
-		}
-	}
-
   async function logout() {
 		// Request server delete httpOnly cookie called loginSession
 		const url = '/auth/logout'

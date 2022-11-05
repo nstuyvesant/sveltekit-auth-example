@@ -22,7 +22,7 @@ export function initializeGoogleAccounts() {
 	})
 
   if (!initialized) {
-    window.google.accounts.id.initialize({
+    google.accounts.id.initialize({
       client_id: PUBLIC_GOOGLE_CLIENT_ID,
       callback: googleCallback
     })

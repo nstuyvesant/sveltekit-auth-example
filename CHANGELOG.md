@@ -1,6 +1,12 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.32
+* Remove window from reference to google.accounts
+* Add apple-touch-icon.png
+* Update dependencies
+* Remove dead code
+
 # 1.0.31
 * Cleanup
 * Update SvelteKit
