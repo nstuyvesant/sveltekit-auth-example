@@ -27,12 +27,12 @@ The website supports two types of authentication:
 
 > There is some overhead to checking the user session in a database each time versus using a JWT; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
 
-The forgot password / password reset functionality uses a JWT and [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (used their API because on another project).
+The forgot password / password reset functionality uses a JWT and [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (used their API in another project).
 
 ## Prerequisites
 - PostgreSQL 14.5 or higher
 - Node.js 18.11.0 or higher
-- npm 8.19.2 or higher
+- npm 9.1.1 or higher
 - Google API client
 - SendInBlue account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
