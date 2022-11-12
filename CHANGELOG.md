@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.34
+* Update SvelteKit
+
 # 1.0.33
 * Update dependencies
 
