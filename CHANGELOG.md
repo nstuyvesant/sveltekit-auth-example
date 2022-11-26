@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.36
+* Bump SvelteKit, adapter-node, Bootstrap, prettier
+
 # 1.0.35
 * Update SvelteKit, vite, Typescript
 
