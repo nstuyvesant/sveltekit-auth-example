@@ -17,10 +17,8 @@ declare namespace App {
     DATABASE_URL: string
     DOMAIN: string
     JWT_SECRET: string
-    SEND_IN_BLUE_URL: string
-    SEND_IN_BLUE_KEY: string
-    SEND_IN_BLUE_FROM: string
-    SEND_IN_BLUE_ADMINS: string
+    SENDGRID_KEY: string
+    SENDGRID_SENDER: string
   } 
 
 	interface PublicEnv { // $env/static/public
@@ -38,42 +36,6 @@ interface AuthenticationResult {
 interface Credentials {
   email: string
   password: string
-}
-
-interface MessageAddressee {
-  email: string
-  name?: string
-}
-
-interface Message {
-  sender?: MessageAddressee
-  to?: MessageAddressee[]
-  subject: string
-  htmlContent?: string
-  textContent?: string
-  tags?: string[]
-  contact?: Person
-}
-
-interface SendInBlueContact {
-  updateEnabled: boolean
-  email: string
-  emailBlacklisted: boolean
-  attributes: {
-    NAME: string
-    SURNAME: string
-  }
-}
-
-interface SendInBlueMessage extends Message {
-  sender: MessageAddressee
-  to: MessageAddressee[]
-}
-
-interface SendInBlueRequest extends RequestInit {
-  headers: {
-    'api-key': string
-  }
 }
 
 interface UserProperties {

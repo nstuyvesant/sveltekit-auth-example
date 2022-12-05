@@ -27,14 +27,14 @@ The website supports two types of authentication:
 
 > There is some overhead to checking the user session in a database each time versus using a JWT; however, validating each request avoids problems discussed in [this article](https://redis.com/blog/json-web-tokens-jwt-are-dangerous-for-user-sessions/) and [this one](https://scotch.io/bar-talk/why-jwts-suck-as-session-tokens). For a high-volume website, I would use Redis or the equivalent.
 
-The forgot password / password reset functionality uses a JWT and [**SendInBlue**](https://www.sendinblue.com) to send the email. You would need to have a **SendInBlue** account and set three environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendInBlue** (used their API in another project).
+The forgot password / password reset functionality uses a JWT and [**SendGrid**](https://www.sendgrid.com) to send the email. You would need to have a **SendGrid** account and set two environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendGrid** (used their API in another project).
 
 ## Prerequisites
 - PostgreSQL 14.5 or higher
 - Node.js 18.11.0 or higher
 - npm 9.1.1 or higher
 - Google API client
-- SendInBlue account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
+- Twilio SendGrid account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
 ## Setting up the project
 
@@ -55,15 +55,15 @@ psql -d postgres -f db_create.sql
 
 2. Create a **Google API client ID** per [these instructions](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid). Make sure you include `http://localhost:3000`, `http://localhost` in the Authorized JavaScript origins and `http://localhost:3000/auth/google/callback` in the Authorized redirect URIs for your Client ID for Web application. ** Do not access the site using http://127.0.0.1:3000 ** - use `http://localhost:3000` or it will not work.
 
-3. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
+3. [Create a free Twilio SendGrid account](https://signup.sendgrid.com) and generate an API Key following [this documentation](https://docs.sendgrid.com/ui/account-and-settings/api-keys) and add a sender as documented [here](https://docs.sendgrid.com/ui/sending-email/senders).
+
+4. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
 ```bash
 DATABASE_URL=postgres://user:password@localhost:5432/auth
 DOMAIN=http://localhost:3000
 JWT_SECRET=replace_with_your_own
-SEND_IN_BLUE_URL=https://api.sendinblue.com
-SEND_IN_BLUE_KEY=replace_with_your_own
-SEND_IN_BLUE_FROM='{ "email":"jdoe@example.com", "name":"John Doe" }'
-SEND_IN_BLUE_ADMINS='{ "email":"jdoe@example.com", "name":"John Doe" }'
+SENDGRID_KEY=replace_with_your_own
+SENDGRID_SENDER=replace_with_your_own
 PUBLIC_GOOGLE_CLIENT_ID=replace_with_your_own
 ```
 

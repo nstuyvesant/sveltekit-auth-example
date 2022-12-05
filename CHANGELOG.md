@@ -1,6 +1,10 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.38
+* Switch from SendInBlue to Sendgrid for email
+* Bump SvelteKit, adapter-node, and vite
+
 # 1.0.37
 * Bump SvelteKit, svelte-check, and a few dev dependencies
 

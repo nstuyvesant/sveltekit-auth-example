@@ -1,9 +1,10 @@
-import type { RequestHandler } from './$types'
-import { JWT_SECRET, DOMAIN } from '$env/static/private'
 import type { Secret } from 'jsonwebtoken'
+import type { MailDataRequired } from '@sendgrid/mail'
+import type { RequestHandler } from './$types'
 import jwt from 'jsonwebtoken'
+import { JWT_SECRET, DOMAIN, SENDGRID_SENDER } from '$env/static/private'
 import { query } from '$lib/server/db'
-import { sendMessage } from '$lib/server/send-in-blue'
+import { sendMessage } from '$lib/server/sendgrid'
 
 export const POST: RequestHandler = async event => {
   const body = await event.request.json()
@@ -19,11 +20,12 @@ export const POST: RequestHandler = async event => {
     })
 
     // Email URL with token to user
-    const message: Message = {
-      to: [{ email: body.email }],
+    const message: MailDataRequired = {
+      to: { email: body.email },
+      from: SENDGRID_SENDER,
       subject: 'Password reset',
-      tags: ['account'],
-      htmlContent: `
+      categories: ['account'],
+      html: `
         <a href="${DOMAIN}/auth/reset/${token}">Reset my password</a>. Your browser will open and ask you to provide a
         new password with a confirmation then redirect you to your login page.
       `
