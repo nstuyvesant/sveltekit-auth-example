@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import type { LayoutServerData } from './$types'
   import { goto, beforeNavigate } from '$app/navigation'
-  import { page } from '$app/stores'
   import { loginSession, toast } from '../stores'
   import { initializeGoogleAccounts } from '$lib/google'
 

@@ -1,8 +1,7 @@
 # SvelteKit Authentication and Authorization Example
 
 This is an example of how to register, authenticate, and update users and limit their access to
-areas of the website by role (admin, teacher, student). As almost every recent release of SvelteKit introduced breaking changes, this project attempts to
-maintain compatibility with the latest release and leverage new APIs.
+areas of the website by role (admin, teacher, student). It includes profile management and password resets via SendGrid.
 
 It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash).
 
@@ -31,8 +30,8 @@ The forgot password / password reset functionality uses a JWT and [**SendGrid**]
 
 ## Prerequisites
 - PostgreSQL 14.5 or higher
-- Node.js 18.11.0 or higher
-- npm 9.1.1 or higher
+- Node.js 18.12.1 or higher
+- npm 9.2.0 or higher
 - Google API client
 - Twilio SendGrid account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 

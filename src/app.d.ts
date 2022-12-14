@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/// <reference types="bootstrap" />
-/// <reference types="google.accounts" />
-
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 // and what to do when importing types
@@ -54,10 +51,4 @@ type User = UserProperties | undefined | null
 interface UserSession {
   id: string,
   user: User
-}
-
-interface Window {
-  google?: any
-  grecaptcha: any
-  bootstrap: Bootstrap
 }

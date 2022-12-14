@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-node'
-import preprocess from 'svelte-preprocess'
+import { vitePreprocess } from '@sveltejs/kit/vite';
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -15,7 +15,7 @@ if (!production) baseCsp.push('ws://localhost:3000')
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: preprocess(),
+	preprocess: vitePreprocess(),
 
 	kit: {
 		adapter: adapter({
