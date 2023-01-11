@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.43",
+  "version": "1.0.44",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.1.0",
-    "@sveltejs/kit": "^1.0.9",
+    "@sveltejs/kit": "^1.0.11",
     "@types/bootstrap": "5.2.6",
     "@types/google.accounts": "0.0.5",
     "@types/jsonwebtoken": "^9.0.0",
@@ -58,7 +58,7 @@
     "prettier": "^2.8.2",
     "prettier-plugin-svelte": "^2.9.0",
     "sass": "^1.57.1",
-    "svelte": "^3.55.0",
+    "svelte": "^3.55.1",
     "svelte-check": "^3.0.2",
     "tslib": "^2.4.1",
     "typescript": "^4.9.4",
