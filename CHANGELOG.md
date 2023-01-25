@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.45
+* Bump @sveltejs/kit, adapter-node, svelte-check, @typescript*, eslint, prettier, vitest, @types/jsonwebtoken
+
 # 1.0.44
 * Bump @sveltejs/kit, svelte
 
