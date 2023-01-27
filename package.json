@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.45",
+  "version": "1.0.46",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -33,16 +33,16 @@
   },
   "engines": {
     "node": ">=18.13.0",
-    "npm": "^9.3.1"
+    "npm": "^9.4.0"
   },
   "type": "module",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
-    "pg": "^8.8.0"
+    "pg": "^8.9.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.1.4",
-    "@sveltejs/kit": "^1.2.9",
+    "@sveltejs/kit": "^1.3.2",
     "@types/bootstrap": "5.2.6",
     "@types/google.accounts": "0.0.5",
     "@types/jsonwebtoken": "^9.0.1",
@@ -60,9 +60,9 @@
     "sass": "^1.57.1",
     "svelte": "^3.55.1",
     "svelte-check": "^3.0.3",
-    "tslib": "^2.4.1",
+    "tslib": "^2.5.0",
     "typescript": "^4.9.4",
     "vite": "^4.0.4",
-    "vitest": "^0.28.2"
+    "vitest": "^0.28.3"
   }
 }
