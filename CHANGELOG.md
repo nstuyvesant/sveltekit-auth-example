@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.47
+* Bump @sveltejs/kit, adapter-node, @types/google.accounts, @typescript*, eslint, sass, typescript, vite, vitest
+
 # 1.0.46
 * Bump @sveltejs/kit, pg, tslib, vitest
 
