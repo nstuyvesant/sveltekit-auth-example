@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-auth-example",
   "description": "SvelteKit Authentication Example",
-  "version": "1.0.47",
+  "version": "1.0.48",
   "private": false,
   "author": "Nate Stuyvesant",
   "license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
@@ -33,7 +33,7 @@
   },
   "engines": {
     "node": ">=18.14.0",
-    "npm": "^9.4.1"
+    "npm": "^9.4.2"
   },
   "type": "module",
   "dependencies": {
@@ -41,8 +41,8 @@
     "pg": "^8.9.0"
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^1.1.7",
-    "@sveltejs/kit": "^1.5.0",
+    "@sveltejs/adapter-node": "^1.1.8",
+    "@sveltejs/kit": "^1.5.5",
     "@types/bootstrap": "5.2.6",
     "@types/google.accounts": "0.0.6",
     "@types/jsonwebtoken": "^9.0.1",
@@ -50,12 +50,12 @@
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
     "bootstrap": "^5.2.3",
-    "eslint": "^8.33.0",
+    "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "google-auth-library": "^8.7.0",
     "jsonwebtoken": "^9.0.0",
-    "prettier": "^2.8.3",
+    "prettier": "^2.8.4",
     "prettier-plugin-svelte": "^2.9.0",
     "sass": "^1.58.0",
     "svelte": "^3.55.1",
