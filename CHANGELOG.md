@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.50
+* Bump @sveltejs/kit, sass, vite
+
 # 1.0.49
 * Bump @sveltejs/kit, adapter-node, @typescript*, sass, vitest
 
