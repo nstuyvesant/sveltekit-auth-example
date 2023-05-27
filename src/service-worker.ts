@@ -1,74 +1,68 @@
+/// <reference types="@sveltejs/kit" />
+/// <reference no-default-lib="true"/>
+/// <reference lib="esnext" />
 /// <reference lib="webworker" />
+
 import { build, files, version } from '$service-worker'
 
-const worker = <ServiceWorkerGlobalScope> <unknown> self
-const cacheName = `cache${version}`
-const toCache = build.concat(files)
-const staticAssets = new Set(toCache)
+const sw = self as unknown as ServiceWorkerGlobalScope
 
-worker.addEventListener('install', event => {
-	// console.log('[Service Worker] Installation')
-	event.waitUntil(
-		caches
-			.open(cacheName)
-			.then(cache => cache.addAll(toCache))
-			.then(() => {
-				worker.skipWaiting()
-			})
-			.catch(error => console.error(error))
-	)
+// Create a unique cache name for this deployment
+const CACHE = `cache-${version}`
+
+const ASSETS = [
+	...build, // the app itself
+	...files // everything in `static`
+]
+
+sw.addEventListener('install', (event) => {
+	// Create a new cache and add all files to it
+	async function addFilesToCache() {
+		const cache = await caches.open(CACHE)
+		await cache.addAll(ASSETS)
+	}
+
+	event.waitUntil(addFilesToCache())
 })
 
-worker.addEventListener('activate', event => {
-	// console.log('[Service Worker] Activation')
-	event.waitUntil(
-		caches.keys()
-			.then(async (keys) => {
-				for (const key of keys) {
-					if (key !== cacheName) await caches.delete(key)
-				}
-			})
-	)
-	worker.clients.claim() // or should this be inside the caches.keys().then()?
+sw.addEventListener('activate', (event) => {
+	// Remove previous cached data from disk
+	async function deleteOldCaches() {
+		for (const key of await caches.keys()) {
+			if (key !== CACHE) await caches.delete(key)
+		}
+	}
+
+	event.waitUntil(deleteOldCaches())
 })
 
-// Fetch from network into cache and fall back to cache if user offline
-async function fetchAndCache(request: Request) {
-	const cache = await caches.open(`offline${version}`)
+sw.addEventListener('fetch', (event) => {
+	// ignore POST requests etc
+	if (event.request.method !== 'GET') return
 
-	try {
-		const response = await fetch(request)
-		cache.put(request, response.clone())
-		return response
-	} catch (err) {
-		const response = await cache.match(request)
-		if (response) return response
-		throw err
+	async function respond() {
+		const url = new URL(event.request.url)
+		const cache = await caches.open(CACHE)
+
+		// `build`/`files` can always be served from the cache
+		if (ASSETS.includes(url.pathname)) {
+			return cache.match(url.pathname)
+		}
+
+		// for everything else, try the network first, but
+		// fall back to the cache if we're offline
+		try {
+			const response = await fetch(event.request)
+
+			if (response.status === 200) {
+				cache.put(event.request, response.clone())
+			}
+
+			return response
+		} catch {
+			return cache.match(event.request)
+		}
 	}
-}
 
-worker.addEventListener('fetch', event => {
-	if (event.request.method !== 'GET' || event.request.headers.has('range')) return
-
-	const url = new URL(event.request.url)
-	// console.log(`[Service Worker] Fetch ${url}`)
-
-	// don't try to handle data: or blob: URIs
-	const isHttp = url.protocol.startsWith('http')
-	const isDevServerRequest = url.hostname === self.location.hostname && url.port !== self.location.port
-	const isStaticAsset = url.host === self.location.host && staticAssets.has(url.pathname)
-	const skipBecauseUncached = event.request.cache === 'only-if-cached' && !isStaticAsset
-
-	if (isHttp && !isDevServerRequest && !skipBecauseUncached) {
-		event.respondWith(
-			(async () => {
-				// always serve static files and bundler-generated assets from cache.
-				// if your application has other URLs with data that will never change,
-				// set this variable to true for them and they will only be fetched once.
-				const cachedAsset = isStaticAsset && (await caches.match(event.request))
-
-				return cachedAsset || fetchAndCache(event.request)
-			})()
-		)
-	}
+	event.respondWith(respond() as PromiseLike<Response>)
 })
