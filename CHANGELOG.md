@@ -1,6 +1,10 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.55
+* Add comment to indicate property that should be removed if ssl is turned off on the PostgreSQL server (thanks Brazos)
+* Update public.reset_password stored procedure to plpgsql (thanks Brazos)
+
 # 1.0.54
 * Bump sveltekit, @types/pg, @typescript*, boostrap, eslint, prettier-plugin-svelte, sass, tslib, typescript, vitest
 

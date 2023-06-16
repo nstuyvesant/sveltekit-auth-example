@@ -234,14 +234,14 @@ CREATE PROCEDURE public.delete_session(input_id integer)
 DELETE FROM sessions WHERE user_id = input_id;
 $$;
 
-CREATE OR REPLACE PROCEDURE public.reset_password(
-	input_id integer,
-	input_password text)
-LANGUAGE 'sql'
-AS $BODY$
+CREATE OR REPLACE PROCEDURE public.reset_password(IN input_id integer, IN input_password text)
+  LANGUAGE plpgsql
+AS $procedure$
+BEGIN
   UPDATE users SET password = crypt(input_password, gen_salt('bf', 8)) WHERE id = input_id;
 END;
-$BODY$;
+$procedure$
+;
 
 ALTER PROCEDURE public.reset_password(integer, text) OWNER TO auth;
 

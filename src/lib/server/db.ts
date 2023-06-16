@@ -6,7 +6,7 @@ import { DATABASE_URL } from '$env/static/private'
 const pool = new pg.Pool({
   max: 10, // default
   connectionString: DATABASE_URL,
-  ssl: {
+  ssl: { // If your postgresql.conf does not have `ssl = on`, remove the entire ssl property or you will get an error
     rejectUnauthorized: false
   }
 })
