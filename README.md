@@ -30,7 +30,7 @@ The forgot password / password reset functionality uses a JWT and [**SendGrid**]
 
 ## Prerequisites
 - PostgreSQL 14.5 or higher
-- Node.js 18.14.0 or higher
+- Node.js 18.16.1 or higher
 - Google API client
 - Twilio SendGrid account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 
