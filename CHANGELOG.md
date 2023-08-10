@@ -1,6 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 1.0.58
+* Bump pg, sveltekit, adapter-node, bootstrap, svelte, sass, jsonwebtoken, google-auth-library, vite, vitest
+
 # 1.0.57
 * Minor bumps for pg, tslib, typescript
 
