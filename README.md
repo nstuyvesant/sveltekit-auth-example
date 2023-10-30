@@ -45,7 +45,7 @@ git clone https://github.com/nstuyvesant/sveltekit-auth-example.git
 
 # Install the dependencies
 cd /sveltekit-auth-example
-npm install
+yarn install
 
 # Create PostgreSQL database (only works if you installed PostgreSQL)
 psql -d postgres -f db_create.sql
@@ -69,7 +69,7 @@ PUBLIC_GOOGLE_CLIENT_ID=replace_with_your_own
 
 ```bash
 # Start the server and open the app in a new browser tab
-npm run dev -- --open
+yarn dev -- --open
 ```
 
 ## Valid logins
