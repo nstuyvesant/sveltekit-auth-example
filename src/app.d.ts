@@ -24,7 +24,7 @@ declare namespace App {
 }
 
 interface AuthenticationResult {
-  statusCode: number
+  statusCode: NumericRange<400, 599>
   status: string
   user: User
   sessionId: string

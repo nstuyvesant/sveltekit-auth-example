@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   const authorized = ['admin', 'teacher', 'student'] // must be logged-in
   if (!user || !authorized.includes(user.role)) {
-    throw redirect(302, '/login?referrer=/profile')
+    redirect(302, '/login?referrer=/profile');
   }
 
   return {

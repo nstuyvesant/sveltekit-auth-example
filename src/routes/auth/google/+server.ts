@@ -13,7 +13,7 @@ async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
       audience: PUBLIC_GOOGLE_CLIENT_ID
     });
     const payload = ticket.getPayload()
-    if (!payload) throw error(500, 'Google authentication did not get the expected payload')
+    if (!payload) error(500, 'Google authentication did not get the expected payload');
     
     return {
       firstName: payload['given_name'] || 'UnknownFirstName',
@@ -23,7 +23,7 @@ async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message
-    throw error(500,`Google user could not be authenticated: ${message}`)
+    error(500, `Google user could not be authenticated: ${message}`);
   }
 }
 
@@ -36,12 +36,14 @@ async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message
-    throw error(500,`Gmail user could not be upserted: ${message}`)
+    error(500, `Gmail user could not be upserted: ${message}`);
   }
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
 export const POST: RequestHandler = async event => {
+  const { cookies } = event
+
   try {
     const { token } = await event.request.json()
     const user = await getGoogleUserFromJWT(token)
@@ -50,17 +52,12 @@ export const POST: RequestHandler = async event => {
     // Prevent hooks.server.ts's handler() from deleting cookie thinking no one has authenticated
     event.locals.user = userSession.user
 
-    return json({
-      message: 'Successful Google Sign-In.',
-      user: userSession.user
-    }, {
-      headers: {
-      'Set-Cookie': `session=${userSession.id}; Path=/; SameSite=Lax; HttpOnly;`}
-    })
+    cookies.set('session', userSession.id, { httpOnly: true, sameSite: 'lax', path: '/' })
+    return json({ message: 'Successful Google Sign-In.', user: userSession.user })
     
   } catch (err) {
     let message = ''
     if (err instanceof Error) message = err.message
-    throw error(401, message)
+    error(401, message);
   }
 }

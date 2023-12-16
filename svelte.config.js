@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-node'
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 const production = process.env.NODE_ENV === 'production'
 

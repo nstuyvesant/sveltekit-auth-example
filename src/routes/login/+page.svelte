@@ -53,17 +53,23 @@
 				loginSession.set(fromEndpoint.user)
 				const { role } = fromEndpoint.user
         const referrer = $page.url.searchParams.get('referrer')
-				if (referrer) return goto(referrer)
-				if (role === 'teacher') return goto('/teachers')
-				if (role === 'admin') return goto('/admin')
-				return goto('/')
+				if (referrer) goto(referrer)
+        switch(role) {
+          case 'teacher':
+            goto('/teachers')
+            break
+          case 'admin':
+            goto('/admin')
+            break
+          default:
+            goto('/')
+        }
 			} else {
 				throw new Error(fromEndpoint.message)
 			}
 		} catch (err) {
 			if (err instanceof Error) {
 				console.error('Login error', err)
-				throw new Error(err.message)
 			}
 		}
 	}

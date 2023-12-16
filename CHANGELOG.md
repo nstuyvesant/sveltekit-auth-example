@@ -1,6 +1,12 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 2.0.0 Upgrade for SvelteKit to 2.0
+* Migrated to SvelteKit way of managing cookies (vs. setting headers). The latter no longer works.
+* Corrected AuthenticationResult.statusCode type
+* Removed throw from SvelteKit functions redirect and error
+* Bump @sendgrid/mail, node, yarn, svelte, @sveltejs/kit, @sveltejs/vite-plugin-svelte, svelte-check, google-auth-library, vite, typescript, eslint, eslint-config-prettier, prettier-plugin-svelte, vitest, @types*, @typescript-eslint*, prettier
+
 # 1.0.59
 * Bump pg, sveltekit, @types*, bootstrap, eslint, google-auth-library, sass, svelte, svelte-check, tslib, typescript, vite, vitest
 

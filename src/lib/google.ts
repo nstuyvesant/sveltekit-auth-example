@@ -10,7 +10,7 @@ export function renderGoogleButton() {
       type: 'standard',
       theme: 'filled_blue',
       size: 'large',
-      width: '367'
+      width: 367
     })
   }
 }

@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({locals}) => {
 	const { user } = locals
 	const authorized = ['admin', 'teacher']
 	if (!user || !authorized.includes(user.role)) {
-		throw redirect(302, '/login?referrer=/teachers')
+		redirect(302, '/login?referrer=/teachers');
 	}
 
   return {
