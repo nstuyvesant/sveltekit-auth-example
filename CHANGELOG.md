@@ -2,8 +2,13 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 2.0.3
+- Move to eslint's new eslint.config.js
+- Convert vite.config to TypeScript
+
 # 2.0.2
-- fix prettier
+
+- Fix prettier
 
 # 2.0.1
 

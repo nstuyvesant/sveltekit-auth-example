@@ -17,7 +17,7 @@ export function renderGoogleButton() {
 
 export function initializeGoogleAccounts() {
 	let initialized = false
-	const unsubscribe = googleInitialized.subscribe((value) => {
+	const unsubscribe = googleInitialized.subscribe(value => {
 		initialized = value
 	})
 
@@ -46,7 +46,7 @@ export function initializeGoogleAccounts() {
 			const { role } = fromEndpoint.user
 
 			let referrer
-			const unsubscribe = page.subscribe((p) => {
+			const unsubscribe = page.subscribe(p => {
 				referrer = p.url.searchParams.get('referrer')
 			})
 			unsubscribe()

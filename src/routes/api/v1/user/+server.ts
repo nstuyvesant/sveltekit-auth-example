@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 
-export const PUT: RequestHandler = async (event) => {
+export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 
 	if (!user) error(401, 'Unauthorized - must be logged-in.')

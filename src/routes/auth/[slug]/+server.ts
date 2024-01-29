@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 
-export const POST: RequestHandler = async (event) => {
+export const POST: RequestHandler = async event => {
 	const { cookies } = event
 	const { slug } = event.params
 

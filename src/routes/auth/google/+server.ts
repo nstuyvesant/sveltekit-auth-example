@@ -41,7 +41,7 @@ async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
 }
 
 // Returns local user if Google user authenticated (and authorized our app)
-export const POST: RequestHandler = async (event) => {
+export const POST: RequestHandler = async event => {
 	const { cookies } = event
 
 	try {

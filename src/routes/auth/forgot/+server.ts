@@ -6,7 +6,7 @@ import { JWT_SECRET, DOMAIN, SENDGRID_SENDER } from '$env/static/private'
 import { query } from '$lib/server/db'
 import { sendMessage } from '$lib/server/sendgrid'
 
-export const POST: RequestHandler = async (event) => {
+export const POST: RequestHandler = async event => {
 	const body = await event.request.json()
 	const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
 	const { rows } = await query(sql, [body.email])

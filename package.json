@@ -1,7 +1,7 @@
 {
 	"name": "sveltekit-auth-example",
 	"description": "SvelteKit Authentication Example",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"author": "Nate Stuyvesant",
 	"license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
 	"repository": {
@@ -27,8 +27,8 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"lint": "prettier --check . && eslint . --ignore-path ./.eslintignore",
+		"format": "prettier --write . --ignore-path ./.eslintignore"
 	},
 	"engines": {
 		"node": "^18.19.0"
