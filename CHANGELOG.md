@@ -1,5 +1,9 @@
 # Backlog
 * Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
+* fix prettier
+
+# 2.0.1
+* Bump @sveltejs/adapter-node, @sveltejs/kit, @sveltejs/vite-plugin-svelte, svelte, svelte-check, vite, google-auth-library, @types/pg, @typescript-eslint/*, prettier, sass, vitest
 
 # 2.0.0 Upgrade for SvelteKit to 2.0
 * Migrated to SvelteKit way of managing cookies (vs. setting headers). The latter no longer works.
