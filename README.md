@@ -10,6 +10,7 @@ It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back
 The project includes a Content Security Policy (CSP) in svelte.config.js.
 
 The website supports two types of authentication:
+
 1. **Local accounts** via username (email) and password
    - The login form (/src/routes/login/+page.svelte) sends the login info as JSON to endpoint /auth/login
    - The endpoint passes the JSON to PostgreSQL function authenticate(json) which hashes the password and compares it to the stored hashed password in the users table. The function returns JSON containing a session ID (v4 UUID) and user object (sans password).
@@ -31,6 +32,7 @@ The website supports two types of authentication:
 The forgot password / password reset functionality uses a JWT and [**SendGrid**](https://www.sendgrid.com) to send the email. You would need to have a **SendGrid** account and set two environmental variables. Email sending is in /src/routes/auth/forgot.ts. This code could easily be replaced by nodemailer or something similar. Note: I have no affliation with **SendGrid** (used their API in another project).
 
 ## Prerequisites
+
 - PostgreSQL 14.10 or higher
 - Node.js 18.19.0 or higher
 - Google API client
@@ -41,6 +43,7 @@ The forgot password / password reset functionality uses a JWT and [**SendGrid**]
 Here are the steps:
 
 1. Get the project and setup the database
+
 ```bash
 # Clone the repo to your current directory
 git clone https://github.com/nstuyvesant/sveltekit-auth-example.git
@@ -58,6 +61,7 @@ psql -d postgres -f db_create.sql
 3. [Create a free Twilio SendGrid account](https://signup.sendgrid.com) and generate an API Key following [this documentation](https://docs.sendgrid.com/ui/account-and-settings/api-keys) and add a sender as documented [here](https://docs.sendgrid.com/ui/sending-email/senders).
 
 4. Create an **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
+
 ```bash
 DATABASE_URL=postgres://user:password@localhost:5432/auth
 DOMAIN=http://localhost:3000
@@ -77,6 +81,7 @@ yarn dev -- --open
 ## Valid logins
 
 The db_create.sql script adds three users to the database with obvious roles:
+
 - admin@example.com password admin123
 - teacher@example.com password teacher123
 - student@example.com password student123

@@ -1,5 +1,5 @@
 <svelte:head>
-  <title>Info Page</title>
+	<title>Info Page</title>
 </svelte:head>
 
 <h1>Info</h1>

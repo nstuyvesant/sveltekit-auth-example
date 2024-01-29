@@ -11,7 +11,7 @@ export const PUT: RequestHandler = async (event) => {
 
 	// Check the validity of the token and extract userId
 	try {
-		const decoded = <JwtPayload> jwt.verify(token, <jwt.Secret> JWT_SECRET)
+		const decoded = <JwtPayload>jwt.verify(token, <jwt.Secret>JWT_SECRET)
 		const userId = decoded.subject
 
 		// Update the database with the new password

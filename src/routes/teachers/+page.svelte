@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-  <title>Teachers</title>
+	<title>Teachers</title>
 </svelte:head>
 
 <h1>Teachers</h1>

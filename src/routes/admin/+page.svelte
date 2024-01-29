@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-  <title>Administration</title>
+	<title>Administration</title>
 </svelte:head>
 
 <h1>Admin</h1>
