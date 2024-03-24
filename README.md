@@ -1,6 +1,6 @@
 # SvelteKit Authentication and Authorization Example
 
-**Updated for SvelteKit 2.0**
+**Updated for SvelteKit 2.5.4**
 
 This is an example of how to register, authenticate, and update users and limit their access to
 areas of the website by role (admin, teacher, student). It includes profile management and password resets via SendGrid.
@@ -34,7 +34,7 @@ The forgot password / password reset functionality uses a JWT and [**SendGrid**]
 ## Prerequisites
 
 - PostgreSQL 14.10 or higher
-- Node.js 18.19.0 or higher
+- Node.js 18.19.1 or higher
 - Google API client
 - Twilio SendGrid account (only used for emailing password reset link - the sample can run without it but forgot password will not work)
 

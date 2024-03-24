@@ -2,6 +2,9 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 2.0.5
+- Bump @sveltejs/kit, @types/pg, @typescript-eslint, google-auth-library, sass, svelte-check, typescript, vite, vitest
+
 # 2.0.4
 - Tested with latest Sveltekit and google-auth-library
 - Bump @sendgrid/mail, sveltekit, adapter-node, @types, @typescript-eslint, google-auth-library, prettier, prettier-plugin-svelte, sass, svelte, svelte-check, typescript, vite, vitest, yarn
