@@ -1,31 +1,16 @@
-export default {
-	root: true,
-	parser: '@typescript-eslint/parser',
-	extends: [
-		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended',
-		'plugin:svelte/recommended',
-		'prettier'
-	],
-	plugins: ['@typescript-eslint'],
-	ignorePatterns: ['*.cjs'],
-	parserOptions: {
-		sourceType: 'module',
-		ecmaVersion: 2020,
-		extraFileExtensions: ['.svelte']
+import eslint from '@eslint/js'
+import globals from 'globals'
+import prettierPluginRecommended from 'eslint-plugin-prettier/recommended'
+import sveltePlugin from 'eslint-plugin-svelte'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+	// Global - window and document objects
+	{
+		languageOptions: { globals: globals.browser }
 	},
-	env: {
-		browser: true,
-		es2017: true,
-		node: true
-	},
-	overrides: [
-		{
-			files: ['*.svelte'],
-			parser: 'svelte-eslint-parser',
-			parserOptions: {
-				parser: '@typescript-eslint/parser'
-			}
-		}
-	]
-}
+	eslint.configs.recommended,
+	...tseslint.configs.recommended,
+	...sveltePlugin.configs['flat/prettier'],
+	prettierPluginRecommended
+)
