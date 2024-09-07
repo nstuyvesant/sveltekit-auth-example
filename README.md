@@ -1,6 +1,6 @@
 # SvelteKit Authentication and Authorization Example
 
-**Updated for SvelteKit 2.5.7**
+**Updated for SvelteKit 2.5.26**
 
 This is an example of how to register, authenticate, and update users and limit their access to
 areas of the website by role (admin, teacher, student). It includes profile management and password resets via SendGrid.
@@ -85,7 +85,3 @@ The db_create.sql script adds three users to the database with obvious roles:
 - admin@example.com password admin123
 - teacher@example.com password teacher123
 - student@example.com password student123
-
-## My ask of you
-
-Please report any issues [here](https://github.com/nstuyvesant/sveltekit-auth-example/issues). [Pull requests](https://github.com/nstuyvesant/sveltekit-auth-example/pulls) are encouraged especially as SvelteKit is evolving rapidly.
