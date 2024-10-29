@@ -2,6 +2,10 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 2.1.0
+- Bump svelte, @sveltejs/kit, @sveltejs/adapter-node, @sveltejs/vite-plugin-svelte, @sendgrid/mail, pg, google-auth-library, @eslint/js, yarn, @types/google.accounts, @types/jsonwebtoken, @types/pg, eslint, eslint-plugin-svelte, globals, prettier-plugin-svelte, sass, svelte-check, tslib, typescript, typescript-eslint, vite, vitest
+- Change Typescript casting to use "as" since the Svelte 5 has an issue with angle brackets style
+
 # 2.0.8
 - Bump svelte, @sveltejs/kit, @sveltejs/vite-plugin-svelte, google-auth-library and other devDependencies
 

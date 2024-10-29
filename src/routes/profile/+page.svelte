@@ -17,7 +17,7 @@
 
 	async function update() {
 		message = ''
-		const form = <HTMLFormElement>document.getElementById('profile')
+		const form = document.getElementById('profile') as HTMLFormElement
 
 		if (!user?.email?.includes('gmail.com') && !passwordMatch()) {
 			confirmPassword.classList.add('is-invalid')
@@ -156,7 +156,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.card-body {
 		width: 25rem;
 	}

@@ -23,7 +23,7 @@
 
 	const resetPassword = async () => {
 		message = ''
-		const form = <HTMLFormElement>document.getElementById('reset')
+		const form = document.getElementById('reset') as HTMLFormElement
 
 		if (!passwordMatch()) {
 			confirmPassword.classList.add('is-invalid')
@@ -120,7 +120,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.card-body {
 		width: 25rem;
 	}

@@ -48,7 +48,7 @@
 
 	const openToast = (open: boolean) => {
 		if (open) {
-			const toastDiv = <HTMLDivElement>document.getElementById('authToast')
+			const toastDiv = document.getElementById('authToast') as HTMLDivElement
 			const t = new Toast(toastDiv)
 			t.show()
 		}
@@ -155,8 +155,7 @@
 	</div>
 </main>
 
-<style lang="scss" global>
-	// Make Retina displays crisper
+<style global>
 	* {
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;

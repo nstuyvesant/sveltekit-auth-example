@@ -14,7 +14,7 @@
 
 	const sendPasswordReset = async () => {
 		message = ''
-		const form = <HTMLFormElement>document.getElementById('forgot')
+		const form = document.getElementById('forgot') as HTMLFormElement
 
 		if (form.checkValidity()) {
 			if (email.toLowerCase().includes('gmail.com')) {
@@ -81,7 +81,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.card-body {
 		width: 25rem;
 	}

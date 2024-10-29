@@ -20,7 +20,7 @@
 	let message: string
 
 	async function register() {
-		const form = <HTMLFormElement>document.getElementById('register')
+		const form = document.getElementById('register') as HTMLFormElement
 		message = ''
 
 		if (!passwordMatch()) {
@@ -197,7 +197,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.card-body {
 		width: 25rem;
 	}

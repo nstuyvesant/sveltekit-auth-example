@@ -15,7 +15,7 @@
 
 	async function login() {
 		message = ''
-		const form = <HTMLFormElement>document.getElementById('signIn')
+		const form = document.getElementById('signIn') as HTMLFormElement
 
 		if (form.checkValidity()) {
 			try {
@@ -145,7 +145,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.card-body {
 		width: 25rem;
 	}
