@@ -7,7 +7,12 @@
 
 	import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
 
-	export let data: LayoutServerData
+	interface Props {
+		data: LayoutServerData
+		children?: import('svelte').Snippet
+	}
+
+	let { data, children }: Props = $props()
 
 	// If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
 	const { user } = data
@@ -34,7 +39,8 @@
 		if (!$loginSession) google.accounts.id.prompt()
 	})
 
-	async function logout() {
+	async function logout(event: MouseEvent) {
+		event.preventDefault()
 		// Request server delete httpOnly cookie called loginSession
 		const url = '/auth/logout'
 		const res = await fetch(url, {
@@ -54,7 +60,9 @@
 		}
 	}
 
-	$: openToast($toast.isOpen)
+	$effect(() => {
+		openToast($toast.isOpen)
+	})
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -117,7 +125,7 @@
 							</li>
 							<li>
 								<a
-									on:click|preventDefault={logout}
+									onclick={logout}
 									class="dropdown-item"
 									class:d-none={!$loginSession || $loginSession.id === 0}
 									href={'#'}>Logout</a
@@ -136,7 +144,7 @@
 </nav>
 
 <main class="container">
-	<slot />
+	{@render children?.()}
 
 	<div
 		id="authToast"

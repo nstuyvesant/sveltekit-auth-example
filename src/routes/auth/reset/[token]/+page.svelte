@@ -5,20 +5,24 @@
 	import { toast } from '../../../../stores'
 	import { focusOnFirstError } from '$lib/focus'
 
-	export let data: PageData
+	interface Props {
+		data: PageData
+	}
 
-	let focusedField: HTMLInputElement
-	let password: string
-	let confirmPassword: HTMLInputElement
-	let message: string
+	let { data }: Props = $props()
+
+	let focusedField: HTMLInputElement | undefined = $state()
+	let password = $state('')
+	let confirmPassword: HTMLInputElement | undefined = $state()
+	let message = $state('')
 
 	onMount(() => {
-		focusedField.focus()
+		focusedField?.focus()
 	})
 
 	const passwordMatch = () => {
 		if (!password) password = ''
-		return password == confirmPassword.value
+		return password == confirmPassword?.value
 	}
 
 	const resetPassword = async () => {
@@ -26,7 +30,7 @@
 		const form = document.getElementById('reset') as HTMLFormElement
 
 		if (!passwordMatch()) {
-			confirmPassword.classList.add('is-invalid')
+			confirmPassword?.classList.add('is-invalid')
 		}
 
 		if (form.checkValidity()) {
@@ -111,7 +115,7 @@
 					<p class="text-danger">{message}</p>
 				{/if}
 				<div class="d-grid gap-2">
-					<button on:click|preventDefault={resetPassword} class="btn btn-primary btn-lg"
+					<button onclick={resetPassword} type="button" class="btn btn-primary btn-lg"
 						>Send Email</button
 					>
 				</div>

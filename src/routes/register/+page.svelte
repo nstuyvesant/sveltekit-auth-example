@@ -5,9 +5,9 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
-	let focusedField: HTMLInputElement
+	let focusedField: HTMLInputElement | undefined = $state()
 
-	let user: User = {
+	let user: User = $state({
 		id: 0,
 		role: 'student',
 		firstName: '',
@@ -15,16 +15,16 @@
 		password: '',
 		email: '',
 		phone: ''
-	}
-	let confirmPassword: HTMLInputElement
-	let message: string
+	})
+	let confirmPassword: HTMLInputElement | undefined = $state()
+	let message = $state('')
 
 	async function register() {
 		const form = document.getElementById('register') as HTMLFormElement
 		message = ''
 
 		if (!passwordMatch()) {
-			confirmPassword.classList.add('is-invalid')
+			confirmPassword?.classList.add('is-invalid')
 			return
 		}
 
@@ -47,7 +47,7 @@
 		initializeGoogleAccounts()
 		renderGoogleButton()
 
-		focusedField.focus()
+		focusedField?.focus()
 	})
 
 	async function registerLocal(user: User) {
@@ -190,7 +190,7 @@
 						<p class="text-danger">{message}</p>
 					{/if}
 
-					<button type="button" on:click={register} class="btn btn-primary btn-lg">Register</button>
+					<button onclick={register} type="button" class="btn btn-primary btn-lg">Register</button>
 				</form>
 			{/if}
 		</div>

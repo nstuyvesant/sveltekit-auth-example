@@ -1,6 +1,6 @@
 # SvelteKit Authentication and Authorization Example
 
-**Updated for Svelte 5 and SvelteKit 2.7.3**
+**Updated for Svelte 5 and SvelteKit 2.8.1**
 
 This is an example of how to register, authenticate, and update users and limit their access to
 areas of the website by role (admin, teacher, student). It includes profile management and password resets via SendGrid.

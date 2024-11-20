@@ -4,15 +4,19 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { loginSession } from '../../stores'
 
-	export let data: PageData
-	const { user }: { user: User } = data
+	interface Props {
+		data: PageData
+	}
 
-	let focusedField: HTMLInputElement
-	let message: string
-	let confirmPassword: HTMLInputElement
+	let { data }: Props = $props()
+	const { user }: { user: User } = $state(data)
+
+	let focusedField: HTMLInputElement | undefined = $state()
+	let message = $state('')
+	let confirmPassword: HTMLInputElement | undefined = $state()
 
 	onMount(() => {
-		focusedField.focus()
+		focusedField?.focus()
 	})
 
 	async function update() {
@@ -20,7 +24,7 @@
 		const form = document.getElementById('profile') as HTMLFormElement
 
 		if (!user?.email?.includes('gmail.com') && !passwordMatch()) {
-			confirmPassword.classList.add('is-invalid')
+			confirmPassword?.classList.add('is-invalid')
 			return
 		}
 
@@ -44,7 +48,7 @@
 
 	const passwordMatch = () => {
 		if (!user.password) user.password = ''
-		return user.password == confirmPassword.value
+		return user.password == confirmPassword?.value
 	}
 </script>
 
@@ -150,7 +154,7 @@
 					<p>{message}</p>
 				{/if}
 
-				<button type="button" on:click={update} class="btn btn-primary btn-lg">Update</button>
+				<button onclick={update} type="button" class="btn btn-primary btn-lg">Update</button>
 			</form>
 		</div>
 	</div>

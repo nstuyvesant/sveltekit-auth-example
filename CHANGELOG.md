@@ -3,28 +3,35 @@
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
 # 2.1.0
+
 - Bump svelte, @sveltejs/kit, @sveltejs/adapter-node, @sveltejs/vite-plugin-svelte, @sendgrid/mail, pg, google-auth-library, @eslint/js, yarn, @types/google.accounts, @types/jsonwebtoken, @types/pg, eslint, eslint-plugin-svelte, globals, prettier-plugin-svelte, sass, svelte-check, tslib, typescript, typescript-eslint, vite, vitest
 - Change Typescript casting to use "as" since the Svelte 5 has an issue with angle brackets style
 
 # 2.0.8
+
 - Bump svelte, @sveltejs/kit, @sveltejs/vite-plugin-svelte, google-auth-library and other devDependencies
 
 # 2.0.7
+
 - Bump pg, google-auth-library, svelte, svelte-check, yarn, typescript-eslint, @types/pg, eslint, prettier, prettier-plugin-svelte, sass, tslib, typescript, vite, vitest
 - Install typescript-eslint, @eslint/js, globals, eslint-plugin-prettier
 - Change eslint config to flat
 
 # 2.0.6
+
 - Bump google-auth-library, @sendgrid/mail, pg, @sveltejs/kit, @sveltejs/vite-plugin-svelte, @types/pg, @typescript-eslint, eslint, eslint-config-prettier, prettier-plugin-svelte, sass, svelte, svelte-check, typescript, vite, vitest
 
 # 2.0.5
+
 - Bump @sveltejs/kit, @types/pg, @typescript-eslint, google-auth-library, sass, svelte-check, typescript, vite, vitest
 
 # 2.0.4
+
 - Tested with latest Sveltekit and google-auth-library
 - Bump @sendgrid/mail, sveltekit, adapter-node, @types, @typescript-eslint, google-auth-library, prettier, prettier-plugin-svelte, sass, svelte, svelte-check, typescript, vite, vitest, yarn
 
 # 2.0.3
+
 - Move to eslint's new eslint.config.js
 - Convert vite.config to TypeScript
 

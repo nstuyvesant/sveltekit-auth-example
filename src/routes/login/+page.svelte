@@ -6,12 +6,12 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
-	let focusedField: HTMLInputElement
-	let message: string
-	const credentials: Credentials = {
+	let focusedField: HTMLInputElement | undefined = $state()
+	let message = $state('')
+	const credentials: Credentials = $state({
 		email: '',
 		password: ''
-	}
+	})
 
 	async function login() {
 		message = ''
@@ -36,7 +36,7 @@
 		initializeGoogleAccounts()
 		renderGoogleButton()
 
-		focusedField.focus()
+		focusedField?.focus()
 	})
 
 	async function loginLocal(credentials: Credentials) {
@@ -135,7 +135,7 @@
 					<p class="text-danger">{message}</p>
 				{/if}
 				<div class="d-grid gap-2">
-					<button on:click|preventDefault={login} class="btn btn-primary btn-lg">Sign In</button>
+					<button onclick={login} type="button" class="btn btn-primary btn-lg">Sign In</button>
 				</div>
 			</form>
 		</div>

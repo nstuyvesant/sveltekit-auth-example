@@ -4,12 +4,12 @@
 	import { toast } from '../../stores'
 	import { focusOnFirstError } from '$lib/focus'
 
-	let focusedField: HTMLInputElement
-	let email: string
-	let message: string
+	let focusedField: HTMLInputElement | undefined = $state()
+	let email: string = $state('')
+	let message: string = $state('')
 
 	onMount(() => {
-		focusedField.focus()
+		focusedField?.focus()
 	})
 
 	const sendPasswordReset = async () => {
@@ -72,7 +72,7 @@
 					<p class="text-danger">{message}</p>
 				{/if}
 				<div class="d-grid gap-2">
-					<button on:click|preventDefault={sendPasswordReset} class="btn btn-primary btn-lg"
+					<button onclick={sendPasswordReset} type="button" class="btn btn-primary btn-lg"
 						>Send Email</button
 					>
 				</div>
