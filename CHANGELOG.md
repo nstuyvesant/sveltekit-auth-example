@@ -2,6 +2,11 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.0.1
+- Migrate to Svelte 5 runes mode
+- Format with prettier
+- Bump dependencies
+
 # 2.1.0
 
 - Bump svelte, @sveltejs/kit, @sveltejs/adapter-node, @sveltejs/vite-plugin-svelte, @sendgrid/mail, pg, google-auth-library, @eslint/js, yarn, @types/google.accounts, @types/jsonwebtoken, @types/pg, eslint, eslint-plugin-svelte, globals, prettier-plugin-svelte, sass, svelte-check, tslib, typescript, typescript-eslint, vite, vitest

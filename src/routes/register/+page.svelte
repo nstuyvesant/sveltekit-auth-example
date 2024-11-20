@@ -81,7 +81,7 @@
 	const passwordMatch = () => {
 		if (!user) return false // placate TypeScript
 		if (!user.password) user.password = ''
-		return user.password == confirmPassword.value
+		return user.password == confirmPassword?.value
 	}
 </script>
 
