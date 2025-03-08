@@ -2,6 +2,9 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.0.2
+- Bump dependencies
+
 # 5.0.1
 - Migrate to Svelte 5 runes mode
 - Format with prettier
