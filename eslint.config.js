@@ -1,16 +1,47 @@
-import eslint from '@eslint/js'
+import prettier from 'eslint-config-prettier'
+import { includeIgnoreFile } from '@eslint/compat'
+import js from '@eslint/js'
+import svelte from 'eslint-plugin-svelte'
 import globals from 'globals'
-import prettierPluginRecommended from 'eslint-plugin-prettier/recommended'
-import sveltePlugin from 'eslint-plugin-svelte'
-import tseslint from 'typescript-eslint'
+import { fileURLToPath } from 'node:url'
+import ts from 'typescript-eslint'
+import svelteConfig from './svelte.config.js'
 
-export default tseslint.config(
-	// Global - window and document objects
+const prettierIgnorePath = fileURLToPath(new URL('./.prettierignore', import.meta.url))
+
+export default ts.config(
+	includeIgnoreFile(prettierIgnorePath),
+	js.configs.recommended,
+	...ts.configs.recommended,
+	...svelte.configs['flat/recommended'],
+	prettier,
+	...svelte.configs.prettier,
 	{
-		languageOptions: { globals: globals.browser }
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				...globals.node
+			}
+		},
+		rules: {
+			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
+			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
+			'no-undef': 'off'
+		}
 	},
-	eslint.configs.recommended,
-	...tseslint.configs.recommended,
-	...sveltePlugin.configs['flat/prettier'],
-	prettierPluginRecommended
+	{
+		files: ['**/*.svelte', '**/*.svelte.ts'],
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+				extraFileExtensions: ['.svelte'],
+				parser: ts.parser,
+				svelteConfig
+			}
+		},
+		rules: {
+			'svelte/no-at-html-tags': 'warn',
+			'svelte/require-each-key': 'warn'
+		}
+	}
 )

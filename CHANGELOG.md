@@ -2,6 +2,9 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.0.4
+- Bump dependencies
+
 # 5.0.3
 - Bump dependencies
 
