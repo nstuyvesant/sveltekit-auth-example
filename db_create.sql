@@ -40,20 +40,44 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Required to generate UUIDs for sessions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Required for case-insensitive text (email_address domain)
+CREATE EXTENSION IF NOT EXISTS citext;
+
 -- Using hard-coded roles (often this would be a table)
 CREATE TYPE public.roles AS ENUM
   ('student', 'teacher', 'admin');
 
 ALTER TYPE public.roles OWNER TO auth;
 
+-- Domains
+CREATE DOMAIN public.email_address AS citext CHECK (
+  length(VALUE) <= 254
+  AND VALUE = btrim(VALUE)
+  AND VALUE ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'
+);
+
+COMMENT ON DOMAIN public.email_address IS 'RFC-compliant email address (case-insensitive, max 254 chars)';
+
+CREATE DOMAIN public.persons_name AS text CHECK (length(VALUE) <= 20) NOT NULL;
+
+COMMENT ON DOMAIN public.persons_name IS 'Person first or last name (max 20 characters)';
+
+CREATE DOMAIN public.phone_number AS text CHECK (
+  VALUE IS NULL
+  OR length(VALUE) <= 50
+);
+
+COMMENT ON DOMAIN public.phone_number IS 'Phone number (max 50 characters)';
+
 CREATE TABLE IF NOT EXISTS public.users (
   id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
   role roles NOT NULL DEFAULT 'student'::roles,
-  email character varying(80) COLLATE pg_catalog."default" NOT NULL,
+  email email_address NOT NULL,
   password character varying(80) COLLATE pg_catalog."default",
-  first_name character varying(20) COLLATE pg_catalog."default" NOT NULL,
-  last_name character varying(20) COLLATE pg_catalog."default" NOT NULL,
-  phone character varying(23) COLLATE pg_catalog."default",
+  first_name persons_name,
+  last_name persons_name,
+  opt_out boolean NOT NULL DEFAULT false,
+  phone phone_number,
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_email_unique UNIQUE (email)
 ) TABLESPACE pg_default;
@@ -78,13 +102,13 @@ CREATE INDEX users_password
 CREATE TABLE IF NOT EXISTS public.sessions (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   user_id integer NOT NULL,
-  expires timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '02:00:00'::interval),
+  expires timestamptz NOT NULL DEFAULT (CURRENT_TIMESTAMP + INTERVAL '2 hours'),
   CONSTRAINT sessions_pkey PRIMARY KEY (id),
   CONSTRAINT sessions_user_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE CASCADE
-    NOT VALID
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT sessions_one_per_user UNIQUE (user_id)
 ) TABLESPACE pg_default;
 
 ALTER TABLE public.sessions OWNER to auth;
@@ -98,8 +122,8 @@ CREATE OR REPLACE FUNCTION public.authenticate(
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
 DECLARE
-  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
-  input_password varchar(80) := (input->>'password')::varchar;
+  input_email text := trim(input->>'email');
+  input_password text := input->>'password';
 BEGIN
   IF input_email IS NULL OR input_password IS NULL THEN
     response := json_build_object('statusCode', 400, 'status', 'Please provide an email address and password to authenticate.', 'user', NULL);
@@ -107,24 +131,25 @@ BEGIN
   END IF;
 
   WITH user_authenticated AS (
-    SELECT users.id, role, first_name, last_name, phone
+    SELECT users.id, role, first_name, last_name, phone, opt_out
     FROM users
     WHERE email = input_email AND password = crypt(input_password, password) LIMIT 1
   )
   SELECT json_build_object(
-	'statusCode', CASE WHEN (SELECT COUNT(*) FROM user_authenticated) > 0 THEN 200 ELSE 401 END,
-	'status', CASE WHEN (SELECT COUNT(*) FROM user_authenticated) > 0
+	'statusCode', CASE WHEN EXISTS (SELECT 1 FROM user_authenticated) THEN 200 ELSE 401 END,
+	'status', CASE WHEN EXISTS (SELECT 1 FROM user_authenticated)
 	  THEN 'Login successful.'
 	  ELSE 'Invalid username/password combination.'
 	END,
-	'user', CASE WHEN (SELECT COUNT(*) FROM user_authenticated) > 0
+	'user', CASE WHEN EXISTS (SELECT 1 FROM user_authenticated)
 	  THEN (SELECT json_build_object(
 		  'id', user_authenticated.id,
 		  'role', user_authenticated.role,
 		  'email', input_email,
 		  'firstName', user_authenticated.first_name,
 		  'lastName', user_authenticated.last_name,
-		  'phone', user_authenticated.phone)
+		  'phone', user_authenticated.phone,
+		  'optOut', user_authenticated.opt_out)
 		 FROM user_authenticated)
 	  ELSE NULL
 	  END,
@@ -142,8 +167,12 @@ CREATE OR REPLACE FUNCTION public.create_session(
     COST 100
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
-DELETE FROM sessions WHERE user_id = input_user_id;
-INSERT INTO sessions(user_id) VALUES (input_user_id) RETURNING sessions.id;
+  -- Remove expired sessions (index-friendly cleanup)
+  DELETE FROM sessions WHERE expires < CURRENT_TIMESTAMP;
+  -- Remove any existing session(s) for this user
+  DELETE FROM sessions WHERE user_id = input_user_id;
+  -- Create the new session
+  INSERT INTO sessions(user_id) VALUES (input_user_id) RETURNING sessions.id;
 $BODY$;
 
 ALTER FUNCTION public.create_session(integer) OWNER TO auth;
@@ -159,6 +188,7 @@ SELECT json_build_object(
   'firstName', users.first_name,
   'lastName', users.last_name,
   'phone', users.phone,
+  'optOut', users.opt_out,
   'expires', sessions.expires
 ) AS user
 FROM sessions
@@ -177,11 +207,11 @@ CREATE OR REPLACE FUNCTION public.register(
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
 DECLARE
-  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
-  input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
-  input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
-  input_phone varchar(23) := TRIM((input->>'phone')::varchar);
-  input_password varchar(80) := (input->>'password')::varchar;
+  input_email text := trim(input->>'email');
+  input_first_name text := trim(input->>'firstName');
+  input_last_name text := trim(input->>'lastName');
+  input_phone text := trim(input->>'phone');
+  input_password text := input->>'password';
 BEGIN
   PERFORM id FROM users WHERE email = input_email;
   IF NOT FOUND THEN
@@ -190,7 +220,7 @@ BEGIN
       RETURNING
         json_build_object(
           'sessionId', create_session(users.id),
-          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', input_phone, 'optOut', false)
+          'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', input_phone, 'optOut', users.opt_out)
         ) INTO user_session;
   ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
   	SELECT authenticate(input) INTO user_session;
