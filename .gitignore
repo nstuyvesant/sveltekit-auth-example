@@ -1,9 +1,26 @@
-.DS_Store
+# Yarn
+.yarn/cache
+.yarn/install-state.gz
+
+# Node
 node_modules
-build
+
+# Output
+.vercel
 .svelte-kit
+build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
 .env
-!.env.example
+
+# Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-.yarn/install-state.gz
+
+# Testing
+coverage
+test-results

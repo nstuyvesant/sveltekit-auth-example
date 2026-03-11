@@ -15,7 +15,19 @@ if (!production) baseCsp.push('ws://localhost:3000')
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: vitePreprocess(),
+	preprocess: [
+		vitePreprocess(),
+		{
+			name: 'announcer-styles-to-tailwind',
+			markup: ({ content: code }) => {
+				code = code.replace(
+					/(<div id="svelte-announcer"[^>]*?)\s+style="[^"]*"/,
+					'$1 class="tw:absolute tw:left-0 tw:top-0 tw:[clip:rect(0,0,0,0)] tw:[clip-path:inset(50%)] tw:overflow-hidden tw:whitespace-nowrap tw:w-px tw:h-px"'
+				)
+				return { code }
+			}
+		}
+	],
 
 	kit: {
 		adapter: adapter({

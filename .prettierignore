@@ -3,7 +3,7 @@
 .vscode
 .yarn
 node_modules
+coverage
 .env
 !.env.example
 yarn.lock
-

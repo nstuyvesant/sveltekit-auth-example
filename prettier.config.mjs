@@ -1,17 +1,27 @@
 export default {
 	$schema: 'https://json.schemastore.org/prettierrc',
 	useTabs: true,
-	tabWidth: 2,
-	semi: false,
-	arrowParens: 'avoid',
 	singleQuote: true,
 	trailingComma: 'none',
 	printWidth: 100,
-	plugins: ['prettier-plugin-svelte'],
+	tabWidth: 2,
+	semi: false,
+	arrowParens: 'avoid',
+
+
+	plugins: ['prettier-plugin-svelte', 'prettier-plugin-sql', 'prettier-plugin-tailwindcss'],
 	overrides: [
 		{
 			files: '*.svelte',
 			options: { parser: 'svelte' }
+		},
+		{
+			files: '*.sql',
+			options: {
+				parser: 'sql',
+				language: 'postgresql'
+			}
 		}
-	]
+	],
+	tailwindStylesheet: './src/routes/layout.css'
 }
