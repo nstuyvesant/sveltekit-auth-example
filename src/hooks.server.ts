@@ -3,7 +3,7 @@ import { query } from '$lib/server/db'
 
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) {
-	const sql = `SELECT * FROM get_session($1);`
+	const sql = `SELECT * FROM get_session($1::uuid);`
 	const { rows } = await query(sql, [sessionId])
 	if (rows?.length > 0) {
 		event.locals.user = <User>rows[0].get_session

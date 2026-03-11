@@ -26,7 +26,6 @@ CREATE DATABASE auth
   WITH 
   OWNER = auth
   ENCODING = 'UTF8'
-  TABLESPACE = pg_default
   CONNECTION LIMIT = -1;
 
 COMMENT ON DATABASE auth IS 'SvelteKit Auth Example';
