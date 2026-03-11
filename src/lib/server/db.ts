@@ -12,15 +12,16 @@ import { env } from '$env/dynamic/private'
  */
 type QueryFunction = <T extends QueryResultRow>(
 	sql: string,
-	params?: (string | number | boolean | object | null)[]
+	params?: (string | number | boolean | object | null)[],
+	name?: string
 ) => Promise<QueryResult<T>>
 
 let queryFn: QueryFunction
 
 const pool = new pg.Pool({
 	max: 10, // default
-	idleTimeoutMillis: 30000,
-	connectionTimeoutMillis: 2000,
+	idleTimeoutMillis: 10000,
+	connectionTimeoutMillis: 5000,
 	connectionString: env.DATABASE_URL,
 	ssl: env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false
 })
@@ -31,8 +32,9 @@ pool.on('error', (err: Error) => {
 
 queryFn = <T extends QueryResultRow>(
 	sql: string,
-	params?: (string | number | boolean | object | null)[]
-) => pool.query<T>(sql, params)
+	params?: (string | number | boolean | object | null)[],
+	name?: string
+) => pool.query<T>(name ? { name, text: sql, values: params } : { text: sql, values: params })
 
 /**
  * Executes a parameterized SQL query against the PostgreSQL database.

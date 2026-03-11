@@ -14,8 +14,9 @@
 
 	let { data, children }: Props = $props()
 
-	const { user } = data
-	$loginSession = user
+	$effect(() => {
+		$loginSession = data.user
+	})
 
 	let navOpen = $state(false)
 	let dropdownOpen = $state(false)
