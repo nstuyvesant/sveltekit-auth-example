@@ -2,10 +2,9 @@
 
 **Updated for Svelte 5 and SvelteKit 2.19**
 
-This is an example of how to register, authenticate, and update users and limit their access to
-areas of the website by role (admin, teacher, student). It includes profile management and password resets via SendGrid.
+This is an example of how to register, authenticate, and update users and limit their access to areas of the website by role (admin, teacher, student). It includes profile management and password resets via SendGrid.
 
-It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Bootstrap. PostgreSQL functions handle password hashing and UUID generation for the session ID. Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash).
+It's a Single Page App (SPA) built with SvelteKit and a PostgreSQL database back-end. Code is TypeScript and the website is styled using Tailwind CSS. PostgreSQL functions handle password hashing and UUID generation for the session ID. Unlike most authentication examples, this SPA does not use callbacks that redirect back to the site (causing the website to be reloaded with a visual flash).
 
 The project includes a Content Security Policy (CSP) in svelte.config.js.
 

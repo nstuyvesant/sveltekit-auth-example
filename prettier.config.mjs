@@ -8,7 +8,6 @@ export default {
 	semi: false,
 	arrowParens: 'avoid',
 
-
 	plugins: ['prettier-plugin-svelte', 'prettier-plugin-sql', 'prettier-plugin-tailwindcss'],
 	overrides: [
 		{
