@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { page } from '$app/stores'
+	import { page } from '$app/state'
 	import { loginSession } from '../../stores'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
 	let focusedField: HTMLInputElement | undefined = $state()
 	let message = $state('')
+	let submitted = $state(false)
 	const credentials: Credentials = $state({
 		email: '',
 		password: ''
@@ -15,6 +16,7 @@
 
 	async function login() {
 		message = ''
+		submitted = false
 		const form = document.getElementById('signIn') as HTMLFormElement
 
 		if (form.checkValidity()) {
@@ -27,7 +29,7 @@
 				}
 			}
 		} else {
-			form.classList.add('was-validated')
+			submitted = true
 			focusOnFirstError(form)
 		}
 	}
@@ -52,7 +54,7 @@
 			if (res.ok) {
 				loginSession.set(fromEndpoint.user)
 				const { role } = fromEndpoint.user
-				const referrer = $page.url.searchParams.get('referrer')
+				const referrer = page.url.searchParams.get('referrer')
 				if (referrer) goto(referrer)
 				switch (role) {
 					case 'teacher':
@@ -70,6 +72,7 @@
 		} catch (err) {
 			if (err instanceof Error) {
 				console.error('Login error', err)
+				message = err.message
 			}
 		}
 	}
@@ -80,105 +83,67 @@
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<div class="d-flex justify-content-center mt-5">
-	<div class="card">
-		<div class="card-body">
-			<form id="signIn" autocomplete="on" novalidate>
-				<h4><strong>Sign In</strong></h4>
-				<p>Welcome back.</p>
-				<div>
-					<div class="mb-1">
-						<div id="googleButton"></div>
-					</div>
-					<div class="text-centered">
-						<div class="strike">
-							<span>or</span>
-						</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="email">Email</label>
-						<input
-							type="email"
-							class="form-control"
-							bind:this={focusedField}
-							bind:value={credentials.email}
-							required
-							placeholder="Email"
-							autocomplete="email"
-						/>
-						<div class="invalid-feedback">Email address required</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="password">Password</label>
-						<input
-							class="form-control"
-							type="password"
-							bind:value={credentials.password}
-							required
-							minlength="8"
-							maxlength="80"
-							placeholder="Password"
-							autocomplete="current-password"
-						/>
-						<div class="invalid-feedback">Password with 8 chars or more required</div>
-						<div class="form-text">
-							Password minimum length 8, must have one capital letter, 1 number, and one unique
-							character.
-						</div>
-					</div>
-				</div>
-				<div>
-					<a href="/forgot" class="text-black-50">Forgot Password?</a><br />
-					<br />
-				</div>
-				{#if message}
-					<p class="text-danger">{message}</p>
-				{/if}
-				<div class="d-grid gap-2">
-					<button onclick={login} type="button" class="btn btn-primary btn-lg">Sign In</button>
-				</div>
-			</form>
-		</div>
-		<div class="card-footer text-center bg-white">
-			<a href="/register" class="text-black-50">Don't have an account?</a>
-		</div>
+<form
+	id="signIn"
+	autocomplete="on"
+	novalidate
+	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
+	class:submitted
+>
+	<h4><strong>Sign In</strong></h4>
+	<p>Welcome back.</p>
+
+	<div id="googleButton"></div>
+
+	<div class="tw:flex tw:items-center tw:gap-2 tw:text-gray-400 tw:text-sm">
+		<span class="tw:flex-1 tw:border-t tw:border-gray-300"></span>
+		<span>or</span>
+		<span class="tw:flex-1 tw:border-t tw:border-gray-300"></span>
 	</div>
-</div>
 
-<style>
-	.card-body {
-		width: 25rem;
-	}
+	<label class="tw:block tw:text-sm tw:font-medium" for="email">
+		Email
+		<input
+			type="email"
+			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			bind:this={focusedField}
+			bind:value={credentials.email}
+			required
+			placeholder="Email"
+			autocomplete="email"
+		/>
+		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Email address required</span>
+	</label>
 
-	.strike {
-		display: block;
-		text-align: center;
-		overflow: hidden;
-		white-space: nowrap;
-	}
+	<label class="tw:block tw:text-sm tw:font-medium" for="password">
+		Password
+		<input
+			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			type="password"
+			bind:value={credentials.password}
+			required
+			minlength="8"
+			maxlength="80"
+			placeholder="Password"
+			autocomplete="current-password"
+		/>
+		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
+		<span class="tw:text-xs tw:text-gray-500">
+			Minimum 8 characters, one capital letter, one number, one special character.
+		</span>
+	</label>
 
-	.strike > span {
-		position: relative;
-		display: inline-block;
-	}
+	<a href="/forgot" class="tw:text-sm tw:text-gray-500">Forgot Password?</a>
 
-	.strike > span:before,
-	.strike > span:after {
-		content: '';
-		position: absolute;
-		top: 50%;
-		width: 9999px;
-		height: 1px;
-		background: darkgray;
-	}
+	{#if message}
+		<p class="tw:text-red-600">{message}</p>
+	{/if}
 
-	.strike > span:before {
-		right: 100%;
-		margin-right: 10px;
-	}
+	<button onclick={login} type="button" class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700">
+		Sign In
+	</button>
 
-	.strike > span:after {
-		left: 100%;
-		margin-left: 10px;
-	}
-</style>
+	<p class="tw:text-center tw:text-sm">
+		<a href="/register" class="tw:text-gray-500">Don't have an account?</a>
+	</p>
+</form>

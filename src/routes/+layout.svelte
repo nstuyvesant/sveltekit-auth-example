@@ -5,7 +5,6 @@
 	import { loginSession, toast } from '../stores'
 	import { initializeGoogleAccounts } from '$lib/google'
 
-	import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
 	import './layout.css'
 
 	interface Props {
@@ -15,167 +14,117 @@
 
 	let { data, children }: Props = $props()
 
-	// If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
 	const { user } = data
 	$loginSession = user
 
-	let Toast: any
+	let navOpen = $state(false)
+	let dropdownOpen = $state(false)
 
 	beforeNavigate(() => {
-		let expirationDate = $loginSession?.expires ? new Date($loginSession.expires) : undefined
-
+		navOpen = false
+		dropdownOpen = false
+		const expirationDate = $loginSession?.expires ? new Date($loginSession.expires) : undefined
 		if (expirationDate && expirationDate < new Date()) {
 			console.log('Login session expired.')
 			$loginSession = null
 		}
 	})
 
-	onMount(async () => {
+	onMount(() => {
 		initializeGoogleAccounts()
-
-		await import('bootstrap/js/dist/collapse') // lots of ways to load Bootstrap but prefer this approach to avoid SSR issues
-		await import('bootstrap/js/dist/dropdown')
-		Toast = (await import('bootstrap/js/dist/toast')).default
-
 		if (!$loginSession) google.accounts.id.prompt()
 	})
 
 	async function logout(event: MouseEvent) {
 		event.preventDefault()
-		// Request server delete httpOnly cookie called loginSession
-		const url = '/auth/logout'
-		const res = await fetch(url, {
-			method: 'POST'
-		})
+		const res = await fetch('/auth/logout', { method: 'POST' })
 		if (res.ok) {
-			loginSession.set(undefined) // delete loginSession.user from
+			loginSession.set(undefined)
 			goto('/login')
 		} else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
 	}
-
-	const openToast = (open: boolean) => {
-		if (open) {
-			const toastDiv = document.getElementById('authToast') as HTMLDivElement
-			const t = new Toast(toastDiv)
-			t.show()
-		}
-	}
-
-	$effect(() => {
-		openToast($toast.isOpen)
-	})
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	<div class="container">
-		<a class="navbar-brand" href="/">SvelteKit-Auth-Example</a>
-		<button
-			class="navbar-toggler"
-			type="button"
-			data-bs-toggle="collapse"
-			data-bs-target="#navbarMain"
-			aria-controls="navbarMain"
-			aria-expanded="false"
-			aria-label="Toggle navigation"
-		>
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarMain">
-			<ul class="navbar-nav me-5">
-				<li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-				<li class="nav-item"><a class="nav-link" href="/info">Info</a></li>
+<nav class="tw:bg-gray-100 tw:border-b tw:border-gray-200">
+	<div class="tw:mx-auto tw:max-w-5xl tw:px-4 tw:flex tw:items-center tw:justify-between tw:h-14">
+		<a class="tw:font-semibold tw:text-gray-800 tw:no-underline" href="/">SvelteKit-Auth-Example</a>
 
-				{#if $loginSession}
-					{#if $loginSession.role == 'admin'}
-						<li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
-					{/if}
-					{#if $loginSession.role != 'student'}
-						<li class="nav-item"><a class="nav-link" href="/teachers">Teachers</a></li>
-					{/if}
-				{/if}
-			</ul>
-			<ul class="navbar-nav">
-				{#if $loginSession}
-					<li class="nav-item dropdown">
-						<a
-							class="nav-link dropdown-toggle"
-							href={'#'}
-							role="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="16"
-								height="16"
-								fill="currentColor"
-								class="avatar"
-								viewBox="0 0 16 16"
-							>
-								<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-								<path
-									fill-rule="evenodd"
-									d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
-								/>
-							</svg>
-							{$loginSession.firstName}
-						</a>
-						<ul class="dropdown-menu">
-							<li>
-								<a class="dropdown-item" href="/profile">Profile</a>
-							</li>
-							<li>
-								<a
-									onclick={logout}
-									class="dropdown-item"
-									class:d-none={!$loginSession || $loginSession.id === 0}
-									href={'#'}>Logout</a
-								>
-							</li>
+		<!-- Mobile toggle -->
+		<button
+			class="tw:sm:hidden tw:p-2 tw:rounded tw:text-gray-600 hover:tw:bg-gray-200"
+			aria-label="Toggle navigation"
+			onclick={() => (navOpen = !navOpen)}
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" class="tw:h-5 tw:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+			</svg>
+		</button>
+
+		<!-- Nav links -->
+		<div class="tw:hidden tw:sm:flex tw:items-center tw:gap-6 {navOpen ? '!tw:flex tw:flex-col tw:absolute tw:top-14 tw:left-0 tw:right-0 tw:bg-gray-100 tw:p-4 tw:border-b tw:border-gray-200' : ''}">
+			<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/">Home</a>
+			<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/info">Info</a>
+
+			{#if $loginSession?.role === 'admin'}
+				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/admin">Admin</a>
+			{/if}
+			{#if $loginSession && $loginSession.role !== 'student'}
+				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/teachers">Teachers</a>
+			{/if}
+
+			{#if $loginSession}
+				<!-- User dropdown -->
+				<div class="tw:relative">
+					<button
+						class="tw:flex tw:items-center tw:gap-1 tw:text-sm tw:text-gray-700 hover:tw:text-gray-900 tw:bg-transparent tw:border-0 tw:cursor-pointer"
+						onclick={() => (dropdownOpen = !dropdownOpen)}
+						aria-expanded={dropdownOpen}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="tw:relative tw:top-[-1.5px]">
+							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+							<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+						</svg>
+						{$loginSession.firstName}
+						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+						</svg>
+					</button>
+					{#if dropdownOpen}
+						<ul class="tw:absolute tw:right-0 tw:mt-1 tw:w-36 tw:rounded tw:border tw:border-gray-200 tw:bg-white tw:shadow-md tw:py-1 tw:z-50 tw:list-none tw:p-0">
+							<li><a class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:bg-gray-100" href="/profile">Profile</a></li>
+							{#if $loginSession.id !== 0}
+								<li><a onclick={logout} class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:bg-gray-100" href="#">Logout</a></li>
+							{/if}
 						</ul>
-					</li>
-				{:else}
-					<li class="nav-item">
-						<a class="nav-link" href="/login">Login</a>
-					</li>
-				{/if}
-			</ul>
+					{/if}
+				</div>
+			{:else}
+				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/login">Login</a>
+			{/if}
 		</div>
 	</div>
 </nav>
 
-<main class="container">
+<main class="tw:mx-auto tw:max-w-5xl tw:px-4 tw:py-6">
 	{@render children?.()}
+</main>
 
+<!-- Toast notification -->
+{#if $toast.isOpen}
 	<div
-		id="authToast"
-		class="toast position-fixed top-0 end-0 m-3"
 		role="alert"
 		aria-live="assertive"
 		aria-atomic="true"
+		class="tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:min-w-64 tw:rounded tw:shadow-lg tw:border tw:border-gray-200 tw:bg-white tw:overflow-hidden"
 	>
-		<div class="toast-header bg-primary text-white">
-			<strong class="me-auto">{$toast.title}</strong>
-			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+		<div class="tw:flex tw:items-center tw:justify-between tw:bg-blue-600 tw:px-4 tw:py-2">
+			<strong class="tw:text-white tw:text-sm">{$toast.title}</strong>
+			<button
+				type="button"
+				aria-label="Close"
+				class="tw:text-white tw:bg-transparent tw:border-0 tw:cursor-pointer tw:text-lg tw:leading-none"
+				onclick={() => ($toast = { ...$toast, isOpen: false })}>&times;</button>
 		</div>
-		<div class="toast-body">
-			{$toast.body}
-		</div>
+		<div class="tw:px-4 tw:py-3 tw:text-sm">{$toast.body}</div>
 	</div>
-</main>
-
-<style global>
-	* {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-	}
-
-	.toast {
-		z-index: 9999;
-	}
-
-	.avatar {
-		position: relative;
-		top: -1.5px;
-	}
-</style>
+{/if}

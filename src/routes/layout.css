@@ -14,16 +14,4 @@
 	:host {
 		@apply tw:font-sans tw:text-gray-800;
 	}
-
-	a {
-		@apply tw:text-blue-700 tw:underline tw:decoration-dotted tw:decoration-1 tw:underline-offset-4 tw:hover:text-orange-500;
-	}
-
-	p {
-		@apply tw:mb-4;
-	}
-
-	h2 {
-		@apply tw:mb-4;
-	}
 }

@@ -7,6 +7,7 @@
 	let focusedField: HTMLInputElement | undefined = $state()
 	let email: string = $state('')
 	let message: string = $state('')
+	let submitted = $state(false)
 
 	onMount(() => {
 		focusedField?.focus()
@@ -38,7 +39,7 @@
 				return goto('/')
 			}
 		} else {
-			form.classList.add('was-validated')
+			submitted = true
 			focusOnFirstError(form)
 		}
 	}
@@ -48,41 +49,42 @@
 	<title>Forgot Password</title>
 </svelte:head>
 
-<div class="d-flex justify-content-center mt-5">
-	<div class="card">
-		<div class="card-body">
-			<form id="forgot" autocomplete="on" novalidate>
-				<h4><strong>Forgot password</strong></h4>
-				<p>Hey, you're human. We get it.</p>
-				<div class="mb-3">
-					<label class="form-label" for="email">Email</label>
-					<input
-						bind:this={focusedField}
-						bind:value={email}
-						type="email"
-						id="email"
-						class="form-control"
-						required
-						placeholder="Email"
-						autocomplete="email"
-					/>
-					<div class="invalid-feedback">Email address required</div>
-				</div>
-				{#if message}
-					<p class="text-danger">{message}</p>
-				{/if}
-				<div class="d-grid gap-2">
-					<button onclick={sendPasswordReset} type="button" class="btn btn-primary btn-lg"
-						>Send Email</button
-					>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
+<form
+	id="forgot"
+	autocomplete="on"
+	novalidate
+	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
+	class:submitted
+>
+	<h4><strong>Forgot password</strong></h4>
+	<p>Hey, you're human. We get it.</p>
 
-<style>
-	.card-body {
-		width: 25rem;
-	}
-</style>
+	<label class="tw:block tw:text-sm tw:font-medium" for="email">
+		Email
+		<input
+			bind:this={focusedField}
+			bind:value={email}
+			type="email"
+			id="email"
+			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			required
+			placeholder="Email"
+			autocomplete="email"
+		/>
+		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Email address required</span>
+	</label>
+
+	{#if message}
+		<p class="tw:text-red-600">{message}</p>
+	{/if}
+
+	<button
+		onclick={sendPasswordReset}
+		type="button"
+		class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700"
+	>
+		Send Email
+	</button>
+</form>
+
+

@@ -18,13 +18,17 @@
 	})
 	let confirmPassword: HTMLInputElement | undefined = $state()
 	let message = $state('')
+	let submitted = $state(false)
+	let passwordMismatch = $state(false)
 
 	async function register() {
 		const form = document.getElementById('register') as HTMLFormElement
 		message = ''
+		submitted = false
+		passwordMismatch = false
 
 		if (!passwordMatch()) {
-			confirmPassword?.classList.add('is-invalid')
+			passwordMismatch = true
 			return
 		}
 
@@ -38,7 +42,7 @@
 				}
 			}
 		} else {
-			form.classList.add('was-validated')
+			submitted = true
 			focusOnFirstError(form)
 		}
 	}
@@ -89,116 +93,123 @@
 	<title>Register</title>
 </svelte:head>
 
-<div class="d-flex justify-content-center my-3">
-	<div class="card login">
-		<div class="card-body">
-			<h4><strong>Register</strong></h4>
-			<p>Welcome to our community.</p>
-			{#if user}
-				<form id="register" autocomplete="on" novalidate class="mt-3">
-					<div class="mb-3">
-						<div id="googleButton"></div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="email">Email</label>
-						<input
-							bind:this={focusedField}
-							type="email"
-							class="form-control"
-							bind:value={user.email}
-							required
-							placeholder="Email"
-							id="email"
-							autocomplete="email"
-						/>
-						<div class="invalid-feedback">Email address required</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="password">Password</label>
-						<input
-							type="password"
-							id="password"
-							class="form-control"
-							bind:value={user.password}
-							required
-							minlength="8"
-							maxlength="80"
-							placeholder="Password"
-							autocomplete="new-password"
-						/>
-						<div class="invalid-feedback">Password with 8 chars or more required</div>
-						<div class="form-text">
-							Password minimum length 8, must have one capital letter, 1 number, and one unique
-							character.
-						</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="password">Confirm password</label>
-						<input
-							type="password"
-							id="password"
-							class="form-control"
-							bind:this={confirmPassword}
-							required
-							minlength="8"
-							maxlength="80"
-							placeholder="Password (again)"
-							autocomplete="new-password"
-						/>
-						<div class="form-text">
-							Password minimum length 8, must have one capital letter, 1 number, and one unique
-							character.
-						</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="firstName">First name</label>
-						<input
-							bind:value={user.firstName}
-							class="form-control"
-							id="firstName"
-							placeholder="First name"
-							required
-							autocomplete="given-name"
-						/>
-						<div class="invalid-feedback">First name required</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="lastName">Last name</label>
-						<input
-							bind:value={user.lastName}
-							class="form-control"
-							id="lastName"
-							placeholder="Last name"
-							required
-							autocomplete="family-name"
-						/>
-						<div class="invalid-feedback">Last name required</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="phone">Phone</label>
-						<input
-							type="tel"
-							bind:value={user.phone}
-							id="phone"
-							class="form-control"
-							placeholder="Phone"
-							autocomplete="tel-local"
-						/>
-					</div>
+{#if user}
+	<form
+		id="register"
+		autocomplete="on"
+		novalidate
+		class="tw:mx-auto tw:my-8 tw:max-w-sm tw:space-y-4"
+		class:submitted
+	>
+		<h4><strong>Register</strong></h4>
+		<p>Welcome to our community.</p>
 
-					{#if message}
-						<p class="text-danger">{message}</p>
-					{/if}
+		<div id="googleButton"></div>
 
-					<button onclick={register} type="button" class="btn btn-primary btn-lg">Register</button>
-				</form>
+		<label class="tw:block tw:text-sm tw:font-medium" for="email">
+			Email
+			<input
+				bind:this={focusedField}
+				type="email"
+				class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+				bind:value={user.email}
+				required
+				placeholder="Email"
+				id="email"
+				autocomplete="email"
+			/>
+			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Email address required</span>
+		</label>
+
+		<label class="tw:block tw:text-sm tw:font-medium" for="password">
+			Password
+			<input
+				type="password"
+				id="password"
+				class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+				bind:value={user.password}
+				required
+				minlength="8"
+				maxlength="80"
+				placeholder="Password"
+				autocomplete="new-password"
+			/>
+			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
+			<span class="tw:text-xs tw:text-gray-500">
+				Minimum 8 characters, one capital letter, one number, one special character.
+			</span>
+		</label>
+
+		<label class="tw:block tw:text-sm tw:font-medium" for="confirmPassword">
+			Confirm password
+			<input
+				type="password"
+				id="confirmPassword"
+				class="tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500"
+				class:tw:border-red-500={passwordMismatch}
+				bind:this={confirmPassword}
+				required
+				minlength="8"
+				maxlength="80"
+				placeholder="Password (again)"
+				autocomplete="new-password"
+			/>
+			{#if passwordMismatch}
+				<span class="tw:text-xs tw:text-red-600 tw:mt-0.5">Passwords must match</span>
 			{/if}
-		</div>
-	</div>
-</div>
+			<span class="tw:text-xs tw:text-gray-500">
+				Minimum 8 characters, one capital letter, one number, one special character.
+			</span>
+		</label>
 
-<style>
-	.card-body {
-		width: 25rem;
-	}
-</style>
+		<label class="tw:block tw:text-sm tw:font-medium" for="firstName">
+			First name
+			<input
+				bind:value={user.firstName}
+				class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+				id="firstName"
+				placeholder="First name"
+				required
+				autocomplete="given-name"
+			/>
+			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">First name required</span>
+		</label>
+
+		<label class="tw:block tw:text-sm tw:font-medium" for="lastName">
+			Last name
+			<input
+				bind:value={user.lastName}
+				class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+				id="lastName"
+				placeholder="Last name"
+				required
+				autocomplete="family-name"
+			/>
+			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Last name required</span>
+		</label>
+
+		<label class="tw:block tw:text-sm tw:font-medium" for="phone">
+			Phone
+			<input
+				type="tel"
+				bind:value={user.phone}
+				id="phone"
+				class="tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500"
+				placeholder="Phone"
+				autocomplete="tel-local"
+			/>
+		</label>
+
+		{#if message}
+			<p class="tw:text-red-600">{message}</p>
+		{/if}
+
+		<button
+			onclick={register}
+			type="button"
+			class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700"
+		>
+			Register
+		</button>
+	</form>
+{/if}

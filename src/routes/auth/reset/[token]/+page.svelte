@@ -15,6 +15,8 @@
 	let password = $state('')
 	let confirmPassword: HTMLInputElement | undefined = $state()
 	let message = $state('')
+	let submitted = $state(false)
+	let passwordMismatch = $state(false)
 
 	onMount(() => {
 		focusedField?.focus()
@@ -27,10 +29,13 @@
 
 	const resetPassword = async () => {
 		message = ''
+		submitted = false
+		passwordMismatch = false
 		const form = document.getElementById('reset') as HTMLFormElement
 
 		if (!passwordMatch()) {
-			confirmPassword?.classList.add('is-invalid')
+			passwordMismatch = true
+			return
 		}
 
 		if (form.checkValidity()) {
@@ -60,7 +65,7 @@
 				message = body.message
 			}
 		} else {
-			form.classList.add('was-validated')
+			submitted = true
 			focusOnFirstError(form)
 		}
 	}
@@ -70,62 +75,65 @@
 	<title>New Password</title>
 </svelte:head>
 
-<div class="d-flex justify-content-center mt-5">
-	<div class="card login">
-		<div class="card-body">
-			<form id="reset" autocomplete="on" novalidate>
-				<h4><strong>New Password</strong></h4>
-				<p>Please provide a new password.</p>
-				<div class="mb-3">
-					<label class="form-label" for="password">Password</label>
-					<input
-						class="form-control"
-						id="password"
-						type="password"
-						bind:value={password}
-						bind:this={focusedField}
-						minlength="8"
-						maxlength="80"
-						placeholder="Password"
-						autocomplete="new-password"
-					/>
-					<div class="invalid-feedback">Password with 8 chars or more required</div>
-					<div class="form-text">
-						Password minimum length 8, must have one capital letter, 1 number, and one unique
-						character.
-					</div>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="passwordConfirm">Password (retype)</label>
-					<input
-						class="form-control"
-						id="passwordConfirm"
-						type="password"
-						required={!!password}
-						bind:this={confirmPassword}
-						minlength="8"
-						maxlength="80"
-						placeholder="Password (again)"
-						autocomplete="new-password"
-					/>
-					<div class="invalid-feedback">Passwords must match</div>
-				</div>
+<form
+	id="reset"
+	autocomplete="on"
+	novalidate
+	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
+	class:submitted
+>
+	<h4><strong>New Password</strong></h4>
+	<p>Please provide a new password.</p>
 
-				{#if message}
-					<p class="text-danger">{message}</p>
-				{/if}
-				<div class="d-grid gap-2">
-					<button onclick={resetPassword} type="button" class="btn btn-primary btn-lg"
-						>Send Email</button
-					>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
+	<label class="tw:block tw:text-sm tw:font-medium" for="password">
+		Password
+		<input
+			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			id="password"
+			type="password"
+			bind:value={password}
+			bind:this={focusedField}
+			required
+			minlength="8"
+			maxlength="80"
+			placeholder="Password"
+			autocomplete="new-password"
+		/>
+		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
+		<span class="tw:text-xs tw:text-gray-500">
+			Minimum 8 characters, one capital letter, one number, one special character.
+		</span>
+	</label>
 
-<style>
-	.card-body {
-		width: 25rem;
-	}
-</style>
+	<label class="tw:block tw:text-sm tw:font-medium" for="passwordConfirm">
+		Password (retype)
+		<input
+			class="tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500"
+			class:tw:border-red-500={passwordMismatch}
+			id="passwordConfirm"
+			type="password"
+			required={!!password}
+			bind:this={confirmPassword}
+			minlength="8"
+			maxlength="80"
+			placeholder="Password (again)"
+			autocomplete="new-password"
+		/>
+		{#if passwordMismatch}
+			<span class="tw:text-xs tw:text-red-600 tw:mt-0.5">Passwords must match</span>
+		{/if}
+	</label>
+
+	{#if message}
+		<p class="tw:text-red-600">{message}</p>
+	{/if}
+
+	<button
+		onclick={resetPassword}
+		type="button"
+		class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700"
+	>
+		Reset Password
+	</button>
+</form>
+
