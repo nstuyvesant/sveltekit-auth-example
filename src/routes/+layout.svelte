@@ -6,6 +6,7 @@
 	import { initializeGoogleAccounts } from '$lib/google'
 
 	import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
+	import './layout.css'
 
 	interface Props {
 		data: LayoutServerData
