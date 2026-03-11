@@ -859,16 +859,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/kit@npm:^2.53.4":
-  version: 2.53.4
-  resolution: "@sveltejs/kit@npm:2.53.4"
+"@sveltejs/kit@npm:^2.54.0":
+  version: 2.54.0
+  resolution: "@sveltejs/kit@npm:2.54.0"
   dependencies:
     "@standard-schema/spec": "npm:^1.0.0"
     "@sveltejs/acorn-typescript": "npm:^1.0.5"
     "@types/cookie": "npm:^0.6.0"
     acorn: "npm:^8.14.1"
     cookie: "npm:^0.6.0"
-    devalue: "npm:^5.6.3"
+    devalue: "npm:^5.6.4"
     esm-env: "npm:^1.2.2"
     kleur: "npm:^4.1.5"
     magic-string: "npm:^0.30.5"
@@ -888,7 +888,7 @@ __metadata:
       optional: true
   bin:
     svelte-kit: svelte-kit.js
-  checksum: 10c0/17dea78ec777673d836d4555db97b7a0da12d36f916a796577c15e86f4e8e4ad950f6e840453c11f3a74686b598f3e1dff7b2046e30214b5b16458e0acccf0f0
+  checksum: 10c0/14ca8ffd4bde933bba820db56084b3c546cc5cd758de9308807a31343b0e3af9e36addde80b43e2411dac567f4b5f5623f019c0852249433cfa2c9776687c0f1
   languageName: node
   linkType: hard
 
@@ -1866,7 +1866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devalue@npm:^5.6.3":
+"devalue@npm:^5.6.3, devalue@npm:^5.6.4":
   version: 5.6.4
   resolution: "devalue@npm:5.6.4"
   checksum: 10c0/0c1bbe036945e55c5f6d54f52bb1a99b19677dd48a8404517fbddb02e725803457bed6317d2c05292d68767914ba319a6a645dbfdf8ade65d687ab430bfc2ae1
@@ -4560,7 +4560,7 @@ __metadata:
     "@playwright/test": "npm:^1.58.2"
     "@sendgrid/mail": "npm:^8.1.6"
     "@sveltejs/adapter-node": "npm:^5.5.4"
-    "@sveltejs/kit": "npm:^2.53.4"
+    "@sveltejs/kit": "npm:^2.54.0"
     "@sveltejs/mcp": "npm:^0.1.21"
     "@sveltejs/vite-plugin-svelte": "npm:^6.2.4"
     "@tailwindcss/vite": "npm:^4.2.1"
