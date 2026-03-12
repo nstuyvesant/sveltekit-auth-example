@@ -4,7 +4,7 @@
 [![Node](https://img.shields.io/node/v/sveltekit-auth-example)](https://nodejs.org)
 [![Svelte](https://img.shields.io/badge/Svelte-5-orange)](https://svelte.dev)
 
-A complete, production-ready authentication and authorization starter for **Svelte 5** and **SvelteKit 2**. Skip the boilerplate — get secure local accounts, Google OAuth, MFA, email verification, role-based access control, and OWASP-compliant password hashing out of the box.
+A complete, production-ready authentication and authorization starter for **Svelte 5** and **SvelteKit 2**. Skip the boilerplate — get secure local accounts, Google OAuth, MFA, email verification, role-based access control, OWASP-compliant password hashing, and bot protection out of the box.
 
 ## Features
 
@@ -12,10 +12,11 @@ A complete, production-ready authentication and authorization starter for **Svel
 | ---------------------------------------------- | --------------------------------------- |
 | ✅ Local accounts (email + password)           | ✅ Sign in with Google / Google One Tap |
 | ✅ Multi-factor authentication (MFA via email) | ✅ Email verification                   |
-| ✅ Forgot password / email reset (SendGrid)    | ✅ User profile management              |
+| ✅ Forgot password / email reset (Brevo)       | ✅ User profile management              |
 | ✅ Session management + timeout                | ✅ Rate limiting                        |
 | ✅ Role-based access control                   | ✅ Password complexity enforcement      |
 | ✅ Content Security Policy (CSP)               | ✅ OWASP-compliant password hashing     |
+| ✅ Cloudflare Turnstile CAPTCHA (bot protection) |                                       |
 
 ## Stack
 
@@ -28,8 +29,9 @@ A complete, production-ready authentication and authorization starter for **Svel
 
 - Node.js 24.14.0 or later
 - PostgreSQL 16 or later
-- A [SendGrid](https://sendgrid.com) account (for password reset emails)
+- A [Brevo](https://brevo.com) account (for transactional emails)
 - A [Google API client ID](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid) (for Sign in with Google)
+- A [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) site key and secret key (for bot protection on auth forms)
 
 ## Setting up the project
 
@@ -49,7 +51,7 @@ bash db_create.sh
 
 2. Create a **Google API client ID** per [these instructions](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid). Make sure you include `http://localhost:3000` and `http://localhost` in the Authorized JavaScript origins, and `http://localhost:3000/auth/google/callback` in the Authorized redirect URIs for your Client ID for Web application. **Do not access the site using http://127.0.0.1:3000** — use `http://localhost:3000` or it will not work.
 
-3. [Create a free Twilio SendGrid account](https://signup.sendgrid.com) and generate an API Key following [this documentation](https://docs.sendgrid.com/ui/account-and-settings/api-keys) and add a sender as documented [here](https://docs.sendgrid.com/ui/sending-email/senders).
+3. [Create a free Brevo account](https://app.brevo.com/account/register) and generate an API Key under **SMTP & API** settings. Set `EMAIL` to the sender address verified in your Brevo account.
 
 4. Create a **.env** file at the top level of the project with the following values (substituting your own id and PostgreSQL username and password):
 
@@ -58,9 +60,11 @@ DATABASE_URL=postgres://user:password@localhost:5432/auth
 DATABASE_SSL=false
 DOMAIN=http://localhost:3000
 JWT_SECRET=replace_with_your_own
-SENDGRID_KEY=replace_with_your_own
-SENDGRID_SENDER=replace_with_your_own
+BREVO_KEY=replace_with_your_own
+EMAIL=replace_with_your_own
 PUBLIC_GOOGLE_CLIENT_ID=replace_with_your_own
+PUBLIC_TURNSTILE_SITE_KEY=replace_with_your_own
+TURNSTILE_SECRET_KEY=replace_with_your_own
 ```
 
 ## Run locally
@@ -86,9 +90,11 @@ The db_create.sql script adds three users to the database with obvious roles:
 
 | Email               | Password   | Role    |
 | ------------------- | ---------- | ------- |
-| admin@example.com   | admin123   | admin   |
-| teacher@example.com | teacher123 | teacher |
-| student@example.com | student123 | student |
+| admin@example.com   | Admin1234!   | admin   |
+| teacher@example.com | Teacher1234! | teacher |
+| student@example.com | Student1234! | student |
+
+> **MFA note:** Local account logins require a 6-digit code sent to the user's email address. To successfully log in with the seed accounts above, either update their email addresses in the database to your own (`UPDATE users SET email = 'you@yourdomain.com' WHERE email = 'admin@example.com';`), or retrieve the code directly from the `mfa_codes` table after submitting the login form (`SELECT code FROM mfa_codes;`).
 
 ## How it works
 

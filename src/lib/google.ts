@@ -3,6 +3,26 @@ import { appState } from '$lib/app-state.svelte'
 import { redirectAfterLogin } from '$lib/auth-redirect'
 
 /**
+ * Waits for the Google Identity Services SDK to load, then calls `fn`.
+ * Polls every 50 ms; gives up after 10 seconds.
+ */
+function whenGoogleReady(fn: () => void) {
+	if (typeof google !== 'undefined') {
+		fn()
+		return
+	}
+	const deadline = Date.now() + 10_000
+	const id = setInterval(() => {
+		if (typeof google !== 'undefined') {
+			clearInterval(id)
+			fn()
+		} else if (Date.now() > deadline) {
+			clearInterval(id)
+		}
+	}, 50)
+}
+
+/**
  * Renders the Google Sign-In button inside the element with id `googleButton`.
  *
  * Reads the element's width (falling back to its parent's width, then 400px)
@@ -10,16 +30,18 @@ import { redirectAfterLogin } from '$lib/auth-redirect'
  * correctly within its container.
  */
 export function renderGoogleButton() {
-	const btn = document.getElementById('googleButton')
-	if (btn) {
-		const width = btn.offsetWidth || btn.parentElement?.offsetWidth || 400
-		google.accounts.id.renderButton(btn, {
-			type: 'standard',
-			theme: 'outline',
-			size: 'large',
-			width: Math.floor(width)
-		})
-	}
+	whenGoogleReady(() => {
+		const btn = document.getElementById('googleButton')
+		if (btn) {
+			const width = btn.offsetWidth || btn.parentElement?.offsetWidth || 400
+			google.accounts.id.renderButton(btn, {
+				type: 'standard',
+				theme: 'outline',
+				size: 'large',
+				width: Math.floor(width)
+			})
+		}
+	})
 }
 
 /**
@@ -33,13 +55,15 @@ export function renderGoogleButton() {
  * 3. Redirects the user via {@link redirectAfterLogin}.
  */
 export function initializeGoogleAccounts() {
-	if (!appState.googleInitialized) {
-		google.accounts.id.initialize({
-			client_id: PUBLIC_GOOGLE_CLIENT_ID,
-			callback: googleCallback
-		})
-		appState.googleInitialized = true
-	}
+	whenGoogleReady(() => {
+		if (!appState.googleInitialized) {
+			google.accounts.id.initialize({
+				client_id: PUBLIC_GOOGLE_CLIENT_ID,
+				callback: googleCallback
+			})
+			appState.googleInitialized = true
+		}
+	})
 
 	async function googleCallback(response: google.accounts.id.CredentialResponse) {
 		const res = await fetch('/auth/google', {

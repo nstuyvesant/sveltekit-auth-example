@@ -4,6 +4,7 @@ import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
+import { verifyTurnstileToken } from '$lib/server/turnstile'
 
 /** Name of the cookie used to mark a device as MFA-trusted. */
 const MFA_TRUSTED_COOKIE = 'mfa_trusted'
@@ -26,7 +27,7 @@ const MFA_TRUSTED_MAX_AGE = 30 * 24 * 60 * 60 // 30 days in seconds
 export const POST: RequestHandler = async event => {
 	const { cookies } = event
 
-	let body: { email?: string; code?: string }
+	let body: { email?: string; code?: string; turnstileToken?: string }
 	try {
 		body = await event.request.json()
 	} catch {
@@ -34,6 +35,10 @@ export const POST: RequestHandler = async event => {
 	}
 
 	if (!body.email || !body.code) error(400, 'Email and verification code are required.')
+
+	const ip = event.request.headers.get('CF-Connecting-IP') ?? event.getClientAddress()
+	const turnstileOk = await verifyTurnstileToken(body.turnstileToken ?? '', ip)
+	if (!turnstileOk) error(400, 'Security challenge failed. Please try again.')
 
 	// Verify the code; returns user_id on success, NULL on failure/expiry
 	const verifyResult = await query(`SELECT verify_mfa_code($1, $2) AS "userId";`, [

@@ -1,9 +1,10 @@
-import { json } from '@sveltejs/kit'
+import { json, error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
+import { verifyTurnstileToken } from '$lib/server/turnstile'
 
 /**
  * Resets a user's password using a signed JWT reset token.
@@ -23,6 +24,10 @@ import { query } from '$lib/server/db'
 export const PUT: RequestHandler = async event => {
 	const body = await event.request.json()
 	const { token, password } = body
+
+	const ip = event.request.headers.get('CF-Connecting-IP') ?? event.getClientAddress()
+	const turnstileOk = await verifyTurnstileToken(body.turnstileToken ?? '', ip)
+	if (!turnstileOk) return json({ message: 'Security challenge failed. Please try again.' }, { status: 400 })
 
 	// Check the validity of the token and extract userId
 	try {

@@ -4,6 +4,7 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 	import { redirectAfterLogin } from '$lib/auth-redirect'
+	import Turnstile from '$lib/Turnstile.svelte'
 
 	let focusedField: HTMLInputElement | undefined = $state()
 	let formEl: HTMLFormElement | undefined = $state()
@@ -14,6 +15,10 @@
 	let loading = $state(false)
 	let mfaRequired = $state(false)
 	let mfaCode = $state('')
+	let turnstileToken = $state('')
+	let mfaTurnstileToken = $state('')
+	let turnstile: Turnstile | undefined = $state()
+	let mfaTurnstile: Turnstile | undefined = $state()
 	const credentials: Credentials = $state({
 		email: '',
 		password: ''
@@ -29,12 +34,17 @@
 		const form = formEl!
 
 		if (form.checkValidity()) {
+			if (!turnstileToken) {
+				message = 'Please complete the security challenge.'
+				return
+			}
 			try {
 				await loginLocal(credentials)
 			} catch (err) {
 				if (err instanceof Error) {
 					console.error('Login error', err.message)
 					message = err.message
+					turnstile?.reset()
 				}
 			}
 		} else {
@@ -63,7 +73,7 @@
 		try {
 			const res = await fetch('/auth/login', {
 				method: 'POST',
-				body: JSON.stringify(credentials),
+				body: JSON.stringify({ ...credentials, turnstileToken }),
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -99,11 +109,15 @@
 	async function verifyMfa() {
 		message = ''
 		mfaSubmitted = false
-		const form = mfaFormEl!
 
-		if (!form.checkValidity()) {
+		if (!/^[0-9]{6}$/.test(mfaCode)) {
 			mfaSubmitted = true
-			focusOnFirstError(form)
+			mfaFormEl?.querySelector<HTMLInputElement>('#mfaCode')?.focus()
+			return
+		}
+
+		if (!mfaTurnstileToken) {
+			message = 'Please complete the security challenge.'
 			return
 		}
 
@@ -111,7 +125,7 @@
 		try {
 			const res = await fetch('/auth/mfa', {
 				method: 'POST',
-				body: JSON.stringify({ email: credentials.email, code: mfaCode }),
+				body: JSON.stringify({ email: credentials.email, code: mfaCode, turnstileToken: mfaTurnstileToken }),
 				headers: { 'Content-Type': 'application/json' }
 			})
 			const fromEndpoint = await res.json()
@@ -125,6 +139,7 @@
 			if (err instanceof Error) {
 				console.error('MFA error', err)
 				message = err.message
+				mfaTurnstile?.reset()
 			}
 		} finally {
 			loading = false
@@ -194,6 +209,8 @@
 			</button>
 		</p>
 	</form>
+
+	<Turnstile bind:this={mfaTurnstile} bind:token={mfaTurnstileToken} />
 {:else}
 	<form
 		bind:this={formEl}
@@ -287,6 +304,8 @@
 		{#if message}
 			<p class="tw:text-red-600">{message}</p>
 		{/if}
+
+		<Turnstile bind:this={turnstile} bind:token={turnstileToken} />
 
 		<button type="submit" class="btn-primary" disabled={loading}>
 			{loading ? 'Signing in...' : 'Sign In'}

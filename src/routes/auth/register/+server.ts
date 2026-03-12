@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 import { sendVerificationEmail } from '$lib/server/email'
+import { verifyTurnstileToken } from '$lib/server/turnstile'
 
 /**
  * Registers a new user account.
@@ -23,12 +24,16 @@ import { sendVerificationEmail } from '$lib/server/email'
  * @throws The status code from the registration result on other failures (e.g. duplicate email).
  */
 export const POST: RequestHandler = async event => {
-	let body: { email?: string; password?: string; firstName?: string; lastName?: string }
+	let body: { email?: string; password?: string; firstName?: string; lastName?: string; turnstileToken?: string }
 	try {
 		body = await event.request.json()
 	} catch {
 		error(400, 'Invalid request body.')
 	}
+
+	const ip = event.request.headers.get('CF-Connecting-IP') ?? event.getClientAddress()
+	const turnstileOk = await verifyTurnstileToken(body.turnstileToken ?? '', ip)
+	if (!turnstileOk) error(400, 'Security challenge failed. Please try again.')
 
 	if (!body.email || !body.password || !body.firstName || !body.lastName)
 		error(400, 'Please supply all required fields: email, password, first and last name.')

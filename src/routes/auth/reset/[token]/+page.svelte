@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
+	import Turnstile from '$lib/Turnstile.svelte'
 
 	/** Props for the password-reset page. */
 	interface Props {
@@ -21,6 +22,8 @@
 	let submitted = $state(false)
 	let passwordMismatch = $state(false)
 	let loading = $state(false)
+	let turnstileToken = $state('')
+	let turnstile: Turnstile | undefined = $state()
 
 	onMount(() => {
 		// Remove the token from the URL to prevent it appearing in logs and Referer headers
@@ -53,6 +56,10 @@
 		}
 
 		if (form.checkValidity()) {
+			if (!turnstileToken) {
+				message = 'Please complete the security challenge.'
+				return
+			}
 			loading = true
 			try {
 				const url = `/auth/reset`
@@ -63,7 +70,8 @@
 					},
 					body: JSON.stringify({
 						token: data.token,
-						password
+						password,
+						turnstileToken
 					})
 				})
 
@@ -150,6 +158,8 @@
 	{#if message}
 		<p class="tw:text-red-600">{message}</p>
 	{/if}
+
+	<Turnstile bind:this={turnstile} bind:token={turnstileToken} />
 
 	<button type="submit" class="btn-primary" disabled={loading}>
 		{loading ? 'Resetting...' : 'Reset Password'}

@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 import { sendPasswordResetEmail } from '$lib/server/email'
+import { error } from '@sveltejs/kit'
+import { verifyTurnstileToken } from '$lib/server/turnstile'
 
 /**
  * Handles a forgot-password request.
@@ -17,6 +19,11 @@ import { sendPasswordResetEmail } from '$lib/server/email'
  */
 export const POST: RequestHandler = async event => {
 	const body = await event.request.json()
+
+	const ip = event.request.headers.get('CF-Connecting-IP') ?? event.getClientAddress()
+	const turnstileOk = await verifyTurnstileToken(body.turnstileToken ?? '', ip)
+	if (!turnstileOk) error(400, 'Security challenge failed. Please try again.')
+
 	const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
 	const { rows } = await query(sql, [body.email])
 

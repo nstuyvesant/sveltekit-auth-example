@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
+	import Turnstile from '$lib/Turnstile.svelte'
 
 	let focusedField: HTMLInputElement | undefined = $state()
 	// Pattern stored as a variable to avoid Svelte parsing `{8,}` as a template expression
@@ -24,6 +25,8 @@
 	let emailVerificationSent = $state(false)
 
 	let formEl: HTMLFormElement | undefined = $state()
+	let turnstileToken = $state('')
+	let turnstile: Turnstile | undefined = $state()
 
 	/**
 	 * Validates the registration form and, if valid, delegates to {@link registerLocal}.
@@ -41,12 +44,17 @@
 		}
 
 		if (form.checkValidity()) {
+			if (!turnstileToken) {
+				message = 'Please complete the security challenge.'
+				return
+			}
 			try {
 				await registerLocal(user)
 			} catch (err) {
 				if (err instanceof Error) {
 					message = err.message
 					console.log('Login error', message)
+					turnstile?.reset()
 				}
 			}
 		} else {
@@ -76,7 +84,7 @@
 		try {
 			const res = await fetch('/auth/register', {
 				method: 'POST',
-				body: JSON.stringify(user), // server ignores user.role - always set it to 'student' (lowest priv)
+				body: JSON.stringify({ ...user, turnstileToken }), // server ignores user.role - always set it to 'student' (lowest priv)
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -268,6 +276,8 @@
 		{#if message}
 			<p class="tw:text-red-600">{message}</p>
 		{/if}
+
+		<Turnstile bind:this={turnstile} bind:token={turnstileToken} />
 
 		<button type="submit" class="btn-primary" disabled={loading}>
 			{loading ? 'Creating account...' : 'Register'}

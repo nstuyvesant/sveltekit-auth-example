@@ -8,7 +8,8 @@ const baseCsp = [
 	'https://www.gstatic.com/recaptcha/', // recaptcha
 	'https://accounts.google.com/gsi/', // sign-in w/google
 	'https://www.google.com/recaptcha/', // recapatcha
-	'https://fonts.gstatic.com/' // recaptcha fonts
+	'https://fonts.gstatic.com/', // recaptcha fonts
+	'https://challenges.cloudflare.com/' // turnstile
 ]
 
 if (!production) baseCsp.push('ws://localhost:3000')
@@ -41,7 +42,8 @@ const config = {
 				'img-src': ['data:', 'blob:', ...baseCsp],
 				'style-src': ['unsafe-inline', ...baseCsp],
 				'object-src': ['none'],
-				'base-uri': ['self']
+				'base-uri': ['self'],
+				'frame-src': ['https://challenges.cloudflare.com/', 'https://accounts.google.com/']
 			}
 		},
 		files: {

@@ -2,6 +2,30 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.8.1
+
+- Fix MFA verification code always showing "6-digit verification code required" for valid codes: replaced `form.checkValidity()` and `codeInput.checkValidity()` (which picked up Cloudflare Turnstile's injected form elements) with a direct JS regex test against the bound `mfaCode` value
+- Move `<Turnstile>` outside the MFA `<form>` so its injected inputs are never part of the form's element collection
+- Fix `google is not defined` crash on hard reload of `/login`: Google GSI script is loaded `async defer` and may not be ready when `onMount` fires; added `whenGoogleReady()` helper in `src/lib/google.ts` that polls until `google` is available (up to 10 s) before calling `initializeGoogleAccounts()` and `renderGoogleButton()`
+
+# 5.8.0
+
+- Replace SendGrid with Brevo for all transactional email (password reset, email verification, MFA code)
+- New `src/lib/server/brevo.ts` sends email via the Brevo API with exponential-backoff retry logic (up to 4 attempts), 30-second per-request timeout, and `Retry-After` header support
+- Email templates (`password-reset.ts`, `mfa-code.ts`, `verify-email.ts`) updated to use Brevo message format (`sender`, `to[]`, `htmlContent`, `tags`)
+- Env vars changed: `SENDGRID_KEY` → `BREVO_KEY`, `SENDGRID_SENDER` → `EMAIL`
+- `app.d.ts` `PrivateEnv` updated to reflect new env vars
+- README updated with Brevo setup instructions and new env var names
+
+# 5.7.0
+
+- Add Cloudflare Turnstile CAPTCHA to login, register, forgot password, MFA, and password reset forms
+- New `src/lib/Turnstile.svelte` reusable Svelte 5 component wraps the Turnstile widget with `reset()` export
+- New `src/lib/server/turnstile.ts` server-side token verification utility (`verifyTurnstileToken`)
+- All auth endpoints verify the Turnstile challenge token before processing requests
+- New env vars: `PUBLIC_TURNSTILE_SITE_KEY` (client) and `TURNSTILE_SECRET_KEY` (server)
+- Extend `app.d.ts` with `PublicEnv`, `PrivateEnv` (add `TURNSTILE_SECRET_KEY`), and `Window.turnstile` types; wrap in `declare global`
+
 # 5.6.1
 
 - Add JSDoc comments throughout the codebase (`app.d.ts`, server hooks, route handlers, lib utilities, Svelte components)

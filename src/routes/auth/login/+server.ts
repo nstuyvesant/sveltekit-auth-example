@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 import { sendMfaCodeEmail } from '$lib/server/email'
+import { verifyTurnstileToken } from '$lib/server/turnstile'
 
 /**
  * In-memory failed-attempt tracker used for per-email account lockout.
@@ -41,12 +42,16 @@ const MFA_TRUSTED_COOKIE = 'mfa_trusted'
 export const POST: RequestHandler = async event => {
 	const { cookies } = event
 
-	let body: { email?: string; password?: string }
+	let body: { email?: string; password?: string; turnstileToken?: string }
 	try {
 		body = await event.request.json()
 	} catch {
 		error(400, 'Invalid request body.')
 	}
+
+	const ip = event.request.headers.get('CF-Connecting-IP') ?? event.getClientAddress()
+	const turnstileOk = await verifyTurnstileToken(body.turnstileToken ?? '', ip)
+	if (!turnstileOk) error(400, 'Security challenge failed. Please try again.')
 
 	const email = body.email?.toLowerCase() ?? ''
 

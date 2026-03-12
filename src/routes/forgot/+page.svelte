@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation'
 	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
+	import Turnstile from '$lib/Turnstile.svelte'
 
 	let focusedField: HTMLInputElement | undefined = $state()
 	let formEl: HTMLFormElement | undefined = $state()
@@ -10,6 +11,8 @@
 	let message: string = $state('')
 	let submitted = $state(false)
 	let loading = $state(false)
+	let turnstileToken = $state('')
+	let turnstile: Turnstile | undefined = $state()
 
 	onMount(() => {
 		focusedField?.focus()
@@ -31,6 +34,9 @@
 			if (email.toLowerCase().includes('gmail.com')) {
 				return (message = 'Gmail passwords must be reset on Manage Your Google Account.')
 			}
+			if (!turnstileToken) {
+				return (message = 'Please complete the security challenge.')
+			}
 			loading = true
 			try {
 				const url = `/auth/forgot`
@@ -39,7 +45,7 @@
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ email })
+					body: JSON.stringify({ email, turnstileToken })
 				})
 
 				if (res.ok) {
@@ -96,6 +102,8 @@
 	{#if message}
 		<p class="tw:text-red-600">{message}</p>
 	{/if}
+
+	<Turnstile bind:this={turnstile} bind:token={turnstileToken} />
 
 	<button type="submit" class="btn-primary" disabled={loading}>
 		{loading ? 'Sending...' : 'Send Email'}
