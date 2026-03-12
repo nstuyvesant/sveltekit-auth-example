@@ -2,6 +2,10 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.8.2
+
+- Add Chrome DevTools
+
 # 5.8.1
 
 - Fix MFA verification code always showing "6-digit verification code required" for valid codes: replaced `form.checkValidity()` and `codeInput.checkValidity()` (which picked up Cloudflare Turnstile's injected form elements) with a direct JS regex test against the bound `mfaCode` value
