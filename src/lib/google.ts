@@ -5,11 +5,12 @@ import { redirectAfterLogin } from '$lib/auth-redirect'
 export function renderGoogleButton() {
 	const btn = document.getElementById('googleButton')
 	if (btn) {
+		const width = btn.offsetWidth || btn.parentElement?.offsetWidth || 400
 		google.accounts.id.renderButton(btn, {
 			type: 'standard',
-			theme: 'filled_blue',
+			theme: 'outline',
 			size: 'large',
-			width: btn.offsetWidth || 400
+			width: Math.floor(width)
 		})
 	}
 }

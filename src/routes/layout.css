@@ -12,7 +12,10 @@
 
 	html,
 	:host {
-		@apply tw:font-sans tw:text-gray-800;
+		@apply tw:font-sans tw:text-gray-800 tw:bg-white;
+		@variant dark {
+			@apply tw:text-gray-100 tw:bg-gray-900;
+		}
 	}
 }
 
@@ -22,8 +25,9 @@
 		display: block;
 		width: 100%;
 		margin-top: 0.25rem;
-		border-radius: var(--radius, 0.25rem);
-		border: 1px solid var(--color-gray-300, #d1d5db);
+		appearance: none;
+		-webkit-appearance: none;
+		@apply tw:rounded tw:border tw:border-gray-300 tw:bg-white tw:text-gray-900 tw:dark:bg-gray-800 tw:dark:border-gray-600 tw:dark:text-gray-200;
 		padding: 0.375rem 0.75rem;
 		font-size: var(--text-sm, 0.875rem);
 		line-height: var(--tw-leading-sm, 1.25rem);

@@ -208,7 +208,7 @@
 		<p class="tw:text-sm tw:text-gray-500 tw:mb-2">Danger zone</p>
 		<button
 			type="button"
-			class="tw:w-full tw:rounded tw:border tw:border-red-400 tw:bg-white tw:px-4 tw:py-2 tw:text-sm tw:font-medium tw:text-red-600 tw:cursor-pointer hover:tw:bg-red-50 disabled:tw:opacity-50 disabled:tw:cursor-not-allowed"
+			class="tw:w-full tw:rounded tw:border tw:border-red-600 tw:bg-red-600 tw:px-4 tw:py-2 tw:text-sm tw:font-medium tw:text-white tw:cursor-pointer hover:tw:bg-red-700 hover:tw:border-red-700 disabled:tw:opacity-50 disabled:tw:cursor-not-allowed"
 			disabled={deleting}
 			onclick={deleteAccount}
 		>

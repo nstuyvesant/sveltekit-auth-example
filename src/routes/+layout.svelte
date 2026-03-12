@@ -55,13 +55,13 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<nav class="tw:bg-gray-100 tw:border-b tw:border-gray-200">
+<nav class="tw:bg-gray-100 tw:border-b tw:border-gray-200 tw:dark:bg-gray-900 tw:dark:border-gray-700">
 	<div class="tw:mx-auto tw:max-w-5xl tw:px-4 tw:flex tw:items-center tw:justify-between tw:h-14">
-		<a class="tw:font-semibold tw:text-gray-800 tw:no-underline" href="/">SvelteKit-Auth-Example</a>
+		<a class="tw:font-semibold tw:text-gray-800 tw:no-underline tw:dark:text-gray-100" href="/">SvelteKit-Auth-Example</a>
 
 		<!-- Mobile toggle -->
 		<button
-			class="tw:sm:hidden tw:p-2 tw:rounded tw:text-gray-600 hover:tw:bg-gray-200"
+			class="tw:sm:hidden tw:p-2 tw:rounded tw:text-gray-600 hover:tw:bg-gray-200 tw:dark:text-gray-300 tw:dark:hover:bg-gray-700"
 			aria-label="Toggle navigation"
 			onclick={() => (navOpen = !navOpen)}
 		>
@@ -71,22 +71,22 @@
 		</button>
 
 		<!-- Nav links -->
-		<div class="tw:hidden tw:sm:flex tw:items-center tw:gap-6 {navOpen ? '!tw:flex tw:flex-col tw:absolute tw:top-14 tw:left-0 tw:right-0 tw:bg-gray-100 tw:p-4 tw:border-b tw:border-gray-200' : ''}">
-			<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/">Home</a>
-			<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/info">Info</a>
+		<div class="tw:hidden tw:sm:flex tw:items-center tw:gap-6 {navOpen ? '!tw:flex tw:flex-col tw:absolute tw:top-14 tw:left-0 tw:right-0 tw:bg-gray-100 tw:dark:bg-gray-900 tw:p-4 tw:border-b tw:border-gray-200 tw:dark:border-gray-700' : ''}">
+			<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900 tw:dark:text-gray-300 tw:dark:hover:text-white" href="/">Home</a>
+			<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900 tw:dark:text-gray-300 tw:dark:hover:text-white" href="/info">Info</a>
 
 			{#if appState.user?.role === 'admin'}
-				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/admin">Admin</a>
+				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900 tw:dark:text-gray-300 tw:dark:hover:text-white" href="/admin">Admin</a>
 			{/if}
 			{#if appState.user && appState.user.role !== 'student'}
-				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/teachers">Teachers</a>
+				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900 tw:dark:text-gray-300 tw:dark:hover:text-white" href="/teachers">Teachers</a>
 			{/if}
 
 			{#if appState.user}
 				<!-- User dropdown -->
 				<div class="tw:relative" bind:this={dropdownEl}>
 					<button
-						class="tw:flex tw:items-center tw:gap-1 tw:text-sm tw:text-gray-700 hover:tw:text-gray-900 tw:bg-transparent tw:border-0 tw:cursor-pointer"
+						class="tw:flex tw:items-center tw:gap-1 tw:text-sm tw:text-gray-700 hover:tw:text-gray-900 tw:bg-transparent tw:border-0 tw:cursor-pointer tw:dark:text-gray-300 tw:dark:hover:text-white"
 						onclick={() => (dropdownOpen = !dropdownOpen)}
 						aria-expanded={dropdownOpen}
 						aria-haspopup="true"
@@ -101,13 +101,13 @@
 						</svg>
 					</button>
 					{#if dropdownOpen}
-					<ul class="tw:absolute tw:right-0 tw:mt-1 tw:w-36 tw:rounded tw:border tw:border-gray-200 tw:bg-white tw:shadow-md tw:py-1 tw:z-50 tw:list-none">
-							<li><a class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:bg-gray-100" href="/profile">Profile</a></li>
+					<ul class="tw:absolute tw:right-0 tw:mt-1 tw:w-36 tw:rounded tw:border tw:border-gray-200 tw:bg-white tw:shadow-md tw:py-1 tw:z-50 tw:list-none tw:dark:bg-gray-800 tw:dark:border-gray-700">
+							<li><a class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:bg-gray-100 tw:dark:text-gray-300 tw:dark:hover:bg-gray-700" href="/profile">Profile</a></li>
 							{#if appState.user?.id !== 0}
 							<li>
 								<button
 									onclick={logout}
-									class="tw:block tw:w-full tw:text-left tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:bg-transparent tw:border-0 tw:cursor-pointer hover:tw:bg-gray-100"
+									class="tw:block tw:w-full tw:text-left tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:bg-transparent tw:border-0 tw:cursor-pointer hover:tw:bg-gray-100 tw:dark:text-gray-300 tw:dark:hover:bg-gray-700"
 								>Logout</button>
 							</li>
 							{/if}
@@ -115,7 +115,7 @@
 					{/if}
 				</div>
 			{:else}
-				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900" href="/login">Login</a>
+				<a class="tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:text-gray-900 tw:dark:text-gray-300 tw:dark:hover:text-white" href="/login">Login</a>
 			{/if}
 		</div>
 	</div>
@@ -131,7 +131,7 @@
 		role="alert"
 		aria-live="assertive"
 		aria-atomic="true"
-		class="tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:min-w-64 tw:rounded tw:shadow-lg tw:border tw:border-gray-200 tw:bg-white tw:overflow-hidden"
+		class="tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:min-w-64 tw:rounded tw:shadow-lg tw:border tw:border-gray-200 tw:bg-white tw:overflow-hidden tw:dark:bg-gray-800 tw:dark:border-gray-700"
 	>
 		<div class="tw:flex tw:items-center tw:justify-between tw:bg-blue-600 tw:px-4 tw:py-2">
 			<strong class="tw:text-white tw:text-sm">{appState.toast.title}</strong>
@@ -141,6 +141,6 @@
 				class="tw:text-white tw:bg-transparent tw:border-0 tw:cursor-pointer tw:text-lg tw:leading-none"
 				onclick={() => (appState.toast = { ...appState.toast, isOpen: false })}>&times;</button>
 		</div>
-		<div class="tw:px-4 tw:py-3 tw:text-sm">{appState.toast.body}</div>
+		<div class="tw:px-4 tw:py-3 tw:text-sm tw:dark:text-gray-100">{appState.toast.body}</div>
 	</div>
 {/if}

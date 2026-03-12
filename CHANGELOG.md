@@ -2,6 +2,10 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.1.2
+
+- Dark mode
+
 # 5.1.0
 
 - Convert to Tailwind CSS
