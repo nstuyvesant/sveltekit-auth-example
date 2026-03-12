@@ -89,6 +89,7 @@
 						class="tw:flex tw:items-center tw:gap-1 tw:text-sm tw:text-gray-700 hover:tw:text-gray-900 tw:bg-transparent tw:border-0 tw:cursor-pointer"
 						onclick={() => (dropdownOpen = !dropdownOpen)}
 						aria-expanded={dropdownOpen}
+						aria-haspopup="true"
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="tw:relative tw:top-[-1.5px]">
 							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
@@ -100,10 +101,15 @@
 						</svg>
 					</button>
 					{#if dropdownOpen}
-						<ul class="tw:absolute tw:right-0 tw:mt-1 tw:w-36 tw:rounded tw:border tw:border-gray-200 tw:bg-white tw:shadow-md tw:py-1 tw:z-50 tw:list-none tw:p-0">
+					<ul class="tw:absolute tw:right-0 tw:mt-1 tw:w-36 tw:rounded tw:border tw:border-gray-200 tw:bg-white tw:shadow-md tw:py-1 tw:z-50 tw:list-none">
 							<li><a class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:bg-gray-100" href="/profile">Profile</a></li>
 							{#if appState.user?.id !== 0}
-								<li><a onclick={logout} class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:no-underline hover:tw:bg-gray-100" href="#">Logout</a></li>
+							<li>
+								<button
+									onclick={logout}
+									class="tw:block tw:w-full tw:text-left tw:px-4 tw:py-2 tw:text-sm tw:text-gray-700 tw:bg-transparent tw:border-0 tw:cursor-pointer hover:tw:bg-gray-100"
+								>Logout</button>
+							</li>
 							{/if}
 						</ul>
 					{/if}

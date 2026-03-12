@@ -12,6 +12,7 @@
 	let { data }: Props = $props()
 
 	let focusedField: HTMLInputElement | undefined = $state()
+	let formEl: HTMLFormElement | undefined = $state()
 	let password = $state('')
 	let confirmPassword: HTMLInputElement | undefined = $state()
 	let message = $state('')
@@ -31,7 +32,7 @@
 		message = ''
 		submitted = false
 		passwordMismatch = false
-		const form = document.getElementById('reset') as HTMLFormElement
+		const form = formEl!
 
 		if (!passwordMatch()) {
 			passwordMismatch = true
@@ -53,7 +54,7 @@
 
 			if (res.ok) {
 				appState.toast = {
-					title: 'Password Reset Succesful',
+					title: 'Password Reset Successful',
 					body: 'Your password was reset. Please login.',
 					isOpen: true
 				}
@@ -76,19 +77,20 @@
 </svelte:head>
 
 <form
-	id="reset"
+	bind:this={formEl}
 	autocomplete="on"
 	novalidate
 	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
 	class:submitted
+	onsubmit={(e) => { e.preventDefault(); resetPassword() }}
 >
-	<h4><strong>New Password</strong></h4>
+	<h4>New Password</h4>
 	<p>Please provide a new password.</p>
 
 	<label class="tw:block tw:text-sm tw:font-medium" for="password">
 		Password
 		<input
-			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			class="form-input-validated"
 			id="password"
 			type="password"
 			bind:value={password}
@@ -99,7 +101,7 @@
 			placeholder="Password"
 			autocomplete="new-password"
 		/>
-		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
+		<span class="form-error">Password with 8 chars or more required</span>
 		<span class="tw:text-xs tw:text-gray-500">
 			Minimum 8 characters, one capital letter, one number, one special character.
 		</span>
@@ -108,7 +110,7 @@
 	<label class="tw:block tw:text-sm tw:font-medium" for="passwordConfirm">
 		Password (retype)
 		<input
-			class="tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500"
+			class="form-input"
 			class:tw:border-red-500={passwordMismatch}
 			id="passwordConfirm"
 			type="password"
@@ -129,9 +131,8 @@
 	{/if}
 
 	<button
-		onclick={resetPassword}
-		type="button"
-		class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700"
+		type="submit"
+		class="btn-primary"
 	>
 		Reset Password
 	</button>

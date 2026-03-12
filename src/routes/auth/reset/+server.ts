@@ -18,6 +18,13 @@ export const PUT: RequestHandler = async event => {
 		const sql = `CALL reset_password($1, $2);`
 		await query(sql, [userId, password])
 
+		// Invalidate all existing sessions so the old password can no longer be used
+		try {
+			await query(`CALL delete_session($1);`, [userId])
+		} catch (err) {
+			console.error('Failed to invalidate sessions after password reset:', err)
+		}
+
 		return json({
 			message: 'Password successfully reset.'
 		})

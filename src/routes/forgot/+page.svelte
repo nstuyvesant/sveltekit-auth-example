@@ -5,6 +5,7 @@
 	import { focusOnFirstError } from '$lib/focus'
 
 	let focusedField: HTMLInputElement | undefined = $state()
+	let formEl: HTMLFormElement | undefined = $state()
 	let email: string = $state('')
 	let message: string = $state('')
 	let submitted = $state(false)
@@ -15,7 +16,7 @@
 
 	const sendPasswordReset = async () => {
 		message = ''
-		const form = document.getElementById('forgot') as HTMLFormElement
+		const form = formEl!
 
 		if (form.checkValidity()) {
 			if (email.toLowerCase().includes('gmail.com')) {
@@ -50,13 +51,14 @@
 </svelte:head>
 
 <form
-	id="forgot"
+	bind:this={formEl}
 	autocomplete="on"
 	novalidate
 	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
 	class:submitted
+	onsubmit={(e) => { e.preventDefault(); sendPasswordReset() }}
 >
-	<h4><strong>Forgot password</strong></h4>
+	<h4>Forgot password</h4>
 	<p>Hey, you're human. We get it.</p>
 
 	<label class="tw:block tw:text-sm tw:font-medium" for="email">
@@ -66,12 +68,12 @@
 			bind:value={email}
 			type="email"
 			id="email"
-			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			class="form-input-validated"
 			required
 			placeholder="Email"
 			autocomplete="email"
 		/>
-		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Email address required</span>
+		<span class="form-error">Email address required</span>
 	</label>
 
 	{#if message}
@@ -79,9 +81,8 @@
 	{/if}
 
 	<button
-		onclick={sendPasswordReset}
-		type="button"
-		class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700"
+		type="submit"
+		class="btn-primary"
 	>
 		Send Email
 	</button>

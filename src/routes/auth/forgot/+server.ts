@@ -30,7 +30,12 @@ export const POST: RequestHandler = async event => {
         new password with a confirmation then redirect you to your login page.
       `
 		}
-		sendMessage(message)
+		try {
+			await sendMessage(message)
+		} catch (err) {
+			console.error('Failed to send password reset email:', err)
+			// Still return 204 to avoid leaking whether the email exists in our system
+		}
 	}
 
 	return new Response(undefined, { status: 204 })

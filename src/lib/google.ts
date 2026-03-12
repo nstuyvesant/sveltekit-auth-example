@@ -1,7 +1,6 @@
-import { page } from '$app/state'
-import { goto } from '$app/navigation'
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
 import { appState } from '$lib/app-state.svelte'
+import { redirectAfterLogin } from '$lib/auth-redirect'
 
 export function renderGoogleButton() {
 	const btn = document.getElementById('googleButton')
@@ -36,14 +35,7 @@ export function initializeGoogleAccounts() {
 		if (res.ok) {
 			const fromEndpoint = await res.json()
 			appState.user = fromEndpoint.user
-			const { role } = fromEndpoint.user
-
-			const referrer = page.url.searchParams.get('referrer')
-
-			if (referrer) return goto(referrer)
-			if (role === 'teacher') return goto('/teachers')
-			if (role === 'admin') return goto('/admin')
-			if (location.pathname === '/login') goto('/') // logged in so go home
+			redirectAfterLogin(fromEndpoint.user)
 		}
 	}
 }

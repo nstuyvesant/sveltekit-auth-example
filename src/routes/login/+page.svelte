@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { goto } from '$app/navigation'
-	import { page } from '$app/state'
 	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
+	import { redirectAfterLogin } from '$lib/auth-redirect'
 
 	let focusedField: HTMLInputElement | undefined = $state()
+	let formEl: HTMLFormElement | undefined = $state()
 	let message = $state('')
 	let submitted = $state(false)
 	const credentials: Credentials = $state({
@@ -17,7 +17,7 @@
 	async function login() {
 		message = ''
 		submitted = false
-		const form = document.getElementById('signIn') as HTMLFormElement
+		const form = formEl!
 
 		if (form.checkValidity()) {
 			try {
@@ -53,19 +53,7 @@
 			const fromEndpoint = await res.json()
 			if (res.ok) {
 				appState.user = fromEndpoint.user
-				const { role } = fromEndpoint.user
-				const referrer = page.url.searchParams.get('referrer')
-				if (referrer) goto(referrer)
-				switch (role) {
-					case 'teacher':
-						goto('/teachers')
-						break
-					case 'admin':
-						goto('/admin')
-						break
-					default:
-						goto('/')
-				}
+				redirectAfterLogin(fromEndpoint.user)
 			} else {
 				throw new Error(fromEndpoint.message)
 			}
@@ -84,13 +72,14 @@
 </svelte:head>
 
 <form
-	id="signIn"
+	bind:this={formEl}
 	autocomplete="on"
 	novalidate
 	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
 	class:submitted
+	onsubmit={(e) => { e.preventDefault(); login() }}
 >
-	<h4><strong>Sign In</strong></h4>
+	<h4>Sign In</h4>
 	<p>Welcome back.</p>
 
 	<div id="googleButton" class="tw:w-full"></div>
@@ -104,21 +93,26 @@
 	<label class="tw:block tw:text-sm tw:font-medium" for="email">
 		Email
 		<input
+			id="email"
 			type="email"
-			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			class="form-input-validated"
 			bind:this={focusedField}
 			bind:value={credentials.email}
 			required
 			placeholder="Email"
 			autocomplete="email"
 		/>
-		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Email address required</span>
+		<span class="form-error">Email address required</span>
 	</label>
 
-	<label class="tw:block tw:text-sm tw:font-medium" for="password">
-		Password
+	<div class="tw:block tw:text-sm tw:font-medium">
+		<div class="tw:flex tw:justify-between tw:items-baseline">
+			<label for="password">Password</label>
+			<a href="/forgot" class="tw:text-xs tw:text-gray-500 tw:font-normal">Forgot password?</a>
+		</div>
 		<input
-			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			id="password"
+			class="form-input-validated"
 			type="password"
 			bind:value={credentials.password}
 			required
@@ -127,16 +121,14 @@
 			placeholder="Password"
 			autocomplete="current-password"
 		/>
-		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
-	</label>
-
-	<a href="/forgot" class="tw:text-sm tw:text-gray-500">Forgot Password?</a>
+		<span class="form-error">Password with 8 chars or more required</span>
+	</div>
 
 	{#if message}
 		<p class="tw:text-red-600">{message}</p>
 	{/if}
 
-	<button onclick={login} type="button" class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700">
+	<button type="submit" class="btn-primary">
 		Sign In
 	</button>
 

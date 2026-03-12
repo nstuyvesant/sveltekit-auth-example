@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types'
+	import { untrack } from 'svelte'
 	import { onMount } from 'svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import { appState } from '$lib/app-state.svelte'
@@ -9,7 +10,10 @@
 	}
 
 	let { data }: Props = $props()
-	const { user }: { user: User } = $state(data)
+	// untrack: intentionally take a one-time snapshot of server data for local form editing
+	let user: User = $state(untrack(() => ({ ...data.user })))
+
+	const passwordPattern = '(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}'
 
 	let focusedField: HTMLInputElement | undefined = $state()
 	let message = $state('')
@@ -66,8 +70,9 @@
 	novalidate
 	class="tw:mx-auto tw:my-8 tw:max-w-sm tw:space-y-4"
 	class:submitted
+	onsubmit={(e) => { e.preventDefault(); update() }}
 >
-	<h4><strong>Profile</strong></h4>
+	<h4>Profile</h4>
 	<p>Update your information.</p>
 
 	{#if !user?.email?.includes('gmail.com')}
@@ -76,14 +81,14 @@
 			<input
 				bind:this={focusedField}
 				type="email"
-				class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+				class="form-input-validated"
 				bind:value={user.email}
 				required
 				placeholder="Email"
 				id="email"
 				autocomplete="email"
 			/>
-			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Email address required</span>
+			<span class="form-error">Email address required</span>
 		</label>
 
 		<label class="tw:block tw:text-sm tw:font-medium" for="password">
@@ -91,14 +96,14 @@
 			<input
 				type="password"
 				id="password"
-				class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+				class="form-input-validated"
 				bind:value={user.password}
 				minlength="8"
 				maxlength="80"
-				pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
+				pattern={passwordPattern}
 				placeholder="Password"
 			/>
-			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Must be 8+ characters with a capital letter, number, and special character</span>
+			<span class="form-error">Must be 8+ characters with a capital letter, number, and special character</span>
 			<span class="tw:text-xs tw:text-gray-500">
 				Minimum 8 characters, one capital letter, one number, one special character.
 			</span>
@@ -109,7 +114,7 @@
 			<input
 				type="password"
 				id="confirmPassword"
-				class="tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500"
+				class="form-input"
 				class:tw:border-red-500={passwordMismatch}
 				bind:this={confirmPassword}
 				required={!!user.password}
@@ -129,26 +134,26 @@
 		<input
 			bind:this={focusedField}
 			bind:value={user.firstName}
-			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			class="form-input-validated"
 			id="firstName"
 			required
 			placeholder="First name"
 			autocomplete="given-name"
 		/>
-		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">First name required</span>
+		<span class="form-error">First name required</span>
 	</label>
 
 	<label class="tw:block tw:text-sm tw:font-medium" for="lastName">
 		Last name
 		<input
 			bind:value={user.lastName}
-			class="tw:peer tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500 tw:[.submitted_&]:invalid:border-red-500"
+			class="form-input-validated"
 			id="lastName"
 			required
 			placeholder="Last name"
 			autocomplete="family-name"
 		/>
-		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Last name required</span>
+		<span class="form-error">Last name required</span>
 	</label>
 
 	<label class="tw:block tw:text-sm tw:font-medium" for="phone">
@@ -157,7 +162,7 @@
 			type="tel"
 			bind:value={user.phone}
 			id="phone"
-			class="tw:mt-1 tw:block tw:w-full tw:rounded tw:border tw:border-gray-300 tw:px-3 tw:py-1.5 tw:text-sm focus:tw:outline-none focus:tw:ring-2 focus:tw:ring-blue-500"
+			class="form-input"
 			placeholder="Phone"
 			autocomplete="tel-local"
 		/>
@@ -168,9 +173,8 @@
 	{/if}
 
 	<button
-		onclick={update}
-		type="button"
-		class="tw:w-full tw:rounded tw:bg-blue-600 tw:px-4 tw:py-2 tw:font-semibold tw:text-white hover:tw:bg-blue-700"
+		type="submit"
+		class="btn-primary"
 	>
 		Update
 	</button>
