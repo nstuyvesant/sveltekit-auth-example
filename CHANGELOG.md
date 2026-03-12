@@ -2,6 +2,11 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.5.0
+
+- Extract email templates into dedicated files under `src/lib/server/email/` (`password-reset.ts`, `verify-email.ts`)
+- `src/lib/server/email/index.ts` re-exports all templates for clean imports
+
 # 5.1.3
 
 - Session timeout: automatically redirect to /login on session expiry via fetch interceptor (`src/lib/fetch-interceptor.ts`)

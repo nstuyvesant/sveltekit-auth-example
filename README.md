@@ -1,6 +1,5 @@
 # SvelteKit Authentication and Authorization Example
 
-[![GitHub release](https://img.shields.io/github/v/release/nstuyvesant/sveltekit-auth-example)](https://github.com/nstuyvesant/sveltekit-auth-example/releases)
 [![License](https://img.shields.io/github/license/nstuyvesant/sveltekit-auth-example)](https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE)
 [![Node](https://img.shields.io/node/v/sveltekit-auth-example)](https://nodejs.org)
 [![Svelte](https://img.shields.io/badge/Svelte-5-orange)](https://svelte.dev)

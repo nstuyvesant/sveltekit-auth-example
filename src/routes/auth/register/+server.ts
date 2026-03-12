@@ -1,10 +1,9 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import type { MailDataRequired } from '@sendgrid/mail'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET, DOMAIN, SENDGRID_SENDER } from '$env/static/private'
+import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
-import { sendMessage } from '$lib/server/sendgrid'
+import { sendVerificationEmail } from '$lib/server/email'
 
 export const POST: RequestHandler = async event => {
 	let body: { email?: string; password?: string; firstName?: string; lastName?: string }
@@ -47,19 +46,7 @@ export const POST: RequestHandler = async event => {
 		{ expiresIn: '24h' }
 	)
 
-	const message: MailDataRequired = {
-		to: { email: body.email },
-		from: SENDGRID_SENDER,
-		subject: 'Verify your email address',
-		categories: ['account'],
-		html: `
-      <p>Thanks for registering! Please verify your email address by clicking the link below:</p>
-      <p><a href="${DOMAIN}/auth/verify/${token}">Verify my email address</a></p>
-      <p>This link expires in 24 hours. If you did not register, you can safely ignore this email.</p>
-    `
-	}
-
-	await sendMessage(message)
+	await sendVerificationEmail(body.email, token)
 
 	return json({
 		message: 'Registration successful. Please check your email to verify your account.',
