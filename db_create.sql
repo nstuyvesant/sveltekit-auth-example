@@ -1,6 +1,5 @@
 -- Run via db_create.sh or:
 -- $ psql -d postgres -f db_create.sql && psql -d auth -f db_schema.sql
-
 -- Create role if not already there
 DO $do$
 BEGIN

@@ -125,7 +125,11 @@
 		try {
 			const res = await fetch('/auth/mfa', {
 				method: 'POST',
-				body: JSON.stringify({ email: credentials.email, code: mfaCode, turnstileToken: mfaTurnstileToken }),
+				body: JSON.stringify({
+					email: credentials.email,
+					code: mfaCode,
+					turnstileToken: mfaTurnstileToken
+				}),
 				headers: { 'Content-Type': 'application/json' }
 			})
 			const fromEndpoint = await res.json()

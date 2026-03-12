@@ -8,15 +8,15 @@ A complete, production-ready authentication and authorization starter for **Svel
 
 ## Features
 
-|                                                |                                         |
-| ---------------------------------------------- | --------------------------------------- |
-| ✅ Local accounts (email + password)           | ✅ Sign in with Google / Google One Tap |
-| ✅ Multi-factor authentication (MFA via email) | ✅ Email verification                   |
-| ✅ Forgot password / email reset (Brevo)       | ✅ User profile management              |
-| ✅ Session management + timeout                | ✅ Rate limiting                        |
-| ✅ Role-based access control                   | ✅ Password complexity enforcement      |
-| ✅ Content Security Policy (CSP)               | ✅ OWASP-compliant password hashing     |
-| ✅ Cloudflare Turnstile CAPTCHA (bot protection) |                                       |
+|                                                  |                                         |
+| ------------------------------------------------ | --------------------------------------- |
+| ✅ Local accounts (email + password)             | ✅ Sign in with Google / Google One Tap |
+| ✅ Multi-factor authentication (MFA via email)   | ✅ Email verification                   |
+| ✅ Forgot password / email reset (Brevo)         | ✅ User profile management              |
+| ✅ Session management + timeout                  | ✅ Rate limiting                        |
+| ✅ Role-based access control                     | ✅ Password complexity enforcement      |
+| ✅ Content Security Policy (CSP)                 | ✅ OWASP-compliant password hashing     |
+| ✅ Cloudflare Turnstile CAPTCHA (bot protection) |                                         |
 
 ## Stack
 
@@ -88,8 +88,8 @@ yarn preview
 
 The db_create.sql script adds three users to the database with obvious roles:
 
-| Email               | Password   | Role    |
-| ------------------- | ---------- | ------- |
+| Email               | Password     | Role    |
+| ------------------- | ------------ | ------- |
 | admin@example.com   | Admin1234!   | admin   |
 | teacher@example.com | Teacher1234! | teacher |
 | student@example.com | Student1234! | student |

@@ -30,7 +30,7 @@ function getBackoffDelay(attempt: number) {
  * @param data - The response data to check.
  * @returns True if the data is a BrevoErrorResponse.
  */
-function isBrevoError(data: unknown): data is BrevoErrorResponse {
+function isBrevoError(data: unknown): data is App.BrevoErrorResponse {
 	return typeof data === 'object' && data !== null && 'code' in data
 }
 
@@ -39,7 +39,7 @@ function isBrevoError(data: unknown): data is BrevoErrorResponse {
  * @param message - The email message to validate.
  * @throws {Error} If any required field is missing or invalid.
  */
-function validateMessage(message: EmailMessageBrevo): void {
+function validateMessage(message: App.EmailMessageBrevo): void {
 	if (!message.sender) {
 		throw new Error('Email message is missing sender')
 	}
@@ -69,7 +69,7 @@ function validateMessage(message: EmailMessageBrevo): void {
  * - Respects Retry-After header from rate limit responses.
  * - Logs warnings for retriable failures and errors for permanent failures.
  */
-export async function sendMessage(message: EmailMessageBrevo): Promise<void> {
+export async function sendMessage(message: App.EmailMessageBrevo): Promise<void> {
 	if (!env.BREVO_KEY) {
 		throw new Error('Brevo API key is missing from environment variables')
 	}

@@ -27,7 +27,8 @@ export const PUT: RequestHandler = async event => {
 
 	const ip = event.request.headers.get('CF-Connecting-IP') ?? event.getClientAddress()
 	const turnstileOk = await verifyTurnstileToken(body.turnstileToken ?? '', ip)
-	if (!turnstileOk) return json({ message: 'Security challenge failed. Please try again.' }, { status: 400 })
+	if (!turnstileOk)
+		return json({ message: 'Security challenge failed. Please try again.' }, { status: 400 })
 
 	// Check the validity of the token and extract userId
 	try {

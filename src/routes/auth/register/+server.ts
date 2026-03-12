@@ -24,7 +24,13 @@ import { verifyTurnstileToken } from '$lib/server/turnstile'
  * @throws The status code from the registration result on other failures (e.g. duplicate email).
  */
 export const POST: RequestHandler = async event => {
-	let body: { email?: string; password?: string; firstName?: string; lastName?: string; turnstileToken?: string }
+	let body: {
+		email?: string
+		password?: string
+		firstName?: string
+		lastName?: string
+		turnstileToken?: string
+	}
 	try {
 		body = await event.request.json()
 	} catch {
