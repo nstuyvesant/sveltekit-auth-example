@@ -1,9 +1,17 @@
+/** Represents a toast notification shown to the user. */
 interface Toast {
+	/** Short heading displayed at the top of the toast. */
 	title: string
+	/** Main message content of the toast. */
 	body: string
+	/** Whether the toast is currently visible. */
 	isOpen: boolean
 }
 
+/**
+ * Reactive singleton holding global application state.
+ * Access via the exported {@link appState} instance.
+ */
 class AppState {
 	/** Currently logged-in user, undefined when not authenticated */
 	user = $state<User | undefined>(undefined)

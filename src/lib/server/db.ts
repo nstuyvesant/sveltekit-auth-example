@@ -30,6 +30,15 @@ pool.on('error', (err: Error) => {
 	console.error('Unexpected error on idle client', err)
 })
 
+/**
+ * Executes a parameterized SQL query using the connection pool.
+ *
+ * @template T - The expected row type, extending QueryResultRow.
+ * @param sql - The SQL query string with optional $1, $2, ... placeholders.
+ * @param params - Optional positional parameter values to bind to the query.
+ * @param name - Optional name for the query to use a prepared statement.
+ * @returns A promise resolving to the typed QueryResult.
+ */
 queryFn = <T extends QueryResultRow>(
 	sql: string,
 	params?: (string | number | boolean | object | null)[],

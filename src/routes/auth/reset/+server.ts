@@ -5,6 +5,21 @@ import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 
+/**
+ * Resets a user's password using a signed JWT reset token.
+ *
+ * Expects a JSON body with `token` (the JWT from the reset email) and
+ * `password` (the new password). The token must have been signed with
+ * `purpose: 'reset-password'`.
+ *
+ * On success:
+ * - Updates the user's password via the `reset_password` stored procedure.
+ * - Best-effort invalidation of all existing sessions so the old password
+ *   can no longer be used.
+ *
+ * @returns `{ message }` JSON with HTTP 200 on success, or HTTP 403 if the
+ *   token is invalid or expired.
+ */
 export const PUT: RequestHandler = async event => {
 	const body = await event.request.json()
 	const { token, password } = body

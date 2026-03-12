@@ -6,7 +6,9 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { appState } from '$lib/app-state.svelte'
 
+	/** Props for the profile page. */
 	interface Props {
+		/** Server data containing the authenticated user's profile. */
 		data: PageData
 	}
 
@@ -28,6 +30,13 @@
 		focusedField?.focus()
 	})
 
+	/**
+	 * Submits the updated profile to `/api/v1/user` (PUT).
+	 *
+	 * Skips the password-match check for Gmail users since they manage their
+	 * password through Google. On success, syncs {@link appState.user} so the
+	 * navbar reflects the changes immediately.
+	 */
 	async function update() {
 		message = ''
 		submitted = false
@@ -62,6 +71,12 @@
 		}
 	}
 
+	/**
+	 * Permanently deletes the authenticated user's account after confirmation.
+	 *
+	 * Sends a DELETE to `/api/v1/user`. On success, clears {@link appState.user}
+	 * and redirects to the login page.
+	 */
 	async function deleteAccount() {
 		if (
 			!confirm('Are you sure you want to permanently delete your account? This cannot be undone.')
@@ -81,6 +96,7 @@
 		}
 	}
 
+	/** Returns `true` if the password and confirm-password fields match. */
 	const passwordMatch = () => {
 		if (!user.password) user.password = ''
 		return user.password == confirmPassword?.value

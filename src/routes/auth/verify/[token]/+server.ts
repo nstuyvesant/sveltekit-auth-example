@@ -5,7 +5,18 @@ import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 
-// Handles email verification links sent after registration
+/**
+ * Handles email verification links sent to users after registration.
+ *
+ * Verifies the JWT in the URL parameter, ensuring it has `purpose: 'verify-email'`.
+ * On a valid token, calls `verify_email_and_create_session` to atomically mark
+ * the email as verified and create a new session, then sets the session cookie
+ * and redirects the user to the home page.
+ *
+ * Redirects to `/login?error=invalid-token` if the token is missing, expired,
+ * or tampered, and to `/login?error=verification-failed` if the database call
+ * fails.
+ */
 export const GET: RequestHandler = async event => {
 	const { token } = event.params
 	const { cookies } = event

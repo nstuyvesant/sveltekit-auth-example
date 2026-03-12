@@ -8,8 +8,11 @@
 
 	import './layout.css'
 
+	/** Props for the root layout. */
 	interface Props {
+		/** Server data containing the authenticated user. */
 		data: LayoutServerData
+		/** Page content rendered inside the layout. */
 		children?: import('svelte').Snippet
 	}
 
@@ -23,6 +26,11 @@
 	let dropdownOpen = $state(false)
 	let dropdownEl: HTMLDivElement | undefined = $state()
 
+	/**
+	 * Closes the user dropdown when a click occurs outside of it.
+	 *
+	 * @param e - The window-level mouse event.
+	 */
 	function handleWindowClick(e: MouseEvent) {
 		if (dropdownOpen && dropdownEl && !dropdownEl.contains(e.target as Node)) {
 			dropdownOpen = false
@@ -45,6 +53,12 @@
 		if (!appState.user) google.accounts.id.prompt()
 	})
 
+	/**
+	 * Logs the current user out by POSTing to `/auth/logout`, then clears
+	 * {@link appState.user} and redirects to the login page.
+	 *
+	 * @param event - The click event from the logout button.
+	 */
 	async function logout(event: MouseEvent) {
 		event.preventDefault()
 		const res = await fetch('/auth/logout', { method: 'POST' })

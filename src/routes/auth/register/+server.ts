@@ -5,6 +5,23 @@ import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 import { sendVerificationEmail } from '$lib/server/email'
 
+/**
+ * Registers a new user account.
+ *
+ * - Validates that all required fields (`email`, `password`, `firstName`,
+ *   `lastName`) are present and that the password meets complexity requirements.
+ * - Calls the `register` SQL function to create the user record.
+ * - Deletes the session the DB auto-creates, since the user must verify their
+ *   email before they can log in.
+ * - Generates a 24-hour email-verification JWT and sends it via
+ *   {@link sendVerificationEmail}.
+ *
+ * @returns `{ message, emailVerification: true }` on success.
+ * @throws 400 if the request body is invalid, fields are missing, or the
+ *   password does not meet complexity requirements.
+ * @throws 503 if the database is unreachable.
+ * @throws The status code from the registration result on other failures (e.g. duplicate email).
+ */
 export const POST: RequestHandler = async event => {
 	let body: { email?: string; password?: string; firstName?: string; lastName?: string }
 	try {

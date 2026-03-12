@@ -7,7 +7,7 @@ import { build, files, version } from '$service-worker'
 
 const sw = self as unknown as ServiceWorkerGlobalScope
 
-// Create a unique cache name for this deployment
+/** Unique cache name for this deployment, keyed by the SvelteKit build version. */
 const CACHE = `cache-${version}`
 
 const ASSETS = [
@@ -15,6 +15,10 @@ const ASSETS = [
 	...files // everything in `static`
 ]
 
+/**
+ * On install, opens the versioned cache and pre-caches all build artifacts
+ * and static files so they are available offline.
+ */
 sw.addEventListener('install', event => {
 	// Create a new cache and add all files to it
 	async function addFilesToCache() {
@@ -25,6 +29,10 @@ sw.addEventListener('install', event => {
 	event.waitUntil(addFilesToCache())
 })
 
+/**
+ * On activate, removes all caches from previous deployments, keeping only
+ * the cache for the current build version.
+ */
 sw.addEventListener('activate', event => {
 	// Remove previous cached data from disk
 	async function deleteOldCaches() {
@@ -36,6 +44,14 @@ sw.addEventListener('activate', event => {
 	event.waitUntil(deleteOldCaches())
 })
 
+/**
+ * Intercepts GET requests and applies a cache-first strategy for pre-cached
+ * assets, falling back to network-first (with cache fallback) for all other
+ * requests.
+ *
+ * API (`/api`), auth (`/auth`), and non-HTTP requests are bypassed and go
+ * directly to the network.
+ */
 sw.addEventListener('fetch', event => {
 	// ignore POST requests etc
 	if (event.request.method !== 'GET') return

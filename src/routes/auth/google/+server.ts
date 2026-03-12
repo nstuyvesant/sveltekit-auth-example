@@ -4,7 +4,14 @@ import { OAuth2Client } from 'google-auth-library'
 import { query } from '$lib/server/db'
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
 
-// Verify JWT per https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
+/**
+ * Verifies a Google ID token and extracts basic user info from its payload.
+ *
+ * @see https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
+ * @param token - The Google credential JWT returned by the Identity Services SDK.
+ * @returns A partial {@link User} containing `firstName`, `lastName`, and `email`.
+ * @throws 500 if the token is invalid or the payload is missing.
+ */
 async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
 	try {
 		const client = new OAuth2Client(PUBLIC_GOOGLE_CLIENT_ID)
@@ -27,7 +34,17 @@ async function getGoogleUserFromJWT(token: string): Promise<Partial<User>> {
 	}
 }
 
-// Upsert user and get session ID
+/**
+ * Upserts a Google-authenticated user in the database and creates a new session.
+ *
+ * Calls the `start_gmail_user_session` SQL function, which inserts or updates
+ * the user record and returns a {@link UserSession} containing the session ID
+ * and user data.
+ *
+ * @param user - Partial user data obtained from the verified Google ID token.
+ * @returns A {@link UserSession} with the new session ID and user record.
+ * @throws 500 if the database call fails.
+ */
 async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
 	try {
 		const sql = `SELECT start_gmail_user_session($1) AS user_session;`
@@ -40,7 +57,16 @@ async function upsertGoogleUser(user: Partial<User>): Promise<UserSession> {
 	}
 }
 
-// Returns local user if Google user authenticated (and authorized our app)
+/**
+ * Handles Google Sign-In by verifying the credential token, upserting the user,
+ * and issuing a session cookie.
+ *
+ * Expects a JSON body with a `token` field containing the Google credential JWT.
+ * On success, sets an `httpOnly` session cookie and returns the authenticated user.
+ *
+ * @returns `{ message, user }` JSON on success.
+ * @throws 401 if Google authentication fails at any step.
+ */
 export const POST: RequestHandler = async event => {
 	const { cookies } = event
 

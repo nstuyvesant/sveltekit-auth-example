@@ -25,6 +25,10 @@
 
 	let formEl: HTMLFormElement | undefined = $state()
 
+	/**
+	 * Validates the registration form and, if valid, delegates to {@link registerLocal}.
+	 * Checks that passwords match before form validation runs.
+	 */
 	async function register() {
 		const form = formEl!
 		message = ''
@@ -57,6 +61,16 @@
 		focusedField?.focus()
 	})
 
+	/**
+	 * POSTs the new user data to `/auth/register`.
+	 *
+	 * The server ignores the `role` field and always assigns the lowest privilege
+	 * (`student`). On success with `emailVerification: true`, sets
+	 * `emailVerificationSent` to show the confirmation message instead of the form.
+	 *
+	 * @param user - The user object collected from the registration form.
+	 * @throws {Error} With a user-friendly message on HTTP errors.
+	 */
 	async function registerLocal(user: User) {
 		loading = true
 		try {
@@ -86,6 +100,7 @@
 		}
 	}
 
+	/** Returns `true` if the password and confirm-password fields match. */
 	const passwordMatch = () => {
 		if (!user) return false // placate TypeScript
 		if (!user.password) user.password = ''

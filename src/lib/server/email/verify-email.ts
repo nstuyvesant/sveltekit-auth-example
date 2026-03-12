@@ -1,6 +1,12 @@
 import { DOMAIN, SENDGRID_SENDER } from '$env/static/private'
 import { sendMessage } from '$lib/server/sendgrid'
 
+/**
+ * Sends an email verification link to a newly registered user.
+ *
+ * @param toEmail - The recipient's email address.
+ * @param token - The email verification token to embed in the verification link.
+ */
 export const sendVerificationEmail = async (toEmail: string, token: string) => {
 	await sendMessage({
 		to: { email: toEmail },

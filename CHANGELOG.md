@@ -2,6 +2,10 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.6.1
+
+- Add JSDoc comments throughout the codebase (`app.d.ts`, server hooks, route handlers, lib utilities, Svelte components)
+
 # 5.6.0
 
 - Split `db_create.sql` into `db_create.sql` (role + database creation) and `db_schema.sql` (schema, functions, seed data)

@@ -2,6 +2,16 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 
+/**
+ * Updates the authenticated user's profile.
+ *
+ * Reads a partial user object from the JSON request body and passes it to the
+ * `update_user` stored procedure.
+ *
+ * @returns `{ message }` JSON on success.
+ * @throws 401 if the user is not logged in.
+ * @throws 503 if the database call fails.
+ */
 export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 
@@ -19,6 +29,16 @@ export const PUT: RequestHandler = async event => {
 	})
 }
 
+/**
+ * Deletes the authenticated user's account and clears their session cookie.
+ *
+ * Calls the `delete_user` stored procedure, which cascades to related session
+ * records via `ON DELETE CASCADE`, then removes the `session` cookie.
+ *
+ * @returns `{ message }` JSON on success.
+ * @throws 401 if the user is not logged in.
+ * @throws 503 if the database call fails.
+ */
 export const DELETE: RequestHandler = async event => {
 	const { user } = event.locals
 

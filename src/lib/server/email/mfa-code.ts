@@ -1,6 +1,12 @@
 import { SENDGRID_SENDER } from '$env/static/private'
 import { sendMessage } from '$lib/server/sendgrid'
 
+/**
+ * Sends a multi-factor authentication (MFA) verification code email to the user.
+ *
+ * @param toEmail - The recipient's email address.
+ * @param code - The one-time verification code to include in the email.
+ */
 export const sendMfaCodeEmail = async (toEmail: string, code: string) => {
 	await sendMessage({
 		to: { email: toEmail },

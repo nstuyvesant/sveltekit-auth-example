@@ -5,7 +5,9 @@
 	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 
+	/** Props for the password-reset page. */
 	interface Props {
+		/** Server data containing the password-reset token from the URL segment. */
 		data: PageData
 	}
 
@@ -26,11 +28,19 @@
 		focusedField?.focus()
 	})
 
+	/** Returns `true` if the password and confirm-password fields match. */
 	const passwordMatch = () => {
 		if (!password) password = ''
 		return password == confirmPassword?.value
 	}
 
+	/**
+	 * Submits the new password to `/auth/reset` (PUT).
+	 *
+	 * Validates that the passwords match and the form is valid before sending.
+	 * On success, shows a toast notification and redirects to `/login`.
+	 * On failure, displays the error message returned by the server.
+	 */
 	const resetPassword = async () => {
 		message = ''
 		submitted = false

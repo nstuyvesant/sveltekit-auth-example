@@ -15,6 +15,14 @@
 		focusedField?.focus()
 	})
 
+	/**
+	 * Submits a forgot-password request to `/auth/forgot` (POST).
+	 *
+	 * Gmail addresses are rejected client-side since their passwords must be
+	 * managed through Google. For all other addresses a 204 response triggers
+	 * a toast notification and redirects to the home page (the server always
+	 * returns 204 regardless of whether the email exists, to prevent enumeration).
+	 */
 	const sendPasswordReset = async () => {
 		message = ''
 		const form = formEl!

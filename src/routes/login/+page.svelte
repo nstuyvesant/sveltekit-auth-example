@@ -19,6 +19,10 @@
 		password: ''
 	})
 
+	/**
+	 * Validates the login form and, if valid, delegates to {@link loginLocal}.
+	 * Displays any error message returned by the server.
+	 */
 	async function login() {
 		message = ''
 		submitted = false
@@ -45,6 +49,15 @@
 		focusedField?.focus()
 	})
 
+	/**
+	 * POSTs credentials to `/auth/login`.
+	 *
+	 * If the server requires MFA, sets `mfaRequired` to show the code form.
+	 * Otherwise, updates {@link appState.user} and redirects via
+	 * {@link redirectAfterLogin}.
+	 *
+	 * @param credentials - The user's email and password.
+	 */
 	async function loginLocal(credentials: Credentials) {
 		loading = true
 		try {
@@ -77,6 +90,12 @@
 		}
 	}
 
+	/**
+	 * Validates the MFA form and POSTs the code to `/auth/mfa`.
+	 *
+	 * On success, updates {@link appState.user} and redirects via
+	 * {@link redirectAfterLogin}. Displays any error returned by the server.
+	 */
 	async function verifyMfa() {
 		message = ''
 		mfaSubmitted = false

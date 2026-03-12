@@ -5,6 +5,16 @@ import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
 import { sendPasswordResetEmail } from '$lib/server/email'
 
+/**
+ * Handles a forgot-password request.
+ *
+ * Looks up the provided email address. If a matching user is found, a signed
+ * JWT (valid for 30 minutes) is generated and sent via a password-reset email.
+ * A 204 is always returned regardless of whether the email exists, to prevent
+ * user enumeration.
+ *
+ * @returns 204 No Content in all cases.
+ */
 export const POST: RequestHandler = async event => {
 	const body = await event.request.json()
 	const sql = `SELECT id as "userId" FROM users WHERE email = $1 LIMIT 1;`
