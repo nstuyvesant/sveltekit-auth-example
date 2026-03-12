@@ -7,12 +7,12 @@ import { query } from '$lib/server/db'
 
 const mockQuery = vi.mocked(query)
 
-const mockUser: User = {
+const mockUser: UserProperties = {
 	id: 3,
 	email: 'user@example.com',
 	firstName: 'Jane',
 	lastName: 'Doe',
-	role: 'user'
+	role: 'student'
 }
 
 function makeEvent({ noUser = false } = {}) {

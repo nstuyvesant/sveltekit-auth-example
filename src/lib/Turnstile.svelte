@@ -7,6 +7,7 @@
 		theme?: 'light' | 'dark' | 'auto'
 	}
 
+	// eslint-disable-next-line no-useless-assignment
 	let { token = $bindable(''), theme = 'auto' }: Props = $props()
 
 	let container: HTMLDivElement | undefined = $state()

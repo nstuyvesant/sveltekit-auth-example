@@ -16,8 +16,6 @@ type QueryFunction = <T extends QueryResultRow>(
 	name?: string
 ) => Promise<QueryResult<T>>
 
-let queryFn: QueryFunction
-
 const pool = new pg.Pool({
 	max: 10, // default
 	idleTimeoutMillis: 10000,
@@ -39,7 +37,7 @@ pool.on('error', (err: Error) => {
  * @param name - Optional name for the query to use a prepared statement.
  * @returns A promise resolving to the typed QueryResult.
  */
-queryFn = <T extends QueryResultRow>(
+const queryFn: QueryFunction = <T extends QueryResultRow>(
 	sql: string,
 	params?: (string | number | boolean | object | null)[],
 	name?: string
@@ -71,7 +69,7 @@ queryFn = <T extends QueryResultRow>(
  * );
  * ```
  */
-export const query = <T extends QueryResultRow = any>(
+export const query = <T extends QueryResultRow = QueryResultRow>(
 	sql: string,
 	params?: (string | number | boolean | object | null)[],
 	name?: string

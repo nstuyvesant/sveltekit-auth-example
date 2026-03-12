@@ -30,8 +30,7 @@ describe('setupFetchInterceptor', () => {
 			email: 'a@b.com',
 			firstName: 'A',
 			lastName: 'B',
-			phone: '',
-			optOut: false
+			phone: ''
 		}
 		setupFetchInterceptor()
 	})

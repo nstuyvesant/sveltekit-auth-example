@@ -15,12 +15,12 @@ const mockQuery = vi.mocked(query)
 const mockSendMfaCodeEmail = vi.mocked(sendMfaCodeEmail)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
-const mockUser: User = {
+const mockUser: UserProperties = {
 	id: 7,
 	email: 'user@example.com',
 	firstName: 'Jane',
 	lastName: 'Doe',
-	role: 'user'
+	role: 'student'
 }
 
 const successResult: AuthenticationResult = {
@@ -210,10 +210,12 @@ describe('POST /auth/login — brute-force lockout', () => {
 
 		// 5 failures to trigger lockout
 		for (let i = 0; i < 5; i++) {
-			await POST(
-				makeEvent({
-					body: { email: 'lockout@example.com', password: 'wrong', turnstileToken: 'tok' }
-				})
+			await Promise.resolve(
+				POST(
+					makeEvent({
+						body: { email: 'lockout@example.com', password: 'wrong', turnstileToken: 'tok' }
+					})
+				)
 			).catch(() => {})
 		}
 
@@ -229,8 +231,12 @@ describe('POST /auth/login — brute-force lockout', () => {
 	it('clears the lockout tracker on successful login', async () => {
 		// Register a failed attempt first
 		mockQuery.mockResolvedValueOnce({ rows: [{ authenticationResult: failResult }] } as any)
-		await POST(
-			makeEvent({ body: { email: 'clear@example.com', password: 'wrong', turnstileToken: 'tok' } })
+		await Promise.resolve(
+			POST(
+				makeEvent({
+					body: { email: 'clear@example.com', password: 'wrong', turnstileToken: 'tok' }
+				})
+			)
 		).catch(() => {})
 
 		// Then succeed — mfa flow needs 3 query responses

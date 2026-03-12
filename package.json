@@ -1,7 +1,7 @@
 {
 	"name": "sveltekit-auth-example",
 	"description": "SvelteKit Authentication Example",
-	"version": "5.8.4",
+	"version": "5.8.5",
 	"author": "Nate Stuyvesant",
 	"license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
 	"repository": {
@@ -44,6 +44,7 @@
 		"pg": "^8.20.0"
 	},
 	"devDependencies": {
+		"@eslint/compat": "^1.0.3",
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.58.2",
 		"@sveltejs/adapter-node": "^5.5.4",

@@ -101,7 +101,7 @@
 		} catch (err) {
 			console.error('Register error', err)
 			if (err instanceof Error) {
-				throw new Error(err.message)
+				throw new Error(err.message, { cause: err })
 			}
 		} finally {
 			loading = false

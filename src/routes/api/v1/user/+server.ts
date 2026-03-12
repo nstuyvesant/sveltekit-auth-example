@@ -20,7 +20,7 @@ export const PUT: RequestHandler = async event => {
 	try {
 		const userUpdate = await event.request.json()
 		await query(`CALL update_user($1, $2);`, [user.id, JSON.stringify(userUpdate)])
-	} catch (err) {
+	} catch {
 		error(503, 'Could not communicate with database.')
 	}
 

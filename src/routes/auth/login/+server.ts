@@ -69,7 +69,7 @@ export const POST: RequestHandler = async event => {
 		error(503, 'Could not communicate with database.')
 	}
 
-	const { authenticationResult }: { authenticationResult: AuthenticationResult } = result.rows[0]
+	const { authenticationResult } = result.rows[0] as { authenticationResult: AuthenticationResult }
 
 	if (!authenticationResult.user) {
 		// Track failed attempt for lockout

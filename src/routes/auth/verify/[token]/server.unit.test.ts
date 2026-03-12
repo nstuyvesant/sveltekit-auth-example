@@ -40,7 +40,7 @@ describe('GET /auth/verify/[token]', () => {
 		mockQuery.mockResolvedValue({ rows: [{ verify_email_and_create_session: 'sess-abc' }] } as any)
 		const event = makeEvent(makeVerifyEmailToken())
 
-		await GET(event).catch(() => {})
+		await Promise.resolve(GET(event)).catch(() => {})
 
 		expect(event.cookies.set).toHaveBeenCalledWith(
 			'session',
@@ -57,7 +57,7 @@ describe('GET /auth/verify/[token]', () => {
 	it('calls verify_email_and_create_session with the userId from the token', async () => {
 		mockQuery.mockResolvedValue({ rows: [{ verify_email_and_create_session: 'sess-abc' }] } as any)
 
-		await GET(makeEvent(makeVerifyEmailToken())).catch(() => {})
+		await Promise.resolve(GET(makeEvent(makeVerifyEmailToken()))).catch(() => {})
 
 		expect(mockQuery).toHaveBeenCalledWith(
 			expect.stringContaining('verify_email_and_create_session'),
@@ -125,7 +125,7 @@ describe('GET /auth/verify/[token]', () => {
 		mockQuery.mockRejectedValue(new Error('db down'))
 		const event = makeEvent(makeVerifyEmailToken())
 
-		await GET(event).catch(() => {})
+		await Promise.resolve(GET(event)).catch(() => {})
 
 		expect(event.cookies.set).not.toHaveBeenCalled()
 	})

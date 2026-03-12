@@ -50,8 +50,8 @@ export const PUT: RequestHandler = async event => {
 		return json({
 			message: 'Password successfully reset.'
 		})
-	} catch (error) {
-		// Technically, I should check error.message to make sure it's not a DB issue
+	} catch {
+		// Technically, we should check if it's a DB issue vs an invalid/expired token
 		return json(
 			{
 				message: 'Password reset token expired.'

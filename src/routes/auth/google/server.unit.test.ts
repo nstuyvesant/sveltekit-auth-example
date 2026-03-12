@@ -13,12 +13,12 @@ import { OAuth2Client } from 'google-auth-library'
 const mockQuery = vi.mocked(query)
 const MockOAuth2Client = vi.mocked(OAuth2Client)
 
-const mockUser: User = {
+const mockUser: UserProperties = {
 	id: 1,
 	email: 'jane@example.com',
 	firstName: 'Jane',
 	lastName: 'Doe',
-	role: 'user'
+	role: 'student'
 }
 const mockUserSession: UserSession = { id: 'session-abc', user: mockUser }
 
@@ -29,7 +29,7 @@ function makeVerifyIdToken(payload: Record<string, unknown> | null) {
 function setupOAuth2Mock(verifyIdToken: ReturnType<typeof vi.fn>) {
 	MockOAuth2Client.mockImplementation(function () {
 		return { verifyIdToken }
-	} as unknown as new (clientId: string) => OAuth2Client)
+	} as any)
 }
 
 function makeEvent(body: Record<string, unknown> = { token: 'google-jwt' }) {

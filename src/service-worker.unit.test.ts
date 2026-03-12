@@ -22,15 +22,17 @@ const mockCaches = {
 	delete: vi.fn()
 }
 
-const swHandlers: Record<string, Function> = {}
+const swHandlers: Record<string, (event: any) => void> = {}
 
 beforeAll(async () => {
 	vi.stubGlobal('caches', mockCaches)
 
 	// Spy on addEventListener to capture the handlers the SW registers
-	vi.spyOn(window, 'addEventListener').mockImplementation((type: string, handler: any) => {
-		swHandlers[type] = handler
-	})
+	vi.spyOn(window, 'addEventListener').mockImplementation(
+		(type: string, handler: EventListener) => {
+			swHandlers[type] = handler
+		}
+	)
 
 	// Reset module registry so the SW file re-evaluates and re-registers its listeners
 	vi.resetModules()

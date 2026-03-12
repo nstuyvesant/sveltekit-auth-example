@@ -101,7 +101,7 @@ describe('DELETE /api/v1/user', () => {
 		mockQuery.mockRejectedValue(new Error('db down'))
 		const event = makeEvent()
 
-		await DELETE(event).catch(() => {})
+		await Promise.resolve(DELETE(event)).catch(() => {})
 
 		expect(event.cookies.delete).not.toHaveBeenCalled()
 	})

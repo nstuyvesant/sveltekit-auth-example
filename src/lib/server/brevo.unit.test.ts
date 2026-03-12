@@ -32,6 +32,7 @@ describe('sendMessage', () => {
 	it('throws if BREVO_KEY is missing', async () => {
 		vi.doMock('$env/dynamic/private', () => ({ env: {} }))
 		// Re-import to pick up the new mock
+		// @ts-expect-error Vite query string not recognized by tsc
 		const { sendMessage: sm } = await import('./brevo?nocache-1')
 		await expect(sm(validMessage)).rejects.toThrow('Brevo API key is missing')
 	})

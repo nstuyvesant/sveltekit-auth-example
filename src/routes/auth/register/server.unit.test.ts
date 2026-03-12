@@ -15,12 +15,12 @@ const mockQuery = vi.mocked(query)
 const mockSendVerificationEmail = vi.mocked(sendVerificationEmail)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
-const mockUser: User = {
+const mockUser: UserProperties = {
 	id: 9,
 	email: 'new@example.com',
 	firstName: 'Jane',
 	lastName: 'Doe',
-	role: 'user'
+	role: 'student'
 }
 
 const successResult: AuthenticationResult = {

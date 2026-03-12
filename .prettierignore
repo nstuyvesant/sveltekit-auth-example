@@ -4,6 +4,7 @@
 .yarn
 node_modules
 coverage
+build
 .env
 !.env.example
 yarn.lock

@@ -31,8 +31,7 @@ describe('appState', () => {
 				email: 'admin@example.com',
 				firstName: 'Jane',
 				lastName: 'Doe',
-				phone: '412-555-1212',
-				optOut: false
+				phone: '412-555-1212'
 			}
 
 			appState.user = user
@@ -47,8 +46,7 @@ describe('appState', () => {
 				email: 'a@b.com',
 				firstName: 'A',
 				lastName: 'B',
-				phone: '',
-				optOut: false
+				phone: ''
 			}
 			appState.user = undefined
 			expect(appState.user).toBeUndefined()

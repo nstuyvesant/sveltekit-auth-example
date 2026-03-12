@@ -12,12 +12,12 @@ import jwt from 'jsonwebtoken'
 const mockQuery = vi.mocked(query)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
-const mockUser: User = {
+const mockUser: UserProperties = {
 	id: 5,
 	email: 'user@example.com',
 	firstName: 'Jane',
 	lastName: 'Doe',
-	role: 'user'
+	role: 'student'
 }
 
 function makeEvent(

@@ -2,6 +2,10 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.8.5
+
+- Fix lint errors
+
 # 5.8.4
 
 - Fix README: replace outdated SendGrid references with Brevo; update env var names (`BREVO_KEY`, `EMAIL`) and source file paths

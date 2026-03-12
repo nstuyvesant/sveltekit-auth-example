@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { error } from '@sveltejs/kit'
 
 vi.mock('$lib/server/db', () => ({ query: vi.fn() }))
 
@@ -28,7 +27,7 @@ function makeEvent({
 	} as unknown as Parameters<typeof handle>[0]['event']
 }
 
-const resolve = vi.fn(async (event: unknown) => new Response('ok', { status: 200 }))
+const resolve = vi.fn(async (_event: unknown) => new Response('ok', { status: 200 }))
 
 beforeEach(() => {
 	vi.resetAllMocks()
