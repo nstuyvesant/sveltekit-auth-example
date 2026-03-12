@@ -9,10 +9,7 @@ const mockQuery = vi.mocked(query)
 
 const adminUser: UserProperties = { id: 42, role: 'admin', email: 'admin@example.com' }
 
-function makeEvent({
-	noUser = false,
-	body = {} as unknown
-} = {}) {
+function makeEvent({ noUser = false, body = {} as unknown } = {}) {
 	return {
 		locals: { user: noUser ? undefined : adminUser },
 		request: { json: vi.fn().mockResolvedValue(body) },
@@ -43,10 +40,10 @@ describe('PUT /api/v1/user', () => {
 
 		await PUT(makeEvent({ body: update }))
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('update_user'),
-			[adminUser.id, JSON.stringify(update)]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('update_user'), [
+			adminUser.id,
+			JSON.stringify(update)
+		])
 	})
 
 	it('throws 401 when user is not authenticated', async () => {
@@ -78,10 +75,7 @@ describe('DELETE /api/v1/user', () => {
 
 		await DELETE(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('delete_user'),
-			[adminUser.id]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('delete_user'), [adminUser.id])
 	})
 
 	it('deletes the session cookie on success', async () => {

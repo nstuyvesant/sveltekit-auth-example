@@ -10,7 +10,9 @@ import jwt from 'jsonwebtoken'
 const mockQuery = vi.mocked(query)
 
 function makeVerifyEmailToken(overrides: Record<string, unknown> = {}) {
-	return jwt.sign({ subject: '7', purpose: 'verify-email', ...overrides }, 'test-secret', { expiresIn: '24h' })
+	return jwt.sign({ subject: '7', purpose: 'verify-email', ...overrides }, 'test-secret', {
+		expiresIn: '24h'
+	})
 }
 
 function makeEvent(token: string) {
@@ -40,12 +42,16 @@ describe('GET /auth/verify/[token]', () => {
 
 		await GET(event).catch(() => {})
 
-		expect(event.cookies.set).toHaveBeenCalledWith('session', 'sess-abc', expect.objectContaining({
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: true,
-			path: '/'
-		}))
+		expect(event.cookies.set).toHaveBeenCalledWith(
+			'session',
+			'sess-abc',
+			expect.objectContaining({
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
+				path: '/'
+			})
+		)
 	})
 
 	it('calls verify_email_and_create_session with the userId from the token', async () => {
@@ -60,7 +66,9 @@ describe('GET /auth/verify/[token]', () => {
 	})
 
 	it('redirects to /login?error=invalid-token when the token is expired', async () => {
-		const expiredToken = jwt.sign({ subject: '7', purpose: 'verify-email' }, 'test-secret', { expiresIn: -1 })
+		const expiredToken = jwt.sign({ subject: '7', purpose: 'verify-email' }, 'test-secret', {
+			expiresIn: -1
+		})
 
 		await expect(GET(makeEvent(expiredToken))).rejects.toMatchObject({
 			location: '/login?error=invalid-token',

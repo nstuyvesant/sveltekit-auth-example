@@ -38,7 +38,10 @@ describe('query', () => {
 		await query('SELECT $1::text AS val', ['hello'])
 
 		expect(mockPoolQuery).toHaveBeenCalledOnce()
-		expect(mockPoolQuery).toHaveBeenCalledWith({ text: 'SELECT $1::text AS val', values: ['hello'] })
+		expect(mockPoolQuery).toHaveBeenCalledWith({
+			text: 'SELECT $1::text AS val',
+			values: ['hello']
+		})
 	})
 
 	it('passes SQL without params to pool.query', async () => {

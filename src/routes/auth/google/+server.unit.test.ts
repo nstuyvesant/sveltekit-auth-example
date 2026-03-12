@@ -13,7 +13,13 @@ import { OAuth2Client } from 'google-auth-library'
 const mockQuery = vi.mocked(query)
 const MockOAuth2Client = vi.mocked(OAuth2Client)
 
-const mockUser: User = { id: 1, email: 'jane@example.com', firstName: 'Jane', lastName: 'Doe', role: 'user' }
+const mockUser: User = {
+	id: 1,
+	email: 'jane@example.com',
+	firstName: 'Jane',
+	lastName: 'Doe',
+	role: 'user'
+}
 const mockUserSession: UserSession = { id: 'session-abc', user: mockUser }
 
 function makeVerifyIdToken(payload: Record<string, unknown> | null) {
@@ -40,7 +46,9 @@ beforeEach(() => {
 
 describe('POST /auth/google', () => {
 	it('returns 200 with user data on successful sign-in', async () => {
-		setupOAuth2Mock(makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' }))
+		setupOAuth2Mock(
+			makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' })
+		)
 		mockQuery.mockResolvedValue({ rows: [{ user_session: mockUserSession }] } as any)
 
 		const res = await POST(makeEvent())
@@ -52,22 +60,30 @@ describe('POST /auth/google', () => {
 	})
 
 	it('sets an httpOnly session cookie on success', async () => {
-		setupOAuth2Mock(makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' }))
+		setupOAuth2Mock(
+			makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' })
+		)
 		mockQuery.mockResolvedValue({ rows: [{ user_session: mockUserSession }] } as any)
 		const event = makeEvent()
 
 		await POST(event)
 
-		expect(event.cookies.set).toHaveBeenCalledWith('session', 'session-abc', expect.objectContaining({
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: true,
-			path: '/'
-		}))
+		expect(event.cookies.set).toHaveBeenCalledWith(
+			'session',
+			'session-abc',
+			expect.objectContaining({
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
+				path: '/'
+			})
+		)
 	})
 
 	it('sets event.locals.user on success', async () => {
-		setupOAuth2Mock(makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' }))
+		setupOAuth2Mock(
+			makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' })
+		)
 		mockQuery.mockResolvedValue({ rows: [{ user_session: mockUserSession }] } as any)
 		const event = makeEvent()
 
@@ -77,7 +93,11 @@ describe('POST /auth/google', () => {
 	})
 
 	it('uses PUBLIC_GOOGLE_CLIENT_ID when verifying the token', async () => {
-		const verifyIdToken = makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' })
+		const verifyIdToken = makeVerifyIdToken({
+			given_name: 'Jane',
+			family_name: 'Doe',
+			email: 'jane@example.com'
+		})
 		setupOAuth2Mock(verifyIdToken)
 		mockQuery.mockResolvedValue({ rows: [{ user_session: mockUserSession }] } as any)
 
@@ -88,15 +108,16 @@ describe('POST /auth/google', () => {
 	})
 
 	it('passes the Google user data to the DB upsert', async () => {
-		setupOAuth2Mock(makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' }))
+		setupOAuth2Mock(
+			makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' })
+		)
 		mockQuery.mockResolvedValue({ rows: [{ user_session: mockUserSession }] } as any)
 
 		await POST(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('start_gmail_user_session'),
-			[JSON.stringify({ firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com' })]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('start_gmail_user_session'), [
+			JSON.stringify({ firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com' })
+		])
 	})
 
 	it('falls back to placeholder names when given_name/family_name are missing', async () => {
@@ -105,10 +126,13 @@ describe('POST /auth/google', () => {
 
 		await POST(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.any(String),
-			[JSON.stringify({ firstName: 'UnknownFirstName', lastName: 'UnknownLastName', email: 'noname@example.com' })]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.any(String), [
+			JSON.stringify({
+				firstName: 'UnknownFirstName',
+				lastName: 'UnknownLastName',
+				email: 'noname@example.com'
+			})
+		])
 	})
 
 	it('throws 401 when the Google token is invalid', async () => {
@@ -118,7 +142,9 @@ describe('POST /auth/google', () => {
 	})
 
 	it('throws 401 when the DB upsert fails', async () => {
-		setupOAuth2Mock(makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' }))
+		setupOAuth2Mock(
+			makeVerifyIdToken({ given_name: 'Jane', family_name: 'Doe', email: 'jane@example.com' })
+		)
 		mockQuery.mockRejectedValue(new Error('db error'))
 
 		await expect(POST(makeEvent())).rejects.toMatchObject({ status: 401 })

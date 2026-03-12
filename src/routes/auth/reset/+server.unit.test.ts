@@ -13,7 +13,9 @@ const mockQuery = vi.mocked(query)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
 function makeResetToken(overrides: Record<string, unknown> = {}) {
-	return jwt.sign({ subject: 42, purpose: 'reset-password', ...overrides }, 'test-secret', { expiresIn: '30m' })
+	return jwt.sign({ subject: 42, purpose: 'reset-password', ...overrides }, 'test-secret', {
+		expiresIn: '30m'
+	})
 }
 
 function makeEvent(body: Record<string, unknown> = {}) {
@@ -58,10 +60,10 @@ describe('PUT /auth/reset', () => {
 
 		await PUT(makeEvent({ password: 'NewPassword1!' }))
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('reset_password'),
-			[42, 'NewPassword1!']
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('reset_password'), [
+			42,
+			'NewPassword1!'
+		])
 	})
 
 	it('invalidates existing sessions after a successful reset', async () => {
@@ -69,16 +71,11 @@ describe('PUT /auth/reset', () => {
 
 		await PUT(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('delete_session'),
-			[42]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('delete_session'), [42])
 	})
 
 	it('still returns 200 when session invalidation fails', async () => {
-		mockQuery
-			.mockResolvedValueOnce({ rows: [] } as any)
-			.mockRejectedValueOnce(new Error('db down'))
+		mockQuery.mockResolvedValueOnce({ rows: [] } as any).mockRejectedValueOnce(new Error('db down'))
 
 		const res = await PUT(makeEvent())
 
@@ -86,7 +83,9 @@ describe('PUT /auth/reset', () => {
 	})
 
 	it('returns 403 when the token is expired', async () => {
-		const expiredToken = jwt.sign({ subject: 42, purpose: 'reset-password' }, 'test-secret', { expiresIn: -1 })
+		const expiredToken = jwt.sign({ subject: 42, purpose: 'reset-password' }, 'test-secret', {
+			expiresIn: -1
+		})
 
 		const res = await PUT(makeEvent({ token: expiredToken }))
 

@@ -2,7 +2,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 vi.mock('$env/static/public', () => ({ PUBLIC_GOOGLE_CLIENT_ID: 'test-client-id' }))
-vi.mock('$lib/app-state.svelte', () => ({ appState: { googleInitialized: false, user: undefined } }))
+vi.mock('$lib/app-state.svelte', () => ({
+	appState: { googleInitialized: false, user: undefined }
+}))
 vi.mock('$lib/auth-redirect', () => ({ redirectAfterLogin: vi.fn() }))
 
 import { renderGoogleButton, initializeGoogleAccounts } from './google'
@@ -47,11 +49,14 @@ describe('renderGoogleButton', () => {
 		renderGoogleButton()
 
 		expect(mock.renderButton).toHaveBeenCalledOnce()
-		expect(mock.renderButton).toHaveBeenCalledWith(btn, expect.objectContaining({
-			type: 'standard',
-			theme: 'outline',
-			size: 'large'
-		}))
+		expect(mock.renderButton).toHaveBeenCalledWith(
+			btn,
+			expect.objectContaining({
+				type: 'standard',
+				theme: 'outline',
+				size: 'large'
+			})
+		)
 	})
 
 	it('falls back to 400 when the button has no width', () => {
@@ -118,9 +123,11 @@ describe('initializeGoogleAccounts', () => {
 		initializeGoogleAccounts()
 
 		expect(mock.initialize).toHaveBeenCalledOnce()
-		expect(mock.initialize).toHaveBeenCalledWith(expect.objectContaining({
-			client_id: 'test-client-id'
-		}))
+		expect(mock.initialize).toHaveBeenCalledWith(
+			expect.objectContaining({
+				client_id: 'test-client-id'
+			})
+		)
 	})
 
 	it('sets appState.googleInitialized to true', () => {
@@ -153,19 +160,20 @@ describe('initializeGoogleAccounts', () => {
 		const { callback } = mock.initialize.mock.calls[0][0]
 		await callback({ credential: 'test-credential' })
 
-		expect(fetch).toHaveBeenCalledWith('/auth/google', expect.objectContaining({
-			method: 'POST',
-			body: JSON.stringify({ token: 'test-credential' })
-		}))
+		expect(fetch).toHaveBeenCalledWith(
+			'/auth/google',
+			expect.objectContaining({
+				method: 'POST',
+				body: JSON.stringify({ token: 'test-credential' })
+			})
+		)
 		expect(appState.user).toEqual(user)
 		expect(mockRedirectAfterLogin).toHaveBeenCalledWith(user)
 	})
 
 	it('callback does not update state when the response is not ok', async () => {
 		const mock = installGoogleMock()
-		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response(null, { status: 401 })
-		)
+		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 401 }))
 
 		initializeGoogleAccounts()
 

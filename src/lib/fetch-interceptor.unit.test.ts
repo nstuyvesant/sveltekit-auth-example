@@ -24,7 +24,15 @@ describe('setupFetchInterceptor', () => {
 		// Save and restore window.fetch around each test
 		originalFetch = window.fetch
 		mockGoto.mockReset()
-		appState.user = { id: 1, role: 'admin', email: 'a@b.com', firstName: 'A', lastName: 'B', phone: '', optOut: false }
+		appState.user = {
+			id: 1,
+			role: 'admin',
+			email: 'a@b.com',
+			firstName: 'A',
+			lastName: 'B',
+			phone: '',
+			optOut: false
+		}
 		setupFetchInterceptor()
 	})
 

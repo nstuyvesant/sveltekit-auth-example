@@ -160,7 +160,9 @@ describe('sendMessage', () => {
 		vi.useFakeTimers()
 		vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Network failure'))
 
-		const rejection = expect(sendMessage(validMessage)).rejects.toThrow('Failed to send email after retries')
+		const rejection = expect(sendMessage(validMessage)).rejects.toThrow(
+			'Failed to send email after retries'
+		)
 		await vi.runAllTimersAsync()
 		await rejection
 		vi.useRealTimers()

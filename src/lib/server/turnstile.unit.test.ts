@@ -94,10 +94,7 @@ describe('verifyTurnstileToken', () => {
 		const result = await verifyTurnstileToken('some-token')
 
 		expect(result).toBe(false)
-		expect(consoleSpy).toHaveBeenCalledWith(
-			'Turnstile verification error:',
-			expect.any(Error)
-		)
+		expect(consoleSpy).toHaveBeenCalledWith('Turnstile verification error:', expect.any(Error))
 	})
 
 	it('returns false when the response body is not valid JSON', async () => {

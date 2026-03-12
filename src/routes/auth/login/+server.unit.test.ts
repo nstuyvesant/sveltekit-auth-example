@@ -15,7 +15,13 @@ const mockQuery = vi.mocked(query)
 const mockSendMfaCodeEmail = vi.mocked(sendMfaCodeEmail)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
-const mockUser: User = { id: 7, email: 'user@example.com', firstName: 'Jane', lastName: 'Doe', role: 'user' }
+const mockUser: User = {
+	id: 7,
+	email: 'user@example.com',
+	firstName: 'Jane',
+	lastName: 'Doe',
+	role: 'user'
+}
 
 const successResult: AuthenticationResult = {
 	user: mockUser,
@@ -32,7 +38,10 @@ const failResult: AuthenticationResult = {
 }
 
 function makeEvent({
-	body = { email: 'user@example.com', password: 'Password1!', turnstileToken: 'tok' } as Record<string, unknown>,
+	body = { email: 'user@example.com', password: 'Password1!', turnstileToken: 'tok' } as Record<
+		string,
+		unknown
+	>,
 	mfaTrustedCookie = undefined as string | undefined
 } = {}) {
 	return {
@@ -61,8 +70,8 @@ describe('POST /auth/login — MFA flow', () => {
 	beforeEach(() => {
 		mockQuery
 			.mockResolvedValueOnce({ rows: [{ authenticationResult: successResult }] } as any) // authenticate
-			.mockResolvedValueOnce({ rows: [] } as any)                                         // delete_session
-			.mockResolvedValueOnce({ rows: [{ code: '123456' }] } as any)                       // create_mfa_code
+			.mockResolvedValueOnce({ rows: [] } as any) // delete_session
+			.mockResolvedValueOnce({ rows: [{ code: '123456' }] } as any) // create_mfa_code
 	})
 
 	it('returns { mfaRequired: true } when no trusted cookie is present', async () => {
@@ -114,12 +123,16 @@ describe('POST /auth/login — MFA trusted device', () => {
 
 		await POST(event)
 
-		expect(event.cookies.set).toHaveBeenCalledWith('session', 'sess-123', expect.objectContaining({
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: true,
-			path: '/'
-		}))
+		expect(event.cookies.set).toHaveBeenCalledWith(
+			'session',
+			'sess-123',
+			expect.objectContaining({
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
+				path: '/'
+			})
+		)
 	})
 
 	it('sets event.locals.user when the trusted cookie is valid', async () => {
@@ -145,7 +158,9 @@ describe('POST /auth/login — MFA trusted device', () => {
 	})
 
 	it('falls through to MFA and deletes cookie when trusted token is expired', async () => {
-		const expiredToken = jwt.sign({ userId: mockUser.id, purpose: 'mfa-trusted' }, 'test-secret', { expiresIn: -1 })
+		const expiredToken = jwt.sign({ userId: mockUser.id, purpose: 'mfa-trusted' }, 'test-secret', {
+			expiresIn: -1
+		})
 		mockQuery
 			.mockResolvedValueOnce({ rows: [{ authenticationResult: successResult }] } as any)
 			.mockResolvedValueOnce({ rows: [] } as any)
@@ -195,18 +210,28 @@ describe('POST /auth/login — brute-force lockout', () => {
 
 		// 5 failures to trigger lockout
 		for (let i = 0; i < 5; i++) {
-			await POST(makeEvent({ body: { email: 'lockout@example.com', password: 'wrong', turnstileToken: 'tok' } })).catch(() => {})
+			await POST(
+				makeEvent({
+					body: { email: 'lockout@example.com', password: 'wrong', turnstileToken: 'tok' }
+				})
+			).catch(() => {})
 		}
 
 		await expect(
-			POST(makeEvent({ body: { email: 'lockout@example.com', password: 'wrong', turnstileToken: 'tok' } }))
+			POST(
+				makeEvent({
+					body: { email: 'lockout@example.com', password: 'wrong', turnstileToken: 'tok' }
+				})
+			)
 		).rejects.toMatchObject({ status: 429 })
 	})
 
 	it('clears the lockout tracker on successful login', async () => {
 		// Register a failed attempt first
 		mockQuery.mockResolvedValueOnce({ rows: [{ authenticationResult: failResult }] } as any)
-		await POST(makeEvent({ body: { email: 'clear@example.com', password: 'wrong', turnstileToken: 'tok' } })).catch(() => {})
+		await POST(
+			makeEvent({ body: { email: 'clear@example.com', password: 'wrong', turnstileToken: 'tok' } })
+		).catch(() => {})
 
 		// Then succeed — mfa flow needs 3 query responses
 		mockQuery
@@ -215,7 +240,11 @@ describe('POST /auth/login — brute-force lockout', () => {
 			.mockResolvedValueOnce({ rows: [{ code: '000000' }] } as any)
 
 		// Should not throw 429
-		const res = await POST(makeEvent({ body: { email: 'clear@example.com', password: 'Password1!', turnstileToken: 'tok' } }))
+		const res = await POST(
+			makeEvent({
+				body: { email: 'clear@example.com', password: 'Password1!', turnstileToken: 'tok' }
+			})
+		)
 		expect((await res.json()).mfaRequired).toBe(true)
 	})
 })

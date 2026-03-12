@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('$env/dynamic/private', () => ({ env: { EMAIL: 'no-reply@example.com', DOMAIN: 'https://example.com' } }))
+vi.mock('$env/dynamic/private', () => ({
+	env: { EMAIL: 'no-reply@example.com', DOMAIN: 'https://example.com' }
+}))
 
 vi.mock('$lib/server/brevo', () => ({ sendMessage: vi.fn() }))
 

@@ -41,7 +41,15 @@ describe('appState', () => {
 		})
 
 		it('can be cleared back to undefined', () => {
-			appState.user = { id: 1, role: 'student', email: 'a@b.com', firstName: 'A', lastName: 'B', phone: '', optOut: false }
+			appState.user = {
+				id: 1,
+				role: 'student',
+				email: 'a@b.com',
+				firstName: 'A',
+				lastName: 'B',
+				phone: '',
+				optOut: false
+			}
 			appState.user = undefined
 			expect(appState.user).toBeUndefined()
 		})
@@ -51,7 +59,11 @@ describe('appState', () => {
 		it('can be updated to show a notification', () => {
 			appState.toast = { title: 'Success', body: 'Your changes were saved.', isOpen: true }
 
-			expect(appState.toast).toEqual({ title: 'Success', body: 'Your changes were saved.', isOpen: true })
+			expect(appState.toast).toEqual({
+				title: 'Success',
+				body: 'Your changes were saved.',
+				isOpen: true
+			})
 		})
 
 		it('isOpen can be toggled independently', () => {

@@ -15,7 +15,13 @@ const mockQuery = vi.mocked(query)
 const mockSendVerificationEmail = vi.mocked(sendVerificationEmail)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
-const mockUser: User = { id: 9, email: 'new@example.com', firstName: 'Jane', lastName: 'Doe', role: 'user' }
+const mockUser: User = {
+	id: 9,
+	email: 'new@example.com',
+	firstName: 'Jane',
+	lastName: 'Doe',
+	role: 'user'
+}
 
 const successResult: AuthenticationResult = {
 	user: mockUser,
@@ -46,7 +52,7 @@ function makeEvent(body: Record<string, unknown> = validBody) {
 function setupSuccessQueries() {
 	mockQuery
 		.mockResolvedValueOnce({ rows: [{ authenticationResult: successResult }] } as any) // register
-		.mockResolvedValueOnce({ rows: [] } as any)                                         // delete_session
+		.mockResolvedValueOnce({ rows: [] } as any) // delete_session
 }
 
 beforeEach(() => {
@@ -92,10 +98,9 @@ describe('POST /auth/register', () => {
 
 		await POST(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('delete_session'),
-			[successResult.sessionId]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('delete_session'), [
+			successResult.sessionId
+		])
 	})
 
 	it('calls the register SQL function with the full body', async () => {
@@ -103,10 +108,9 @@ describe('POST /auth/register', () => {
 
 		await POST(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('register'),
-			[JSON.stringify(validBody)]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('register'), [
+			JSON.stringify(validBody)
+		])
 	})
 
 	it('still sends the verification email when delete_session fails', async () => {
@@ -143,19 +147,27 @@ describe('POST /auth/register — validation', () => {
 	})
 
 	it('throws 400 when password has no uppercase letter', async () => {
-		await expect(POST(makeEvent({ ...validBody, password: 'password1!' }))).rejects.toMatchObject({ status: 400 })
+		await expect(POST(makeEvent({ ...validBody, password: 'password1!' }))).rejects.toMatchObject({
+			status: 400
+		})
 	})
 
 	it('throws 400 when password has no number', async () => {
-		await expect(POST(makeEvent({ ...validBody, password: 'Password!' }))).rejects.toMatchObject({ status: 400 })
+		await expect(POST(makeEvent({ ...validBody, password: 'Password!' }))).rejects.toMatchObject({
+			status: 400
+		})
 	})
 
 	it('throws 400 when password has no special character', async () => {
-		await expect(POST(makeEvent({ ...validBody, password: 'Password1' }))).rejects.toMatchObject({ status: 400 })
+		await expect(POST(makeEvent({ ...validBody, password: 'Password1' }))).rejects.toMatchObject({
+			status: 400
+		})
 	})
 
 	it('throws 400 when password is too short', async () => {
-		await expect(POST(makeEvent({ ...validBody, password: 'P1!' }))).rejects.toMatchObject({ status: 400 })
+		await expect(POST(makeEvent({ ...validBody, password: 'P1!' }))).rejects.toMatchObject({
+			status: 400
+		})
 	})
 
 	it('throws 400 when Turnstile verification fails', async () => {
@@ -175,7 +187,12 @@ describe('POST /auth/register — validation', () => {
 	})
 
 	it('throws the DB status code on registration failure (e.g. duplicate email)', async () => {
-		const dupResult: AuthenticationResult = { user: null, sessionId: '', status: 'Email already registered.', statusCode: 409 }
+		const dupResult: AuthenticationResult = {
+			user: null,
+			sessionId: '',
+			status: 'Email already registered.',
+			statusCode: 409
+		}
 		mockQuery.mockResolvedValueOnce({ rows: [{ authenticationResult: dupResult }] } as any)
 		await expect(POST(makeEvent())).rejects.toMatchObject({ status: 409 })
 	})

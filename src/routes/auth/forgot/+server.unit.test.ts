@@ -17,7 +17,9 @@ const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 function makeEvent(body: Record<string, unknown> = {}) {
 	return {
 		request: {
-			json: vi.fn().mockResolvedValue({ turnstileToken: 'tok', email: 'user@example.com', ...body }),
+			json: vi
+				.fn()
+				.mockResolvedValue({ turnstileToken: 'tok', email: 'user@example.com', ...body }),
 			headers: { get: vi.fn().mockReturnValue(null) }
 		},
 		getClientAddress: vi.fn().mockReturnValue('127.0.0.1')

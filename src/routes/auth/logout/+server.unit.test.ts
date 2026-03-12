@@ -7,7 +7,13 @@ import { query } from '$lib/server/db'
 
 const mockQuery = vi.mocked(query)
 
-const mockUser: User = { id: 3, email: 'user@example.com', firstName: 'Jane', lastName: 'Doe', role: 'user' }
+const mockUser: User = {
+	id: 3,
+	email: 'user@example.com',
+	firstName: 'Jane',
+	lastName: 'Doe',
+	role: 'user'
+}
 
 function makeEvent({ noUser = false } = {}) {
 	return {
@@ -44,10 +50,7 @@ describe('POST /auth/logout', () => {
 
 		await POST(makeEvent())
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('delete_session'),
-			[mockUser.id]
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('delete_session'), [mockUser.id])
 	})
 
 	it('skips the DB call when no user is authenticated', async () => {

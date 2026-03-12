@@ -12,9 +12,21 @@ import jwt from 'jsonwebtoken'
 const mockQuery = vi.mocked(query)
 const mockVerifyTurnstileToken = vi.mocked(verifyTurnstileToken)
 
-const mockUser: User = { id: 5, email: 'user@example.com', firstName: 'Jane', lastName: 'Doe', role: 'user' }
+const mockUser: User = {
+	id: 5,
+	email: 'user@example.com',
+	firstName: 'Jane',
+	lastName: 'Doe',
+	role: 'user'
+}
 
-function makeEvent(body: Record<string, unknown> = { email: 'user@example.com', code: '123456', turnstileToken: 'tok' }) {
+function makeEvent(
+	body: Record<string, unknown> = {
+		email: 'user@example.com',
+		code: '123456',
+		turnstileToken: 'tok'
+	}
+) {
 	return {
 		request: {
 			json: vi.fn().mockResolvedValue(body),
@@ -28,9 +40,9 @@ function makeEvent(body: Record<string, unknown> = { email: 'user@example.com', 
 /** Set up the three DB calls needed for a successful MFA verification. */
 function setupSuccessQueries() {
 	mockQuery
-		.mockResolvedValueOnce({ rows: [{ userId: mockUser.id }] } as any)     // verify_mfa_code
-		.mockResolvedValueOnce({ rows: [{ sessionId: 'sess-xyz' }] } as any)   // create_session
-		.mockResolvedValueOnce({ rows: [{ get_session: mockUser }] } as any)    // get_session
+		.mockResolvedValueOnce({ rows: [{ userId: mockUser.id }] } as any) // verify_mfa_code
+		.mockResolvedValueOnce({ rows: [{ sessionId: 'sess-xyz' }] } as any) // create_session
+		.mockResolvedValueOnce({ rows: [{ get_session: mockUser }] } as any) // get_session
 }
 
 beforeEach(() => {
@@ -56,12 +68,16 @@ describe('POST /auth/mfa', () => {
 
 		await POST(event)
 
-		expect(event.cookies.set).toHaveBeenCalledWith('session', 'sess-xyz', expect.objectContaining({
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: true,
-			path: '/'
-		}))
+		expect(event.cookies.set).toHaveBeenCalledWith(
+			'session',
+			'sess-xyz',
+			expect.objectContaining({
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
+				path: '/'
+			})
+		)
 	})
 
 	it('sets an mfa_trusted cookie on success', async () => {
@@ -70,13 +86,17 @@ describe('POST /auth/mfa', () => {
 
 		await POST(event)
 
-		expect(event.cookies.set).toHaveBeenCalledWith('mfa_trusted', expect.any(String), expect.objectContaining({
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: true,
-			path: '/',
-			maxAge: 30 * 24 * 60 * 60
-		}))
+		expect(event.cookies.set).toHaveBeenCalledWith(
+			'mfa_trusted',
+			expect.any(String),
+			expect.objectContaining({
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
+				path: '/',
+				maxAge: 30 * 24 * 60 * 60
+			})
+		)
 	})
 
 	it('mfa_trusted cookie is a valid JWT with correct payload', async () => {
@@ -85,7 +105,9 @@ describe('POST /auth/mfa', () => {
 
 		await POST(event)
 
-		const [, trustedToken] = vi.mocked(event.cookies.set).mock.calls.find(([name]) => name === 'mfa_trusted')!
+		const [, trustedToken] = vi
+			.mocked(event.cookies.set)
+			.mock.calls.find(([name]) => name === 'mfa_trusted')!
 		const payload = jwt.verify(trustedToken as string, 'test-secret') as Record<string, unknown>
 		expect(payload.userId).toBe(mockUser.id)
 		expect(payload.purpose).toBe('mfa-trusted')
@@ -96,10 +118,10 @@ describe('POST /auth/mfa', () => {
 
 		await POST(makeEvent({ email: 'User@Example.COM', code: '123456', turnstileToken: 'tok' }))
 
-		expect(mockQuery).toHaveBeenCalledWith(
-			expect.stringContaining('verify_mfa_code'),
-			['user@example.com', '123456']
-		)
+		expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('verify_mfa_code'), [
+			'user@example.com',
+			'123456'
+		])
 	})
 
 	it('throws 401 when the MFA code is invalid or expired', async () => {
@@ -109,9 +131,9 @@ describe('POST /auth/mfa', () => {
 	})
 
 	it('throws 400 when email is missing', async () => {
-		await expect(
-			POST(makeEvent({ code: '123456', turnstileToken: 'tok' }))
-		).rejects.toMatchObject({ status: 400 })
+		await expect(POST(makeEvent({ code: '123456', turnstileToken: 'tok' }))).rejects.toMatchObject({
+			status: 400
+		})
 	})
 
 	it('throws 400 when code is missing', async () => {
