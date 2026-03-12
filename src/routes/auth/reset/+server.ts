@@ -1,8 +1,8 @@
-import { json, error } from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { query } from '$lib/server/db'
 import { verifyTurnstileToken } from '$lib/server/turnstile'
 
@@ -32,7 +32,7 @@ export const PUT: RequestHandler = async event => {
 
 	// Check the validity of the token and extract userId
 	try {
-		const decoded = <JwtPayload>jwt.verify(token, <jwt.Secret>JWT_SECRET)
+		const decoded = <JwtPayload>jwt.verify(token, <jwt.Secret>env.JWT_SECRET)
 		if (decoded.purpose !== 'reset-password') throw new Error('Invalid token purpose.')
 		const userId = decoded.subject
 

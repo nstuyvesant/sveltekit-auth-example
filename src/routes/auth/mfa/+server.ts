@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { query } from '$lib/server/db'
 import { verifyTurnstileToken } from '$lib/server/turnstile'
 
@@ -65,7 +65,7 @@ export const POST: RequestHandler = async event => {
 	})
 
 	// Issue a 30-day trusted-device cookie so MFA is not required again on this device
-	const trustedToken = jwt.sign({ userId, purpose: 'mfa-trusted' }, JWT_SECRET as Secret, {
+	const trustedToken = jwt.sign({ userId, purpose: 'mfa-trusted' }, env.JWT_SECRET as Secret, {
 		expiresIn: '30d'
 	})
 	cookies.set(MFA_TRUSTED_COOKIE, trustedToken, {

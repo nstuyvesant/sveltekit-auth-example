@@ -1,7 +1,7 @@
 {
 	"name": "sveltekit-auth-example",
 	"description": "SvelteKit Authentication Example",
-	"version": "5.8.2",
+	"version": "5.8.3",
 	"author": "Nate Stuyvesant",
 	"license": "https://github.com/nstuyvesant/sveltekit-auth-example/blob/master/LICENSE",
 	"repository": {
@@ -55,10 +55,12 @@
 		"@types/google.accounts": "^0.0.18",
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/pg": "^8.18.0",
+		"@vitest/coverage-v8": "4.1.0",
 		"eslint": "^10.0.3",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.15.2",
 		"globals": "^17.4.0",
+		"jsdom": "^28.1.0",
 		"playwright": "^1.58.2",
 		"prettier": "^3.8.1",
 		"prettier-plugin-sql": "^0.19.2",

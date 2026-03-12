@@ -1,4 +1,4 @@
-import { EMAIL } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { sendMessage } from '$lib/server/brevo'
 
 /**
@@ -10,7 +10,7 @@ import { sendMessage } from '$lib/server/brevo'
 export const sendMfaCodeEmail = async (toEmail: string, code: string) => {
 	await sendMessage({
 		to: [{ email: toEmail }],
-		sender: { email: EMAIL },
+		sender: { email: env.EMAIL },
 		subject: 'Your login verification code',
 		tags: ['account'],
 		htmlContent: `

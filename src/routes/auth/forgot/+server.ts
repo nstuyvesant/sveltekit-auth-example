@@ -1,7 +1,7 @@
 import type { Secret } from 'jsonwebtoken'
 import type { RequestHandler } from './$types'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { query } from '$lib/server/db'
 import { sendPasswordResetEmail } from '$lib/server/email'
 import { error } from '@sveltejs/kit'
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async event => {
 	if (rows.length > 0) {
 		const token = jwt.sign(
 			{ subject: rows[0].userId, purpose: 'reset-password' },
-			JWT_SECRET as Secret,
+			env.JWT_SECRET as Secret,
 			{ expiresIn: '30m' }
 		)
 		try {

@@ -2,6 +2,11 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.8.3
+
+- Add unit tests for all auth route handlers: `/auth/[slug]`, `/auth/forgot`, `/auth/google`, `/auth/login`, `/auth/logout`, `/auth/mfa`, `/auth/register`, `/auth/reset`, `/auth/verify/[token]`
+- Switch all server-side env imports from `$env/static/private` to `$env/dynamic/private` so secrets are read at runtime rather than baked into the build
+
 # 5.8.2
 
 - Add Chrome DevTools

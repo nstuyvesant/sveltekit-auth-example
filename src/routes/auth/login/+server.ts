@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { Secret } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { query } from '$lib/server/db'
 import { sendMfaCodeEmail } from '$lib/server/email'
 import { verifyTurnstileToken } from '$lib/server/turnstile'
@@ -97,7 +97,7 @@ export const POST: RequestHandler = async event => {
 	const trustedToken = cookies.get(MFA_TRUSTED_COOKIE)
 	if (trustedToken) {
 		try {
-			const payload = jwt.verify(trustedToken, JWT_SECRET as Secret) as {
+			const payload = jwt.verify(trustedToken, env.JWT_SECRET as Secret) as {
 				userId: number
 				purpose: string
 			}

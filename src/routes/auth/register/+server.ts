@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { query } from '$lib/server/db'
 import { sendVerificationEmail } from '$lib/server/email'
 import { verifyTurnstileToken } from '$lib/server/turnstile'
@@ -73,7 +73,7 @@ export const POST: RequestHandler = async event => {
 
 	const token = jwt.sign(
 		{ subject: authenticationResult.user.id, purpose: 'verify-email' },
-		JWT_SECRET as jwt.Secret,
+		env.JWT_SECRET as jwt.Secret,
 		{ expiresIn: '24h' }
 	)
 

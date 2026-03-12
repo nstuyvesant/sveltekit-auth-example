@@ -1,4 +1,4 @@
-import { DOMAIN, EMAIL } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { sendMessage } from '$lib/server/brevo'
 
 /**
@@ -10,12 +10,12 @@ import { sendMessage } from '$lib/server/brevo'
 export const sendVerificationEmail = async (toEmail: string, token: string) => {
 	await sendMessage({
 		to: [{ email: toEmail }],
-		sender: { email: EMAIL },
+		sender: { email: env.EMAIL },
 		subject: 'Verify your email address',
 		tags: ['account'],
 		htmlContent: `
       <p>Thanks for registering! Please verify your email address by clicking the link below:</p>
-      <p><a href="${DOMAIN}/auth/verify/${token}">Verify my email address</a></p>
+      <p><a href="${env.DOMAIN}/auth/verify/${token}">Verify my email address</a></p>
       <p>This link expires in 24 hours. If you did not register, you can safely ignore this email.</p>
     `
 	})

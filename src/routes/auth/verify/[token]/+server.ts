@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { query } from '$lib/server/db'
 
 /**
@@ -24,7 +24,7 @@ export const GET: RequestHandler = async event => {
 	// Verify the JWT — extract userId only if token is valid and correct purpose
 	let userId: string | undefined
 	try {
-		const decoded = jwt.verify(token, JWT_SECRET as jwt.Secret) as JwtPayload
+		const decoded = jwt.verify(token, env.JWT_SECRET as jwt.Secret) as JwtPayload
 		if (decoded.purpose === 'verify-email' && decoded.subject) {
 			userId = decoded.subject
 		}

@@ -1,4 +1,4 @@
-import { TURNSTILE_SECRET_KEY } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 /**
  * Verifies a Cloudflare Turnstile challenge token against the siteverify API.
@@ -11,7 +11,7 @@ export async function verifyTurnstileToken(token: string, ip?: string): Promise<
 	if (!token) return false
 
 	const formData = new FormData()
-	formData.append('secret', TURNSTILE_SECRET_KEY)
+	formData.append('secret', env.TURNSTILE_SECRET_KEY)
 	formData.append('response', token)
 	if (ip) formData.append('remoteip', ip)
 
