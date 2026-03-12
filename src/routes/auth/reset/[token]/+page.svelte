@@ -18,8 +18,11 @@
 	let message = $state('')
 	let submitted = $state(false)
 	let passwordMismatch = $state(false)
+	let loading = $state(false)
 
 	onMount(() => {
+		// Remove the token from the URL to prevent it appearing in logs and Referer headers
+		history.replaceState('', document.title, '/auth/reset')
 		focusedField?.focus()
 	})
 
@@ -40,30 +43,35 @@
 		}
 
 		if (form.checkValidity()) {
-			const url = `/auth/reset`
-			const res = await fetch(url, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					token: data.token,
-					password
+			loading = true
+			try {
+				const url = `/auth/reset`
+				const res = await fetch(url, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						token: data.token,
+						password
+					})
 				})
-			})
 
-			if (res.ok) {
-				appState.toast = {
-					title: 'Password Reset Successful',
-					body: 'Your password was reset. Please login.',
-					isOpen: true
+				if (res.ok) {
+					appState.toast = {
+						title: 'Password Reset Successful',
+						body: 'Your password was reset. Please login.',
+						isOpen: true
+					}
+
+					goto('/login')
+				} else {
+					const body = await res.json()
+					console.log('Failed reset', body)
+					message = body.message
 				}
-
-				goto('/login')
-			} else {
-				const body = await res.json()
-				console.log('Failed reset', body)
-				message = body.message
+			} finally {
+				loading = false
 			}
 		} else {
 			submitted = true
@@ -133,8 +141,9 @@
 	<button
 		type="submit"
 		class="btn-primary"
+		disabled={loading}
 	>
-		Reset Password
+		{loading ? 'Resetting...' : 'Reset Password'}
 	</button>
 </form>
 

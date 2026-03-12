@@ -18,3 +18,19 @@ export const PUT: RequestHandler = async event => {
 		message: 'Successfully updated user profile.'
 	})
 }
+
+export const DELETE: RequestHandler = async event => {
+	const { user } = event.locals
+
+	if (!user) error(401, 'Unauthorized')
+
+	try {
+		// Deleting the user cascades to sessions via ON DELETE CASCADE
+		await query(`CALL delete_user($1);`, [user.id])
+	} catch {
+		error(503, 'Could not communicate with database.')
+	}
+
+	event.cookies.delete('session', { path: '/' })
+	return json({ message: 'Account successfully deleted.' })
+}

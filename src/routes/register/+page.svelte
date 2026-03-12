@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { goto } from '$app/navigation'
-	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
@@ -22,6 +20,8 @@
 	let message = $state('')
 	let submitted = $state(false)
 	let passwordMismatch = $state(false)
+	let loading = $state(false)
+	let emailVerificationSent = $state(false)
 
 	let formEl: HTMLFormElement | undefined = $state()
 
@@ -59,6 +59,7 @@
 	})
 
 	async function registerLocal(user: User) {
+		loading = true
 		try {
 			const res = await fetch('/auth/register', {
 				method: 'POST',
@@ -67,22 +68,23 @@
 					'Content-Type': 'application/json'
 				}
 			})
-			if (!res.ok) {
-				if (res.status == 401)
-					// user already existed and passwords didn't match (otherwise, we login the user)
-					throw new Error('Sorry, that username is already in use.')
-				throw new Error(res.statusText) // should only occur if there's a database error
-			}
-
-			// res.ok
 			const fromEndpoint = await res.json()
-			appState.user = fromEndpoint.user // update app state so user is logged in
-			goto('/')
+			if (!res.ok) {
+				if (res.status == 409)
+					throw new Error('Sorry, that email address is already in use.')
+				throw new Error(fromEndpoint.message || res.statusText)
+			}
+			if (fromEndpoint.emailVerification) {
+				emailVerificationSent = true
+				return
+			}
 		} catch (err) {
 			console.error('Register error', err)
 			if (err instanceof Error) {
 				throw new Error(err.message)
 			}
+		} finally {
+			loading = false
 		}
 	}
 
@@ -97,6 +99,13 @@
 	<title>Register</title>
 </svelte:head>
 
+{#if emailVerificationSent}
+	<div class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4">
+		<h4>Check your email</h4>
+		<p>We've sent a verification link to your email address. Please check your inbox (and junk folder) to complete your registration.</p>
+		<a href="/login" class="btn-primary tw:block tw:text-center tw:no-underline">Back to login</a>
+	</div>
+{:else}
 <form
 	bind:this={formEl}
 	autocomplete="on"
@@ -209,7 +218,9 @@
 	<button
 		type="submit"
 		class="btn-primary"
+		disabled={loading}
 	>
-		Register
+		{loading ? 'Creating account...' : 'Register'}
 	</button>
 </form>
+{/if}

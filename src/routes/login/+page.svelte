@@ -9,6 +9,7 @@
 	let formEl: HTMLFormElement | undefined = $state()
 	let message = $state('')
 	let submitted = $state(false)
+	let loading = $state(false)
 	const credentials: Credentials = $state({
 		email: '',
 		password: ''
@@ -42,6 +43,7 @@
 	})
 
 	async function loginLocal(credentials: Credentials) {
+		loading = true
 		try {
 			const res = await fetch('/auth/login', {
 				method: 'POST',
@@ -62,6 +64,8 @@
 				console.error('Login error', err)
 				message = err.message
 			}
+		} finally {
+			loading = false
 		}
 	}
 </script>
@@ -128,8 +132,8 @@
 		<p class="tw:text-red-600">{message}</p>
 	{/if}
 
-	<button type="submit" class="btn-primary">
-		Sign In
+	<button type="submit" class="btn-primary" disabled={loading}>
+		{loading ? 'Signing in...' : 'Sign In'}
 	</button>
 
 	<p class="tw:text-center tw:text-sm">

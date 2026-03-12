@@ -2,6 +2,7 @@
 	import type { PageData } from './$types'
 	import { untrack } from 'svelte'
 	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
 	import { focusOnFirstError } from '$lib/focus'
 	import { appState } from '$lib/app-state.svelte'
 
@@ -20,6 +21,8 @@
 	let confirmPassword: HTMLInputElement | undefined = $state()
 	let submitted = $state(false)
 	let passwordMismatch = $state(false)
+	let loading = $state(false)
+	let deleting = $state(false)
 
 	onMount(() => {
 		focusedField?.focus()
@@ -37,20 +40,41 @@
 		}
 
 		if (form.checkValidity()) {
-			const url = '/api/v1/user'
-			const res = await fetch(url, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(user)
-			})
-			const reply = await res.json()
-			message = reply.message
-			appState.user = JSON.parse(JSON.stringify(user)) // update app state so navbar reflects changes
+			loading = true
+			try {
+				const url = '/api/v1/user'
+				const res = await fetch(url, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(user)
+				})
+				const reply = await res.json()
+				message = reply.message
+				appState.user = JSON.parse(JSON.stringify(user)) // update app state so navbar reflects changes
+			} finally {
+				loading = false
+			}
 		} else {
 			submitted = true
 			focusOnFirstError(form)
+		}
+	}
+
+	async function deleteAccount() {
+		if (!confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) return
+		deleting = true
+		try {
+			const res = await fetch('/api/v1/user', { method: 'DELETE' })
+			if (res.ok) {
+				appState.user = undefined
+				goto('/login')
+			} else {
+				message = 'Failed to delete account. Please try again.'
+			}
+		} finally {
+			deleting = false
 		}
 	}
 
@@ -175,7 +199,20 @@
 	<button
 		type="submit"
 		class="btn-primary"
+		disabled={loading}
 	>
-		Update
+		{loading ? 'Updating...' : 'Update'}
 	</button>
+
+	<div class="tw:border-t tw:border-red-200 tw:pt-4 tw:mt-4">
+		<p class="tw:text-sm tw:text-gray-500 tw:mb-2">Danger zone</p>
+		<button
+			type="button"
+			class="tw:w-full tw:rounded tw:border tw:border-red-400 tw:bg-white tw:px-4 tw:py-2 tw:text-sm tw:font-medium tw:text-red-600 tw:cursor-pointer hover:tw:bg-red-50 disabled:tw:opacity-50 disabled:tw:cursor-not-allowed"
+			disabled={deleting}
+			onclick={deleteAccount}
+		>
+			{deleting ? 'Deleting...' : 'Delete my account'}
+		</button>
+	</div>
 </form>

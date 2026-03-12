@@ -9,6 +9,7 @@
 	let email: string = $state('')
 	let message: string = $state('')
 	let submitted = $state(false)
+	let loading = $state(false)
 
 	onMount(() => {
 		focusedField?.focus()
@@ -22,22 +23,27 @@
 			if (email.toLowerCase().includes('gmail.com')) {
 				return (message = 'Gmail passwords must be reset on Manage Your Google Account.')
 			}
-			const url = `/auth/forgot`
-			const res = await fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email })
-			})
+			loading = true
+			try {
+				const url = `/auth/forgot`
+				const res = await fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ email })
+				})
 
-			if (res.ok) {
-				appState.toast = {
-					title: 'Password Reset',
-					body: 'Please check your inbox for a password reset email (junk mail, too).',
-					isOpen: true
+				if (res.ok) {
+					appState.toast = {
+						title: 'Password Reset',
+						body: 'Please check your inbox for a password reset email (junk mail, too).',
+						isOpen: true
+					}
+					return goto('/')
 				}
-				return goto('/')
+			} finally {
+				loading = false
 			}
 		} else {
 			submitted = true
@@ -83,8 +89,9 @@
 	<button
 		type="submit"
 		class="btn-primary"
+		disabled={loading}
 	>
-		Send Email
+		{loading ? 'Sending...' : 'Send Email'}
 	</button>
 </form>
 

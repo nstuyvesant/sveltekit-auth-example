@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   first_name persons_name,
   last_name persons_name,
   opt_out boolean NOT NULL DEFAULT false,
+  email_verified boolean NOT NULL DEFAULT false,
   phone phone_number,
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_email_unique UNIQUE (email)
@@ -123,37 +124,28 @@ AS $BODY$
 DECLARE
   input_email text := trim(input->>'email');
   input_password text := input->>'password';
+  v_user users%ROWTYPE;
 BEGIN
   IF input_email IS NULL OR input_password IS NULL THEN
-    response := json_build_object('statusCode', 400, 'status', 'Please provide an email address and password to authenticate.', 'user', NULL);
-	RETURN;
+    response := json_build_object('statusCode', 400, 'status', 'Please provide an email address and password to authenticate.', 'user', NULL, 'sessionId', NULL);
+    RETURN;
   END IF;
 
-  WITH user_authenticated AS (
-    SELECT users.id, role, first_name, last_name, phone, opt_out
-    FROM users
-    WHERE email = input_email AND password = crypt(input_password, password) LIMIT 1
-  )
-  SELECT json_build_object(
-	'statusCode', CASE WHEN EXISTS (SELECT 1 FROM user_authenticated) THEN 200 ELSE 401 END,
-	'status', CASE WHEN EXISTS (SELECT 1 FROM user_authenticated)
-	  THEN 'Login successful.'
-	  ELSE 'Invalid username/password combination.'
-	END,
-	'user', CASE WHEN EXISTS (SELECT 1 FROM user_authenticated)
-	  THEN (SELECT json_build_object(
-		  'id', user_authenticated.id,
-		  'role', user_authenticated.role,
-		  'email', input_email,
-		  'firstName', user_authenticated.first_name,
-		  'lastName', user_authenticated.last_name,
-		  'phone', user_authenticated.phone,
-		  'optOut', user_authenticated.opt_out)
-		 FROM user_authenticated)
-	  ELSE NULL
-	  END,
-	'sessionId', (SELECT create_session(user_authenticated.id) FROM user_authenticated)
-  ) INTO response;
+  SELECT * INTO v_user FROM users
+  WHERE email = input_email AND password = crypt(input_password, password) LIMIT 1;
+
+  IF NOT FOUND THEN
+    response := json_build_object('statusCode', 401, 'status', 'Invalid username/password combination.', 'user', NULL, 'sessionId', NULL);
+  ELSIF NOT v_user.email_verified THEN
+    response := json_build_object('statusCode', 403, 'status', 'Please verify your email address before logging in.', 'user', NULL, 'sessionId', NULL);
+  ELSE
+    response := json_build_object(
+      'statusCode', 200,
+      'status', 'Login successful.',
+      'user', json_build_object('id', v_user.id, 'role', v_user.role, 'email', input_email, 'firstName', v_user.first_name, 'lastName', v_user.last_name, 'phone', v_user.phone, 'optOut', v_user.opt_out),
+      'sessionId', create_session(v_user.id)
+    );
+  END IF;
 END;
 $BODY$;
 
@@ -196,6 +188,23 @@ WHERE sessions.id = input_session_id AND expires > CURRENT_TIMESTAMP LIMIT 1;
 $BODY$;
 
 ALTER FUNCTION public.get_session(uuid) OWNER TO auth;
+
+CREATE OR REPLACE FUNCTION public.verify_email_and_create_session(input_id integer)
+    RETURNS uuid
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+  session_id uuid;
+BEGIN
+  UPDATE users SET email_verified = true WHERE id = input_id;
+  SELECT create_session(input_id) INTO session_id;
+  RETURN session_id;
+END;
+$BODY$;
+
+ALTER FUNCTION public.verify_email_and_create_session(integer) OWNER TO auth;
 
 CREATE OR REPLACE FUNCTION public.register(
 	input json,
@@ -242,10 +251,12 @@ DECLARE
   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
 BEGIN
+  -- Google verifies email ownership; mark user as verified on every sign-in
+  UPDATE users SET email_verified = true WHERE email = input_email;
   SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name, 'phone', users.phone)) INTO user_session FROM users WHERE email = input_email;
   IF NOT FOUND THEN
-    INSERT INTO users(role, email, first_name, last_name)
-      VALUES('student', input_email, input_first_name, input_last_name)
+    INSERT INTO users(role, email, first_name, last_name, email_verified)
+      VALUES('student', input_email, input_first_name, input_last_name, true)
       RETURNING
         json_build_object(
           'id', create_session(users.id),
@@ -262,6 +273,14 @@ CREATE PROCEDURE public.delete_session(input_id integer)
     AS $$
 DELETE FROM sessions WHERE user_id = input_id;
 $$;
+
+CREATE OR REPLACE PROCEDURE public.delete_user(input_id integer)
+    LANGUAGE sql
+    AS $$
+DELETE FROM users WHERE id = input_id;
+$$;
+
+ALTER PROCEDURE public.delete_user(integer) OWNER TO auth;
 
 CREATE OR REPLACE PROCEDURE public.reset_password(IN input_id integer, IN input_password text)
   LANGUAGE plpgsql
@@ -287,14 +306,15 @@ DECLARE
   input_phone varchar(23) := TRIM((input->>'phone')::varchar);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO users (role, email, password, first_name, last_name, phone)
+    INSERT INTO users (role, email, password, first_name, last_name, phone, email_verified)
     VALUES (
 	  input_role, input_email, crypt(input_password, gen_salt('bf', 8)),
-	  input_first_name, input_last_name, input_phone);
+	  input_first_name, input_last_name, input_phone, true);
   ELSE
     UPDATE users SET
 	  role = input_role,
 	  email = input_email,
+	  email_verified = true,
 	  password = CASE WHEN input_password = ''
 		  THEN password -- leave as is (we are updating fields other than the password)
 		  ELSE crypt(input_password, gen_salt('bf', 8))
