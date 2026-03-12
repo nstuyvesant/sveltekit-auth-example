@@ -2,13 +2,36 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.1.3
+
+- Session timeout: automatically redirect to /login on session expiry via fetch interceptor (`src/lib/fetch-interceptor.ts`)
+- Add database-level session cleanup on expiry
+- Strengthen Content Security Policy (CSP) in svelte.config.js and vite.config.ts
+- Harden auth endpoints (forgot password, Google OAuth, register, password reset)
+
 # 5.1.2
 
 - Dark mode
+- Rate limiting on auth endpoints
+- Email verification for new registrations
+- Refactor state management: replace `stores.ts` with Svelte 5 `$state`-based `AppState` class (`src/lib/app-state.svelte.ts`)
+- Split single `[slug]` auth handler into dedicated endpoints: login, register, google, logout, reset
+- Add `auth-redirect.ts` helper for consistent post-auth redirects
+- Password complexity enforcement on register and profile pages
+- Add `/api/v1/user` profile update endpoint
+- Service worker improvements
+- Performance improvements in session lookup and DB queries
+- Rename `.env.sample` to `.env.example`
 
 # 5.1.0
 
-- Convert to Tailwind CSS
+- Convert to Tailwind CSS 4
+- Remove Bootstrap dependency
+- Modernize PostgreSQL schema and stored functions
+- Add Playwright end-to-end test configuration
+- Add MCP configuration (`.vscode/mcp.json`) for Svelte MCP server
+- Add `AGENTS.md` coding agent instructions
+- Bump dependencies
 
 # 5.0.4
 
