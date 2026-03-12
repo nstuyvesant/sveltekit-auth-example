@@ -34,9 +34,6 @@
 		box-shadow: 0 0 0 2px var(--color-blue-500, #3b82f6);
 	}
 	/* peer class is applied at the HTML element level and cannot be set via CSS */
-	.form-input-validated:invalid {
-		/* border turns red only when the parent form has .submitted */
-	}
 	.submitted .form-input-validated:invalid {
 		border-color: var(--color-red-500, #ef4444);
 	}
