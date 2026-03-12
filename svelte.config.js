@@ -37,7 +37,7 @@ const config = {
 			mode: 'auto',
 			directives: {
 				'default-src': [...baseCsp],
-				'script-src': ['unsafe-inline', ...baseCsp],
+				'script-src': [...baseCsp],
 				'img-src': ['data:', 'blob:', ...baseCsp],
 				'style-src': ['unsafe-inline', ...baseCsp],
 				'object-src': ['none'],

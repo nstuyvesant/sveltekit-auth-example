@@ -224,7 +224,7 @@ BEGIN
   PERFORM id FROM users WHERE email = input_email;
   IF NOT FOUND THEN
     INSERT INTO users(role, password, email, first_name, last_name, phone)
-      VALUES('student', crypt(input_password, gen_salt('bf', 8)), input_email, input_first_name, input_last_name, input_phone)
+      VALUES('student', crypt(input_password, gen_salt('bf', 12)), input_email, input_first_name, input_last_name, input_phone)
       RETURNING
         json_build_object(
           'sessionId', create_session(users.id),
@@ -286,7 +286,7 @@ CREATE OR REPLACE PROCEDURE public.reset_password(IN input_id integer, IN input_
   LANGUAGE plpgsql
 AS $procedure$
 BEGIN
-  UPDATE users SET password = crypt(input_password, gen_salt('bf', 8)) WHERE id = input_id;
+  UPDATE users SET password = crypt(input_password, gen_salt('bf', 12)) WHERE id = input_id;
 END;
 $procedure$
 ;
@@ -308,7 +308,7 @@ BEGIN
   IF input_id = 0 THEN
     INSERT INTO users (role, email, password, first_name, last_name, phone, email_verified)
     VALUES (
-	  input_role, input_email, crypt(input_password, gen_salt('bf', 8)),
+	  input_role, input_email, crypt(input_password, gen_salt('bf', 12)),
 	  input_first_name, input_last_name, input_phone, true);
   ELSE
     UPDATE users SET
@@ -317,7 +317,7 @@ BEGIN
 	  email_verified = true,
 	  password = CASE WHEN input_password = ''
 		  THEN password -- leave as is (we are updating fields other than the password)
-		  ELSE crypt(input_password, gen_salt('bf', 8))
+		  ELSE crypt(input_password, gen_salt('bf', 12))
 	  END,
 	  first_name = input_first_name,
 	  last_name = input_last_name,
@@ -343,7 +343,7 @@ BEGIN
     email = input_email,
 	password = CASE WHEN input_password = ''
       THEN password -- leave as is (we are updating fields other than the password)
-	  ELSE crypt(input_password, gen_salt('bf', 8))
+	  ELSE crypt(input_password, gen_salt('bf', 12))
 	END,
 	first_name = input_first_name,
 	last_name = input_last_name,

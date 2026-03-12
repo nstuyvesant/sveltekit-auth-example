@@ -54,9 +54,7 @@ export const POST: RequestHandler = async event => {
 
 		cookies.set('session', userSession.id, { httpOnly: true, sameSite: 'lax', secure: true, path: '/' })
 		return json({ message: 'Successful Google Sign-In.', user: userSession.user })
-	} catch (err) {
-		let message = ''
-		if (err instanceof Error) message = err.message
-		error(401, message)
+	} catch {
+		error(401, 'Google authentication failed.')
 	}
 }

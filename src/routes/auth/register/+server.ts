@@ -17,6 +17,10 @@ export const POST: RequestHandler = async event => {
 	if (!body.email || !body.password || !body.firstName || !body.lastName)
 		error(400, 'Please supply all required fields: email, password, first and last name.')
 
+	const passwordPattern = /(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}/
+	if (!passwordPattern.test(body.password))
+		error(400, 'Password must be at least 8 characters and include an uppercase letter, a number, and a special character.')
+
 	let result
 	try {
 		const sql = `SELECT register($1) AS "authenticationResult";`

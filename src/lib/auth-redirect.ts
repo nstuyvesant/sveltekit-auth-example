@@ -8,7 +8,7 @@ import { page } from '$app/state'
 export function redirectAfterLogin(user: User): void {
 	if (!user) return
 	const referrer = page.url.searchParams.get('referrer')
-	if (referrer) {
+	if (referrer && referrer.startsWith('/') && !referrer.startsWith('//')) {
 		goto(referrer)
 		return
 	}

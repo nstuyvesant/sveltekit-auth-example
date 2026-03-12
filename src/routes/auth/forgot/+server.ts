@@ -15,7 +15,7 @@ export const POST: RequestHandler = async event => {
 		const { userId } = rows[0]
 		// Create JWT with userId expiring in 30 mins
 		const secret = JWT_SECRET
-		const token = jwt.sign({ subject: userId }, <Secret>secret, {
+		const token = jwt.sign({ subject: userId, purpose: 'reset-password' }, <Secret>secret, {
 			expiresIn: '30m'
 		})
 

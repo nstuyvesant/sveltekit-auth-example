@@ -12,6 +12,7 @@ export const PUT: RequestHandler = async event => {
 	// Check the validity of the token and extract userId
 	try {
 		const decoded = <JwtPayload>jwt.verify(token, <jwt.Secret>JWT_SECRET)
+		if (decoded.purpose !== 'reset-password') throw new Error('Invalid token purpose.')
 		const userId = decoded.subject
 
 		// Update the database with the new password
