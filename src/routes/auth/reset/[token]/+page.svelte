@@ -2,7 +2,7 @@
 	import type { PageData } from './$types'
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { toast } from '../../../../stores'
+	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 
 	interface Props {
@@ -52,7 +52,7 @@
 			})
 
 			if (res.ok) {
-				$toast = {
+				appState.toast = {
 					title: 'Password Reset Succesful',
 					body: 'Your password was reset. Please login.',
 					isOpen: true

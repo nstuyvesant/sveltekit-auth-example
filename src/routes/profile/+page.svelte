@@ -2,7 +2,7 @@
 	import type { PageData } from './$types'
 	import { onMount } from 'svelte'
 	import { focusOnFirstError } from '$lib/focus'
-	import { loginSession } from '../../stores'
+	import { appState } from '$lib/app-state.svelte'
 
 	interface Props {
 		data: PageData
@@ -43,7 +43,7 @@
 			})
 			const reply = await res.json()
 			message = reply.message
-			$loginSession = JSON.parse(JSON.stringify(user)) // update loginSession store
+			appState.user = JSON.parse(JSON.stringify(user)) // update app state so navbar reflects changes
 		} else {
 			submitted = true
 			focusOnFirstError(form)
@@ -95,9 +95,10 @@
 				bind:value={user.password}
 				minlength="8"
 				maxlength="80"
+				pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
 				placeholder="Password"
 			/>
-			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
+			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Must be 8+ characters with a capital letter, number, and special character</span>
 			<span class="tw:text-xs tw:text-gray-500">
 				Minimum 8 characters, one capital letter, one number, one special character.
 			</span>
@@ -120,9 +121,6 @@
 			{#if passwordMismatch}
 				<span class="tw:text-xs tw:text-red-600 tw:mt-0.5">Passwords must match</span>
 			{/if}
-			<span class="tw:text-xs tw:text-gray-500">
-				Minimum 8 characters, one capital letter, one number, one special character.
-			</span>
 		</label>
 	{/if}
 

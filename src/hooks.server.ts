@@ -3,14 +3,12 @@ import { query } from '$lib/server/db'
 
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) {
-	const { rows } = await query('SELECT * FROM get_session($1::uuid)', [sessionId], 'get-session')
-	if (rows?.length > 0) {
-		event.locals.user = <User>rows[0].get_session
-	}
+	const result = await query('SELECT * FROM get_session($1::uuid)', [sessionId], 'get-session')
+	event.locals.user = result.rows[0]?.get_session // undefined if not found
 }
 
 // Invoked for each endpoint called and initially for SSR router
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle = (async ({ event, resolve }) => {
 	const { cookies, url } = event
 
 	// Skip auth overhead for static asset requests
@@ -31,4 +29,4 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// after endpoint or page is called
 
 	return response
-}
+}) satisfies Handle

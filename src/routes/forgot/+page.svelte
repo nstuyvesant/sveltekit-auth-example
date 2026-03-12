@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { toast } from '../../stores'
+	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 
 	let focusedField: HTMLInputElement | undefined = $state()
@@ -31,7 +31,7 @@
 			})
 
 			if (res.ok) {
-				$toast = {
+				appState.toast = {
 					title: 'Password Reset',
 					body: 'Please check your inbox for a password reset email (junk mail, too).',
 					isOpen: true

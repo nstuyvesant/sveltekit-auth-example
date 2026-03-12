@@ -64,5 +64,6 @@ queryFn = <T extends QueryResultRow>(
  */
 export const query = <T extends QueryResultRow = any>(
 	sql: string,
-	params?: (string | number | boolean | object | null)[]
-): Promise<QueryResult<T>> => queryFn<T>(sql, params)
+	params?: (string | number | boolean | object | null)[],
+	name?: string
+): Promise<QueryResult<T>> => queryFn<T>(sql, params, name)

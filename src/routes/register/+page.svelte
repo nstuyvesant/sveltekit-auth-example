@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { loginSession } from '../../stores'
+	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
@@ -72,7 +72,7 @@
 
 			// res.ok
 			const fromEndpoint = await res.json()
-			loginSession.set(fromEndpoint.user) // update store so user is logged in
+			appState.user = fromEndpoint.user // update app state so user is logged in
 			goto('/')
 		} catch (err) {
 			console.error('Register error', err)
@@ -104,7 +104,7 @@
 		<h4><strong>Register</strong></h4>
 		<p>Welcome to our community.</p>
 
-		<div id="googleButton"></div>
+		<div id="googleButton" class="tw:w-full"></div>
 
 		<label class="tw:block tw:text-sm tw:font-medium" for="email">
 			Email
@@ -131,10 +131,11 @@
 				required
 				minlength="8"
 				maxlength="80"
+				pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
 				placeholder="Password"
 				autocomplete="new-password"
 			/>
-			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
+			<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Must be 8+ characters with a capital letter, number, and special character</span>
 			<span class="tw:text-xs tw:text-gray-500">
 				Minimum 8 characters, one capital letter, one number, one special character.
 			</span>
@@ -157,9 +158,6 @@
 			{#if passwordMismatch}
 				<span class="tw:text-xs tw:text-red-600 tw:mt-0.5">Passwords must match</span>
 			{/if}
-			<span class="tw:text-xs tw:text-gray-500">
-				Minimum 8 characters, one capital letter, one number, one special character.
-			</span>
 		</label>
 
 		<label class="tw:block tw:text-sm tw:font-medium" for="firstName">

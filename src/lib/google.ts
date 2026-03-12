@@ -1,7 +1,7 @@
-import { page } from '$app/stores'
+import { page } from '$app/state'
 import { goto } from '$app/navigation'
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public'
-import { googleInitialized, loginSession } from '../stores'
+import { appState } from '$lib/app-state.svelte'
 
 export function renderGoogleButton() {
 	const btn = document.getElementById('googleButton')
@@ -10,26 +10,19 @@ export function renderGoogleButton() {
 			type: 'standard',
 			theme: 'filled_blue',
 			size: 'large',
-			width: 367
+			width: btn.offsetWidth || 400
 		})
 	}
 }
 
 export function initializeGoogleAccounts() {
-	let initialized = false
-	const unsubscribe = googleInitialized.subscribe(value => {
-		initialized = value
-	})
-
-	if (!initialized) {
+	if (!appState.googleInitialized) {
 		google.accounts.id.initialize({
 			client_id: PUBLIC_GOOGLE_CLIENT_ID,
 			callback: googleCallback
 		})
-
-		googleInitialized.set(true)
+		appState.googleInitialized = true
 	}
-	unsubscribe()
 
 	async function googleCallback(response: google.accounts.id.CredentialResponse) {
 		const res = await fetch('/auth/google', {
@@ -42,14 +35,10 @@ export function initializeGoogleAccounts() {
 
 		if (res.ok) {
 			const fromEndpoint = await res.json()
-			loginSession.set(fromEndpoint.user) // update loginSession store
+			appState.user = fromEndpoint.user
 			const { role } = fromEndpoint.user
 
-			let referrer
-			const unsubscribe = page.subscribe(p => {
-				referrer = p.url.searchParams.get('referrer')
-			})
-			unsubscribe()
+			const referrer = page.url.searchParams.get('referrer')
 
 			if (referrer) return goto(referrer)
 			if (role === 'teacher') return goto('/teachers')

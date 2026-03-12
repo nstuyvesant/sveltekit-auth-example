@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
-	import { loginSession } from '../../stores'
+	import { appState } from '$lib/app-state.svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 
@@ -52,7 +52,7 @@
 			})
 			const fromEndpoint = await res.json()
 			if (res.ok) {
-				loginSession.set(fromEndpoint.user)
+				appState.user = fromEndpoint.user
 				const { role } = fromEndpoint.user
 				const referrer = page.url.searchParams.get('referrer')
 				if (referrer) goto(referrer)
@@ -93,7 +93,7 @@
 	<h4><strong>Sign In</strong></h4>
 	<p>Welcome back.</p>
 
-	<div id="googleButton"></div>
+	<div id="googleButton" class="tw:w-full"></div>
 
 	<div class="tw:flex tw:items-center tw:gap-2 tw:text-gray-400 tw:text-sm">
 		<span class="tw:flex-1 tw:border-t tw:border-gray-300"></span>
@@ -128,9 +128,6 @@
 			autocomplete="current-password"
 		/>
 		<span class="tw:hidden tw:text-xs tw:text-red-600 tw:mt-0.5 tw:[.submitted_&]:peer-invalid:block">Password with 8 chars or more required</span>
-		<span class="tw:text-xs tw:text-gray-500">
-			Minimum 8 characters, one capital letter, one number, one special character.
-		</span>
 	</label>
 
 	<a href="/forgot" class="tw:text-sm tw:text-gray-500">Forgot Password?</a>

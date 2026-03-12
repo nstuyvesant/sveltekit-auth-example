@@ -40,13 +40,23 @@ sw.addEventListener('fetch', event => {
 	// ignore POST requests etc
 	if (event.request.method !== 'GET') return
 
+	const url = new URL(event.request.url)
+
+	// Don't intercept API, auth, or non-HTTP requests — let them go straight to the network
+	const bypass =
+		url.pathname.startsWith('/api') ||
+		url.pathname.startsWith('/auth') ||
+		(url.protocol !== 'http:' && url.protocol !== 'https:')
+
+	if (bypass) return
+
 	async function respond() {
-		const url = new URL(event.request.url)
 		const cache = await caches.open(CACHE)
 
 		// `build`/`files` can always be served from the cache
 		if (ASSETS.includes(url.pathname)) {
-			return cache.match(url.pathname)
+			const response = await cache.match(url.pathname)
+			if (response) return response
 		}
 
 		// for everything else, try the network first, but
@@ -54,13 +64,21 @@ sw.addEventListener('fetch', event => {
 		try {
 			const response = await fetch(event.request)
 
+			// if we're offline, fetch can return a value that is not a Response
+			// instead of throwing - and we can't pass this non-Response to respondWith
+			if (!(response instanceof Response)) {
+				throw new Error('invalid response from fetch')
+			}
+
 			if (response.status === 200) {
 				cache.put(event.request, response.clone())
 			}
 
 			return response
-		} catch {
-			return cache.match(event.request)
+		} catch (err) {
+			const response = await cache.match(event.request)
+			if (response) return response
+			throw err
 		}
 	}
 
