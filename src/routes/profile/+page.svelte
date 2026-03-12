@@ -63,7 +63,10 @@
 	}
 
 	async function deleteAccount() {
-		if (!confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) return
+		if (
+			!confirm('Are you sure you want to permanently delete your account? This cannot be undone.')
+		)
+			return
 		deleting = true
 		try {
 			const res = await fetch('/api/v1/user', { method: 'DELETE' })
@@ -94,7 +97,10 @@
 	novalidate
 	class="tw:mx-auto tw:my-8 tw:max-w-sm tw:space-y-4"
 	class:submitted
-	onsubmit={(e) => { e.preventDefault(); update() }}
+	onsubmit={e => {
+		e.preventDefault()
+		update()
+	}}
 >
 	<h4>Profile</h4>
 	<p>Update your information.</p>
@@ -127,7 +133,9 @@
 				pattern={passwordPattern}
 				placeholder="Password"
 			/>
-			<span class="form-error">Must be 8+ characters with a capital letter, number, and special character</span>
+			<span class="form-error"
+				>Must be 8+ characters with a capital letter, number, and special character</span
+			>
 			<span class="tw:text-xs tw:text-gray-500">
 				Minimum 8 characters, one capital letter, one number, one special character.
 			</span>
@@ -148,7 +156,7 @@
 				autocomplete="new-password"
 			/>
 			{#if passwordMismatch}
-				<span class="tw:text-xs tw:text-red-600 tw:mt-0.5">Passwords must match</span>
+				<span class="tw:mt-0.5 tw:text-xs tw:text-red-600">Passwords must match</span>
 			{/if}
 		</label>
 	{/if}
@@ -196,19 +204,15 @@
 		<p>{message}</p>
 	{/if}
 
-	<button
-		type="submit"
-		class="btn-primary"
-		disabled={loading}
-	>
+	<button type="submit" class="btn-primary" disabled={loading}>
 		{loading ? 'Updating...' : 'Update'}
 	</button>
 
-	<div class="tw:border-t tw:border-red-200 tw:pt-4 tw:mt-4">
-		<p class="tw:text-sm tw:text-gray-500 tw:mb-2">Danger zone</p>
+	<div class="tw:mt-4 tw:border-t tw:border-red-200 tw:pt-4">
+		<p class="tw:mb-2 tw:text-sm tw:text-gray-500">Danger zone</p>
 		<button
 			type="button"
-			class="tw:w-full tw:rounded tw:border tw:border-red-600 tw:bg-red-600 tw:px-4 tw:py-2 tw:text-sm tw:font-medium tw:text-white tw:cursor-pointer hover:tw:bg-red-700 hover:tw:border-red-700 disabled:tw:opacity-50 disabled:tw:cursor-not-allowed"
+			class="hover:tw:bg-red-700 hover:tw:border-red-700 disabled:tw:opacity-50 disabled:tw:cursor-not-allowed tw:w-full tw:cursor-pointer tw:rounded tw:border tw:border-red-600 tw:bg-red-600 tw:px-4 tw:py-2 tw:text-sm tw:font-medium tw:text-white"
 			disabled={deleting}
 			onclick={deleteAccount}
 		>

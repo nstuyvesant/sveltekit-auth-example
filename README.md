@@ -8,14 +8,14 @@ A complete, production-ready authentication and authorization starter for **Svel
 
 ## Features
 
-| | |
-|---|---|
-| ✅ Local accounts (email + password) | ✅ Sign in with Google / Google One Tap |
-| ✅ Multi-factor authentication (MFA) | ✅ Email verification |
-| ✅ Forgot password / email reset (SendGrid) | ✅ User profile management |
-| ✅ Session management + timeout | ✅ Rate limiting |
-| ✅ Role-based access control | ✅ Password complexity enforcement |
-| ✅ Content Security Policy (CSP) | ✅ OWASP-compliant password hashing |
+|                                                |                                         |
+| ---------------------------------------------- | --------------------------------------- |
+| ✅ Local accounts (email + password)           | ✅ Sign in with Google / Google One Tap |
+| ✅ Multi-factor authentication (MFA via email) | ✅ Email verification                   |
+| ✅ Forgot password / email reset (SendGrid)    | ✅ User profile management              |
+| ✅ Session management + timeout                | ✅ Rate limiting                        |
+| ✅ Role-based access control                   | ✅ Password complexity enforcement      |
+| ✅ Content Security Policy (CSP)               | ✅ OWASP-compliant password hashing     |
 
 ## Stack
 
@@ -44,7 +44,7 @@ cd sveltekit-auth-example
 yarn install
 
 # Create PostgreSQL database (only works if you have PostgreSQL installed)
-psql -d postgres -f db_create.sql
+bash db_create.sh
 ```
 
 2. Create a **Google API client ID** per [these instructions](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid). Make sure you include `http://localhost:3000` and `http://localhost` in the Authorized JavaScript origins, and `http://localhost:3000/auth/google/callback` in the Authorized redirect URIs for your Client ID for Web application. **Do not access the site using http://127.0.0.1:3000** — use `http://localhost:3000` or it will not work.
@@ -84,9 +84,9 @@ yarn preview
 
 The db_create.sql script adds three users to the database with obvious roles:
 
-| Email | Password | Role |
-|---|---|---|
-| admin@example.com | admin123 | admin |
+| Email               | Password   | Role    |
+| ------------------- | ---------- | ------- |
+| admin@example.com   | admin123   | admin   |
 | teacher@example.com | teacher123 | teacher |
 | student@example.com | student123 | student |
 

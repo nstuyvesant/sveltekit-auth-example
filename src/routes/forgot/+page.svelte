@@ -62,7 +62,10 @@
 	novalidate
 	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
 	class:submitted
-	onsubmit={(e) => { e.preventDefault(); sendPasswordReset() }}
+	onsubmit={e => {
+		e.preventDefault()
+		sendPasswordReset()
+	}}
 >
 	<h4>Forgot password</h4>
 	<p>Hey, you're human. We get it.</p>
@@ -86,13 +89,7 @@
 		<p class="tw:text-red-600">{message}</p>
 	{/if}
 
-	<button
-		type="submit"
-		class="btn-primary"
-		disabled={loading}
-	>
+	<button type="submit" class="btn-primary" disabled={loading}>
 		{loading ? 'Sending...' : 'Send Email'}
 	</button>
 </form>
-
-

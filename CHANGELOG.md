@@ -2,9 +2,23 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.6.0
+
+- Split `db_create.sql` into `db_create.sql` (role + database creation) and `db_schema.sql` (schema, functions, seed data)
+- Add `db_create.sh` shell wrapper to run both files in sequence
+- `db_schema.sql` is pure SQL and fully prettier-formattable
+- README updated to use `bash db_create.sh`
+
 # 5.5.0
 
-- Extract email templates into dedicated files under `src/lib/server/email/` (`password-reset.ts`, `verify-email.ts`)
+- Multi-factor authentication (MFA) via email for local accounts (Google Sign In is exempt)
+- 6-digit OTP code sent via SendGrid, expires in 10 minutes
+- 30-day trusted-device cookie (signed JWT) suppresses MFA on subsequent logins from the same device
+- New `mfa_codes` table in PostgreSQL with `create_mfa_code()` and `verify_mfa_code()` functions
+- New `/auth/mfa` endpoint verifies the code, creates the session, and issues the trusted-device cookie
+- Login page shows an inline MFA step when a code is required
+- `/auth/mfa` added to rate-limited paths
+- Extract email templates into dedicated files under `src/lib/server/email/` (`password-reset.ts`, `verify-email.ts`, `mfa-code.ts`)
 - `src/lib/server/email/index.ts` re-exports all templates for clean imports
 
 # 5.1.3

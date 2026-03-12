@@ -1,37 +1,7 @@
 -- Run via db_create.sh or:
--- $ psql -d postgres -f db_create.sql && psql -d auth -f db_schema.sql
--- Create role if not already there
-DO $do$
-BEGIN
-  IF NOT EXISTS (
-    SELECT -- SELECT list can stay empty for this
-    FROM   pg_catalog.pg_roles
-    WHERE  rolname = 'auth') THEN
-
-    CREATE ROLE auth;
-  END IF;
-END
-$do$;
-
--- Forcefully disconnect anyone
-SELECT
-	pid,
-	pg_terminate_backend(pid)
-FROM
-	pg_stat_activity
-WHERE
-	datname = 'auth'
-	AND pid <> pg_backend_pid();
-
-DROP DATABASE IF EXISTS auth;
-
-CREATE DATABASE auth
-WITH
-	OWNER = auth ENCODING = 'UTF8' CONNECTION
-LIMIT
-	= -1;
-
-COMMENT ON DATABASE auth IS 'SvelteKit Auth Example';
+-- $ psql -d auth -f db_schema.sql
+-- Required for password hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Required to generate UUIDs for sessions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -80,7 +50,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 	CONSTRAINT users_email_unique UNIQUE (email)
 ) TABLESPACE pg_default;
 
-ALTER TABLE public.users OWNER to auth;
+ALTER TABLE public.users OWNER TO auth;
 
 CREATE INDEX users_first_name_index ON public.users USING btree (
 	first_name COLLATE pg_catalog."default" ASC NULLS LAST
@@ -103,7 +73,7 @@ CREATE TABLE IF NOT EXISTS public.sessions (
 	CONSTRAINT sessions_one_per_user UNIQUE (user_id)
 ) TABLESPACE pg_default;
 
-ALTER TABLE public.sessions OWNER to auth;
+ALTER TABLE public.sessions OWNER TO auth;
 
 CREATE OR REPLACE FUNCTION public.authenticate (input json, OUT response json) RETURNS json LANGUAGE 'plpgsql' COST 100 VOLATILE PARALLEL UNSAFE AS $BODY$
 DECLARE
@@ -229,7 +199,7 @@ BEGIN
           'user', json_build_object('id', users.id, 'role', 'student', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'phone', input_phone, 'optOut', users.opt_out)
         ) INTO user_session;
   ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
-  	SELECT authenticate(input) INTO user_session;
+    SELECT authenticate(input) INTO user_session;
   END IF;
 END;
 $BODY$;
@@ -279,7 +249,7 @@ ALTER PROCEDURE public.reset_password (integer, text) OWNER TO auth;
 
 CREATE OR REPLACE PROCEDURE public.upsert_user (input json) LANGUAGE plpgsql AS $BODY$
 DECLARE
-  input_id integer := COALESCE((input->>'id')::integer,0);
+  input_id integer := COALESCE((input->>'id')::integer, 0);
   input_role roles := COALESCE((input->>'role')::roles, 'student');
   input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
   input_password varchar(80) := COALESCE((input->>'password')::varchar, '');
@@ -290,21 +260,22 @@ BEGIN
   IF input_id = 0 THEN
     INSERT INTO users (role, email, password, first_name, last_name, phone, email_verified)
     VALUES (
-	  input_role, input_email, crypt(input_password, gen_salt('bf', 12)),
-	  input_first_name, input_last_name, input_phone, true);
+      input_role, input_email, crypt(input_password, gen_salt('bf', 12)),
+      input_first_name, input_last_name, input_phone, true
+    );
   ELSE
     UPDATE users SET
-	  role = input_role,
-	  email = input_email,
-	  email_verified = true,
-	  password = CASE WHEN input_password = ''
-		  THEN password -- leave as is (we are updating fields other than the password)
-		  ELSE crypt(input_password, gen_salt('bf', 12))
-	  END,
-	  first_name = input_first_name,
-	  last_name = input_last_name,
-	  phone = input_phone
-	WHERE id = input_id;
+      role = input_role,
+      email = input_email,
+      email_verified = true,
+      password = CASE WHEN input_password = ''
+        THEN password -- leave as is (we are updating fields other than the password)
+        ELSE crypt(input_password, gen_salt('bf', 12))
+      END,
+      first_name = input_first_name,
+      last_name = input_last_name,
+      phone = input_phone
+    WHERE id = input_id;
   END IF;
 END;
 $BODY$;
@@ -321,13 +292,13 @@ DECLARE
 BEGIN
   UPDATE users SET
     email = input_email,
-	password = CASE WHEN input_password = ''
+    password = CASE WHEN input_password = ''
       THEN password -- leave as is (we are updating fields other than the password)
-	  ELSE crypt(input_password, gen_salt('bf', 12))
-	END,
-	first_name = input_first_name,
-	last_name = input_last_name,
-	phone = input_phone
+      ELSE crypt(input_password, gen_salt('bf', 12))
+    END,
+    first_name = input_first_name,
+    last_name = input_last_name,
+    phone = input_phone
   WHERE id = input_id;
 END;
 $BODY$;

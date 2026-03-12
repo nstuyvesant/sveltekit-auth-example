@@ -90,7 +90,10 @@
 	novalidate
 	class="tw:mx-auto tw:mt-20 tw:max-w-sm tw:space-y-4"
 	class:submitted
-	onsubmit={(e) => { e.preventDefault(); resetPassword() }}
+	onsubmit={e => {
+		e.preventDefault()
+		resetPassword()
+	}}
 >
 	<h4>New Password</h4>
 	<p>Please provide a new password.</p>
@@ -130,7 +133,7 @@
 			autocomplete="new-password"
 		/>
 		{#if passwordMismatch}
-			<span class="tw:text-xs tw:text-red-600 tw:mt-0.5">Passwords must match</span>
+			<span class="tw:mt-0.5 tw:text-xs tw:text-red-600">Passwords must match</span>
 		{/if}
 	</label>
 
@@ -138,12 +141,7 @@
 		<p class="tw:text-red-600">{message}</p>
 	{/if}
 
-	<button
-		type="submit"
-		class="btn-primary"
-		disabled={loading}
-	>
+	<button type="submit" class="btn-primary" disabled={loading}>
 		{loading ? 'Resetting...' : 'Reset Password'}
 	</button>
 </form>
-

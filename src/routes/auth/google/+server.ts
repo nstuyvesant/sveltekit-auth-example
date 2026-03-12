@@ -52,7 +52,12 @@ export const POST: RequestHandler = async event => {
 		// Prevent hooks.server.ts's handler() from deleting cookie thinking no one has authenticated
 		event.locals.user = userSession.user
 
-		cookies.set('session', userSession.id, { httpOnly: true, sameSite: 'lax', secure: true, path: '/' })
+		cookies.set('session', userSession.id, {
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: true,
+			path: '/'
+		})
 		return json({ message: 'Successful Google Sign-In.', user: userSession.user })
 	} catch {
 		error(401, 'Google authentication failed.')

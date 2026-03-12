@@ -7,7 +7,7 @@ import { query } from '$lib/server/db'
 const ipRateLimit = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 const RATE_LIMIT_MAX_REQUESTS = 20
-const RATE_LIMITED_PATHS = new Set(['/auth/login', '/auth/register', '/auth/forgot'])
+const RATE_LIMITED_PATHS = new Set(['/auth/login', '/auth/register', '/auth/forgot', '/auth/mfa'])
 
 function checkRateLimit(ip: string): boolean {
 	const now = Date.now()
@@ -22,12 +22,15 @@ function checkRateLimit(ip: string): boolean {
 }
 
 // Periodically clean up expired entries to prevent unbounded memory growth
-setInterval(() => {
-	const now = Date.now()
-	for (const [key, value] of ipRateLimit) {
-		if (now > value.resetAt) ipRateLimit.delete(key)
-	}
-}, 60 * 60 * 1000)
+setInterval(
+	() => {
+		const now = Date.now()
+		for (const [key, value] of ipRateLimit) {
+			if (now > value.resetAt) ipRateLimit.delete(key)
+		}
+	},
+	60 * 60 * 1000
+)
 
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) {

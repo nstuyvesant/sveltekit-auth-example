@@ -18,7 +18,10 @@ export const POST: RequestHandler = async event => {
 
 	const passwordPattern = /(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}/
 	if (!passwordPattern.test(body.password))
-		error(400, 'Password must be at least 8 characters and include an uppercase letter, a number, and a special character.')
+		error(
+			400,
+			'Password must be at least 8 characters and include an uppercase letter, a number, and a special character.'
+		)
 
 	let result
 	try {
