@@ -31,8 +31,12 @@ setInterval(() => {
 
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) {
-	const result = await query('SELECT * FROM get_session($1::uuid)', [sessionId], 'get-session')
-	event.locals.user = result.rows[0]?.get_session // undefined if not found
+	const result = await query(
+		'SELECT get_and_update_session($1::uuid)',
+		[sessionId],
+		'get-and-update-session'
+	)
+	event.locals.user = result.rows[0]?.get_and_update_session // undefined if not found
 }
 
 // Invoked for each endpoint called and initially for SSR router

@@ -189,6 +189,43 @@ $BODY$;
 
 ALTER FUNCTION public.get_session(uuid) OWNER TO auth;
 
+-- Like get_session but also bumps the expiry (sliding sessions).
+-- Returns NULL if the session is expired or does not exist.
+CREATE OR REPLACE FUNCTION public.get_and_update_session(input_session_id uuid)
+  RETURNS json
+  LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+  result json;
+BEGIN
+  UPDATE sessions
+    SET expires = CURRENT_TIMESTAMP + INTERVAL '2 hours'
+  WHERE id = input_session_id AND expires > CURRENT_TIMESTAMP;
+
+  IF NOT FOUND THEN
+    RETURN NULL;
+  END IF;
+
+  SELECT json_build_object(
+    'id', sessions.user_id,
+    'role', users.role,
+    'email', users.email,
+    'firstName', users.first_name,
+    'lastName', users.last_name,
+    'phone', users.phone,
+    'optOut', users.opt_out,
+    'expires', sessions.expires
+  ) INTO result
+  FROM sessions
+    INNER JOIN users ON sessions.user_id = users.id
+  WHERE sessions.id = input_session_id;
+
+  RETURN result;
+END;
+$BODY$;
+
+ALTER FUNCTION public.get_and_update_session(uuid) OWNER TO auth;
+
 CREATE OR REPLACE FUNCTION public.verify_email_and_create_session(input_id integer)
     RETURNS uuid
     LANGUAGE 'plpgsql'

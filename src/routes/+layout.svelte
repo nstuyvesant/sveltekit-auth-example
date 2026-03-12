@@ -4,6 +4,7 @@
 	import { goto, beforeNavigate } from '$app/navigation'
 	import { appState } from '$lib/app-state.svelte'
 	import { initializeGoogleAccounts } from '$lib/google'
+	import { setupFetchInterceptor } from '$lib/fetch-interceptor'
 
 	import './layout.css'
 
@@ -39,6 +40,7 @@
 	})
 
 	onMount(() => {
+		setupFetchInterceptor()
 		initializeGoogleAccounts()
 		if (!appState.user) google.accounts.id.prompt()
 	})
