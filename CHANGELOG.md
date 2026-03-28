@@ -2,6 +2,11 @@
 
 - Add password complexity checking on /register and /profile pages (only checks for length currently despite what the pages say)
 
+# 5.8.6
+
+- Bump dependencies
+- Add color theme for One Tap (ignored by Chrome when using FedCM)
+
 # 5.8.5
 
 - Fix lint errors
