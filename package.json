@@ -34,7 +34,7 @@
 		"test:unit": "vitest"
 	},
 	"engines": {
-		"node": "^24.14.0"
+		"node": "^24.14.1"
 	},
 	"type": "module",
 	"dependencies": {
