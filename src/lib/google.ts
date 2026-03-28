@@ -59,7 +59,8 @@ export function initializeGoogleAccounts() {
 		if (!appState.googleInitialized) {
 			google.accounts.id.initialize({
 				client_id: PUBLIC_GOOGLE_CLIENT_ID,
-				callback: googleCallback
+				callback: googleCallback,
+				color_scheme: 'light'
 			})
 			appState.googleInitialized = true
 		}
